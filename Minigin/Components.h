@@ -1,5 +1,4 @@
 #pragma once
-class GameObject;
 
 #include "Transform.h"
 #include <string>
@@ -8,6 +7,8 @@ class GameObject;
 
 namespace dae
 {
+	class GameObject;
+
 	class Component
 	{
 	public:
@@ -21,30 +22,35 @@ namespace dae
 		GameObject* m_owner;
 	};
 
+	class Texture2D;
+
 	class RenderComponent : public Component
 	{
 	public:
 		explicit RenderComponent(GameObject* ownerRef) : Component(ownerRef) {};
 		virtual ~RenderComponent() = default;
 
-		virtual void Render() const override = 0;
+		virtual void Render() const override;
+
+		void SetTexture(const std::string& filename);
+
+	private:
+		std::shared_ptr<Texture2D> m_texture{};
 	};
 
 	class Font;
-	class Texture2D;
 
-	class TextComponent : public RenderComponent
+	class TextComponent : public Component
 	{
 	public:
 		void Update(float delta_time) override;
 		void Render() const override;
 
 		void SetText(const std::string& text);
-		void SetPosition(float x, float y);
 		void SetColor(const SDL_Color& color);
 
 		explicit TextComponent(GameObject* ownerRef, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 })
-			: RenderComponent(ownerRef), m_needsUpdate(true),
+			: Component(ownerRef), m_needsUpdate(true),
 			m_text(text), m_color(color), m_font(std::move(font)),
 			m_textTexture(nullptr)
 		{}
@@ -58,7 +64,6 @@ namespace dae
 		bool m_needsUpdate{};
 		std::string m_text{};
 		SDL_Color m_color{ 255, 255, 255, 255 };
-		Transform m_transform{};
 		std::shared_ptr<Font> m_font{};
 		std::shared_ptr<Texture2D> m_textTexture{};
 	};

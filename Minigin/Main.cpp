@@ -17,47 +17,32 @@ static void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 
-	//auto go = std::make_unique<dae::GameObject>();
-	//go->SetTexture("background.png");
-	//scene.Add(std::move(go));
+	auto objBackground = std::make_unique<dae::GameObject>();
+	objBackground->AddComponent<dae::RenderComponent>();
+	objBackground->GetComponent<dae::RenderComponent>()->SetTexture("background.png");
+	
+	scene.Add(std::move(objBackground));
 
-	//go = std::make_unique<dae::GameObject>();
-	//go->SetTexture("logo.png");
-	//go->SetPosition(358, 180);
-	//scene.Add(std::move(go));
+	auto objLogo = std::make_unique<dae::GameObject>();
+	objLogo->AddComponent<dae::RenderComponent>();
+	objLogo->GetComponent<dae::RenderComponent>()->SetTexture("logo.png");
+	objLogo->SetPosition(358, 180);
+
+	scene.Add(std::move(objLogo));
 
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	//auto to = std::make_unique<dae::TextObject>("Programming 4 Assignment", font);
-	//to->SetColor({ 255, 255, 0, 255 });
-	//to->SetPosition(292, 20);
-	//scene.Add(std::move(to));
+	auto objTitle = std::make_unique<dae::GameObject>();
+	objTitle->AddComponent<dae::TextComponent>("Programming 4 Assignment", font);
+	objTitle->GetComponent<dae::TextComponent>()->SetColor({ 255, 255, 0, 255 });
+	objTitle->SetPosition(292, 20);
 
-	auto obj = std::make_unique<dae::GameObject>();
+	scene.Add(std::move(objTitle));
 
-	auto text = obj->AddComponent<dae::TextComponent>("FPS: 0", font);
-	auto fps = obj->AddComponent<dae::FPSComponent>();
+	auto objFps = std::make_unique<dae::GameObject>();
+	objFps->AddComponent<dae::TextComponent>("0 FPS", font);
+	objFps->AddComponent<dae::FPSComponent>();
 
-	if (text)
-	{
-		text->SetText("FPS: " + std::to_string(fps->GetFPS()));
-	}
-
-
-	// Pass raw pointer to the GameObject, not &obj
-	//auto fps = std::make_unique<dae::FPSComponent>(obj.get());
-	//auto txt = std::make_unique<dae::TextComponent>(obj.get(), std::to_string(fps->GetFPS()), font);
-
-	// Add components to obj
-	//obj->AddComponent(std::move(txt));
-	//obj->AddComponent(std::move(fps));
-
-	scene.Add(std::move(obj));
-
-
-	//auto to = std::make_unique<dae::TextObject>("Programming 4 Assignment", font);
-	//to->SetColor({ 255, 255, 0, 255 });
-	//to->SetPosition(292, 20);
-	//scene.Add(std::move(to));
+	scene.Add(std::move(objFps));
 }
 
 int main(int, char*[]) {

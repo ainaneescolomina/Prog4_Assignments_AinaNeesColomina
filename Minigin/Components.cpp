@@ -1,15 +1,27 @@
 #include "Components.h"
 
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <stdexcept>
 #include <SDL3_ttf/SDL_ttf.h>
 #include "Renderer.h"
+#include "ResourceManager.h"
 #include "Font.h"
 #include "Texture2D.h"
+#include "GameObject.h"
 
-//dae::TextComponent::TextComponent(GameObject* ownerRef, const std::string& text, std::shared_ptr<Font> font, const SDL_Color& color)
-//	: RenderComponent(ownerRef), m_needsUpdate(true), m_text(text), m_color(color), m_font(std::move(font)), m_textTexture(nullptr)
-//{ }
+void dae::RenderComponent::Render() const
+{
+	if (m_texture == nullptr) return;
+	const auto& pos = m_owner->GetTransform().GetPosition();
+	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+}
+
+void dae::RenderComponent::SetTexture(const std::string& filename)
+{
+	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
+}
 
 void dae::TextComponent::Update(float delta_time)
 {
@@ -37,7 +49,7 @@ void dae::TextComponent::Render() const
 {
 	if (m_textTexture != nullptr)
 	{
-		const auto& pos = m_transform.GetPosition();
+		const auto& pos = m_owner->GetTransform().GetPosition();
 		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
 	}
 }
@@ -48,11 +60,6 @@ void dae::TextComponent::SetText(const std::string& text)
 	m_needsUpdate = true;
 }
 
-void dae::TextComponent::SetPosition(const float x, const float y)
-{
-	m_transform.SetPosition(x, y);
-}
-
 void dae::TextComponent::SetColor(const SDL_Color& color)
 {
 	m_color = color;
@@ -61,17 +68,24 @@ void dae::TextComponent::SetColor(const SDL_Color& color)
 
 void dae::FPSComponent::Update(float delta_time)
 {
-	(void)delta_time;
-
-	m_frameCount++;
 	m_elapsedTime += delta_time;
+	m_frameCount++;
+
 	if (m_elapsedTime >= 1.0f)
 	{
-		m_fps = m_frameCount / m_elapsedTime;
-		m_frameCount = 0;
-		m_elapsedTime = 0.0f;
+		m_fps = static_cast<float>(m_frameCount) / m_elapsedTime;
 
-		std::cout << "FPS: " << m_fps << std::endl;
+		auto pTextComponent = m_owner->GetComponent<TextComponent>();
+		if (pTextComponent)
+		{
+			std::ostringstream ss;
+			ss << std::fixed << std::setprecision(2) << m_fps;
+			pTextComponent->SetText(ss.str() + " FPS");
+		}
+
+		// Reset counters
+		m_elapsedTime = 0.0f;
+		m_frameCount = 0;
 	}
 }
 
@@ -79,5 +93,3 @@ float dae::FPSComponent::GetFPS() const
 {
 	return m_fps;
 }
-
-

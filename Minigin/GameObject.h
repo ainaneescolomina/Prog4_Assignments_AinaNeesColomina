@@ -13,14 +13,13 @@ namespace dae
 		std::vector<std::unique_ptr<Component>> m_components{};
 
 		Transform m_transform{};
-		//std::shared_ptr<Texture2D> m_texture{};
 
 	public:
 		virtual void Update(float delta_time);
 		virtual void Render() const;
 
-		//void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
+		Transform& GetTransform() { return m_transform; };
 
 		GameObject() = default;
 		virtual ~GameObject();
@@ -38,7 +37,6 @@ namespace dae
 			m_components.push_back(std::move(component));
 			return raw;
 		}
-
 
 		template<typename T>
 		T* GetComponent()
