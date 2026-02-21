@@ -13,16 +13,20 @@ namespace dae
 		std::vector<std::unique_ptr<Component>> m_components{};
 
 		Transform m_transform{};
+		bool m_isMarkedForDestroy{ false };
 
 	public:
-		virtual void Update(float delta_time);
-		virtual void Render() const;
+		void Update(float delta_time);
+		void Render() const;
 
 		void SetPosition(float x, float y);
 		Transform& GetTransform() { return m_transform; };
 
+		void MarkForDestroy() { m_isMarkedForDestroy = true; }
+		bool IsMarkedForDestroy() const { return m_isMarkedForDestroy; }
+
 		GameObject() = default;
-		virtual ~GameObject();
+		~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;

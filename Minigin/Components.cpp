@@ -14,7 +14,7 @@
 void dae::RenderComponent::Render() const
 {
 	if (m_texture == nullptr) return;
-	const auto& pos = m_owner->GetTransform().GetPosition();
+	const auto& pos = GetOwner()->GetTransform().GetPosition();
 	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
 }
 
@@ -23,10 +23,8 @@ void dae::RenderComponent::SetTexture(const std::string& filename)
 	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
 }
 
-void dae::TextComponent::Update(float delta_time)
+void dae::TextComponent::Update(float)
 {
-	(void)delta_time;
-
 	if (m_needsUpdate)
 	{
 		const auto surf = TTF_RenderText_Blended(m_font->GetFont(), m_text.c_str(), m_text.length(), m_color);
@@ -40,17 +38,8 @@ void dae::TextComponent::Update(float delta_time)
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 		}
 		SDL_DestroySurface(surf);
-		m_textTexture = std::make_shared<Texture2D>(texture);
+		m_texture = std::make_shared<Texture2D>(texture);
 		m_needsUpdate = false;
-	}
-}
-
-void dae::TextComponent::Render() const
-{
-	if (m_textTexture != nullptr)
-	{
-		const auto& pos = m_owner->GetTransform().GetPosition();
-		Renderer::GetInstance().RenderTexture(*m_textTexture, pos.x, pos.y);
 	}
 }
 
@@ -66,6 +55,12 @@ void dae::TextComponent::SetColor(const SDL_Color& color)
 	m_needsUpdate = true;
 }
 
+dae::FPSComponent::FPSComponent(GameObject* ownerRef)
+	:Component(ownerRef)
+{
+	m_pTextComponent = GetOwner()->GetComponent<TextComponent>();
+}
+
 void dae::FPSComponent::Update(float delta_time)
 {
 	m_elapsedTime += delta_time;
@@ -73,14 +68,17 @@ void dae::FPSComponent::Update(float delta_time)
 
 	if (m_elapsedTime >= 1.0f)
 	{
-		m_fps = static_cast<float>(m_frameCount) / m_elapsedTime;
+		auto newFps = static_cast<float>(m_frameCount) / m_elapsedTime;
 
-		auto pTextComponent = m_owner->GetComponent<TextComponent>();
-		if (pTextComponent)
+		if (std::fabs(m_fps - newFps) >= 0.01f)
 		{
-			std::ostringstream ss;
-			ss << std::fixed << std::setprecision(2) << m_fps;
-			pTextComponent->SetText(ss.str() + " FPS");
+			m_fps = newFps;
+			if (m_pTextComponent)
+			{
+				std::ostringstream ss;
+				ss << std::fixed << std::setprecision(2) << m_fps;
+				m_pTextComponent->SetText(ss.str() + " FPS");
+			}
 		}
 
 		// Reset counters

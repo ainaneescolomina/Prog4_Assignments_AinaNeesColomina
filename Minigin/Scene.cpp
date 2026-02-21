@@ -26,12 +26,27 @@ void Scene::RemoveAll()
 	m_objects.clear();
 }
 
+void dae::Scene::Cleanup()
+{
+	m_objects.erase(
+		std::remove_if(
+			m_objects.begin(),
+			m_objects.end(),
+			[](const auto& object)
+			{
+				return object->IsMarkedForDestroy();
+			}),
+		m_objects.end());
+}
+
 void Scene::Update(float delta_time)
 {
 	for(auto& object : m_objects)
 	{
 		object->Update(delta_time);
 	}
+
+	Cleanup();
 }
 
 void Scene::Render() const
