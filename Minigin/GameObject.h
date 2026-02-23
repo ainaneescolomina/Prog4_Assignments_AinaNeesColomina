@@ -15,12 +15,23 @@ namespace dae
 		Transform m_transform{};
 		bool m_isMarkedForDestroy{ false };
 
+		// Scene Graph
+		GameObject* m_parent{};
+		std::vector<GameObject*> m_children{};
+
+		bool m_isDirty{ true };
+		glm::vec3 m_worldPosition{};
+
+		void SetDirty();
+		void UpdateWorldPosition();
+
 	public:
 		void Update(float delta_time);
 		void Render() const;
 
 		void SetPosition(float x, float y);
 		Transform& GetTransform() { return m_transform; };
+		glm::vec3 GetWorldPosition();
 
 		void MarkForDestroy() { m_isMarkedForDestroy = true; }
 		bool IsMarkedForDestroy() const { return m_isMarkedForDestroy; }
@@ -65,6 +76,15 @@ namespace dae
 					}),
 				m_components.end());
 		}
+
+		// Scene Graph
+		void SetParent(GameObject* parent, bool worldPositionStays = false);
+		GameObject* GetParent() const { return m_parent; }
+		size_t GetChildCount() const { return m_children.size(); }
+		GameObject* GetChildAt(unsigned int index) const { return m_children[index]; }
+		bool IsChild(GameObject* obj) const;
+		void AddChild(GameObject* child, bool worldPositionStays = false);
+		void RemoveChild(GameObject* child, bool worldPositionStays = false);
 	};
 
 }

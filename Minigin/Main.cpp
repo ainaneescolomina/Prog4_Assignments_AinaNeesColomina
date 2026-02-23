@@ -43,6 +43,23 @@ static void load()
 	objFps->AddComponent<dae::FPSComponent>();
 
 	scene.Add(std::move(objFps));
+
+	///////////////
+	auto center = std::make_unique<dae::GameObject>();
+	center->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
+	center->SetPosition(150, 400);
+	center->AddComponent<dae::RotatorComponent>(50.f, 0.5f);
+
+	auto satellite = std::make_unique<dae::GameObject>();
+	satellite->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
+	satellite->AddComponent<dae::RotatorComponent>(50.f, -2.f);
+
+	// Scenegraph relation
+	satellite->SetParent(center.get(), false);
+
+	scene.Add(std::move(center));
+	scene.Add(std::move(satellite));
+
 }
 
 int main(int, char*[]) {

@@ -36,7 +36,14 @@ void LogSDLVersion(const std::string& message, int major, int minor, int patch)
 
 void LoopCallback(void* arg)
 {
-	static_cast<dae::Minigin*>(arg)->RunOneFrame();
+	using namespace std::chrono;
+
+	static auto last_time = high_resolution_clock::now();
+	const auto current_time = high_resolution_clock::now();
+	const float delta_time = duration<float>(current_time - last_time).count();
+	last_time = current_time;
+
+	static_cast<dae::Minigin*>(arg)->RunOneFrame(delta_time); 
 }
 #endif
 

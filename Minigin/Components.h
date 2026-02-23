@@ -96,4 +96,23 @@ namespace dae
 		float m_fps = 0.0f;
 		float m_elapsedTime = 0.0f;
 	};
+
+	class RotatorComponent final : public Component
+	{
+	public:
+		RotatorComponent(GameObject* owner, float radius, float speed);
+		virtual ~RotatorComponent() = default;
+		RotatorComponent(const RotatorComponent& other) = delete;
+		RotatorComponent(RotatorComponent&& other) = delete;
+		RotatorComponent& operator=(const RotatorComponent& other) = delete;
+		RotatorComponent& operator=(RotatorComponent&& other) = delete;
+
+		virtual void Update(float deltaTime) override;
+
+	private:
+		glm::vec3 m_startPosition{};
+		float m_radius{};
+		float m_speed{};
+		float m_angle{};
+	};
 }
