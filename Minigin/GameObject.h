@@ -12,18 +12,17 @@ namespace dae
 	{
 		std::vector<std::unique_ptr<Component>> m_components{};
 
-		Transform m_transform{};
+		Transform m_transform{this};
 		bool m_isMarkedForDestroy{ false };
 
 		// Scene Graph
 		GameObject* m_parent{};
 		std::vector<GameObject*> m_children{};
 
-		bool m_isDirty{ true };
-		glm::vec3 m_worldPosition{};
-
-		void SetDirty();
-		void UpdateWorldPosition();
+		void RemoveChild(GameObject* child) {
+			m_children.erase(std::remove(m_children.begin(), m_children.end(), child), m_children.end());
+		}
+		void AddChild(GameObject* child) { m_children.emplace_back(child); }
 
 	public:
 		void Update(float delta_time);
@@ -31,7 +30,6 @@ namespace dae
 
 		void SetPosition(float x, float y);
 		Transform& GetTransform() { return m_transform; };
-		glm::vec3 GetWorldPosition();
 
 		void MarkForDestroy() { m_isMarkedForDestroy = true; }
 		bool IsMarkedForDestroy() const { return m_isMarkedForDestroy; }
@@ -78,13 +76,11 @@ namespace dae
 		}
 
 		// Scene Graph
-		void SetParent(GameObject* parent, bool worldPositionStays = false);
+		void SetParent(GameObject* parent, bool keepWorldPosition = false);
 		GameObject* GetParent() const { return m_parent; }
 		size_t GetChildCount() const { return m_children.size(); }
 		GameObject* GetChildAt(unsigned int index) const { return m_children[index]; }
 		bool IsChild(GameObject* obj) const;
-		void AddChild(GameObject* child, bool worldPositionStays = false);
-		void RemoveChild(GameObject* child, bool worldPositionStays = false);
 	};
 
 }

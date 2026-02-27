@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <SDL3_ttf/SDL_ttf.h>
+#include <glm/gtc/constants.hpp>
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include "Font.h"
@@ -14,7 +15,7 @@
 void dae::RenderComponent::Render() const
 {
 	if (m_texture == nullptr) return;
-	const auto& pos = GetOwner()->GetWorldPosition();
+	const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
 	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
 }
 
@@ -102,12 +103,19 @@ dae::RotatorComponent::RotatorComponent(GameObject* owner, float radius, float s
 
 void dae::RotatorComponent::Update(float deltaTime)
 {
-	m_angle += m_speed * deltaTime;
+    m_angle += m_speed * deltaTime;
+    m_angle = std::fmod(m_angle, glm::two_pi<float>());
 
-	float offsetX = cos(m_angle) * m_radius;
-	float offsetY = sin(m_angle) * m_radius;
+    float offsetX = cos(m_angle) * m_radius;
+    float offsetY = sin(m_angle) * m_radius;
 
-	GetOwner()->SetPosition(
-		m_startPosition.x + offsetX,
-		m_startPosition.y + offsetY);
+    glm::vec3 center{};
+
+    if (auto parent = GetOwner()->GetParent())
+        center = parent->GetTransform().GetWorldPosition();
+    else
+        center = GetOwner()->GetTransform().GetWorldPosition();
+
+    GetOwner()->SetPosition(center.x + offsetX,
+                            center.y + offsetY);
 }
