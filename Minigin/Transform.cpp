@@ -29,9 +29,9 @@ void dae::Transform::SetDirty()
 {
 	m_isDirty = true;
 
-	for (int i = 0; i < m_owner->GetChildCount(); ++i)
+	for (size_t i = 0; i < m_owner->GetChildCount(); ++i)
 	{
-		m_owner->GetChildAt(i)->GetTransform().SetDirty();
+		m_owner->GetChildAt(static_cast<int>(i))->GetTransform().SetDirty();
 	}
 }
 
