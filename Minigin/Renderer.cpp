@@ -79,13 +79,13 @@ void dae::Renderer::Render() const
 			{
 				long long avgTime = 0;
 
-				for (int r = 0; r < value; r++)
+				for (int i = 0; i < value; i++)
 				{
 					const auto start = std::chrono::high_resolution_clock::now();
 
-					for (int i = 0; i < arr->size(); i += stepsize)
+					for (size_t j = 0; j < arr->size(); j += stepsize)
 					{
-						(*arr)[i] *= 2;
+						(*arr)[static_cast<int>(j)] *= 2;
 					}
 
 					const auto end = std::chrono::high_resolution_clock::now();
@@ -178,9 +178,9 @@ void dae::Renderer::Render() const
                 {
                     const auto start = std::chrono::high_resolution_clock::now();
 
-                    for (int j = 0; j < arr->size(); j += stepsize)
+                    for (size_t j = 0; j < arr->size(); j += stepsize)
                     {
-                        (*arr)[j].ID *= 2;
+                        (*arr)[static_cast<int>(j)].ID *= 2;
                     }
 
                     const auto end = std::chrono::high_resolution_clock::now();
@@ -242,9 +242,9 @@ void dae::Renderer::Render() const
                 {
                     const auto start = std::chrono::high_resolution_clock::now();
 
-                    for (int j = 0; j < arr->size(); j += stepsize)
+                    for (size_t j = 0; j < arr->size(); j += stepsize)
                     {
-                        (*arr)[j].ID *= 2;
+                        (*arr)[static_cast<int>(j)].ID *= 2;
                     }
 
                     const auto end = std::chrono::high_resolution_clock::now();
