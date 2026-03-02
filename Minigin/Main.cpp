@@ -60,6 +60,7 @@ static void load()
 	scene.Add(std::move(center));
 	scene.Add(std::move(satellite));
 
+	/////////////
 }
 
 int main(int, char*[]) {
