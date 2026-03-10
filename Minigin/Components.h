@@ -100,7 +100,7 @@ namespace dae
 	class RotatorComponent final : public Component
 	{
 	public:
-		RotatorComponent(GameObject* owner, float radius, float speed);
+		RotatorComponent(GameObject* ownerRef, float radius, float speed);
 		virtual ~RotatorComponent() = default;
 		RotatorComponent(const RotatorComponent& other) = delete;
 		RotatorComponent(RotatorComponent&& other) = delete;
@@ -114,5 +114,47 @@ namespace dae
 		float m_radius{};
 		float m_speed{};
 		float m_angle{};
+	};
+
+	class Exercise1Component final : public Component
+	{
+	public:
+		explicit Exercise1Component(GameObject* ownerRef) : Component(ownerRef) {};
+		virtual ~Exercise1Component() = default;
+
+		Exercise1Component(const Exercise1Component&) = delete;
+		Exercise1Component(Exercise1Component&&) = delete;
+		Exercise1Component& operator=(const Exercise1Component&) = delete;
+		Exercise1Component& operator=(Exercise1Component&&) = delete;
+
+		void Render() const override;
+
+	private:
+		mutable int m_value{ 100 };
+		mutable std::vector<float> m_data;
+		mutable bool m_hasResults{ false };
+	};
+
+	class Exercise2Component final : public Component
+	{
+	public:
+		explicit Exercise2Component(GameObject* ownerRef) : Component(ownerRef) {};
+		virtual ~Exercise2Component() = default;
+
+		Exercise2Component(const Exercise2Component&) = delete;
+		Exercise2Component(Exercise2Component&&) = delete;
+		Exercise2Component& operator=(const Exercise2Component&) = delete;
+		Exercise2Component& operator=(Exercise2Component&&) = delete;
+
+		void Render() const override;
+
+	private:
+		mutable int m_value{ 100 };
+
+		mutable std::vector<float> m_valueData;
+		mutable std::vector<float> m_pointerData;
+
+		mutable bool m_hasValueResults{ false };
+		mutable bool m_hasPointerResults{ false };
 	};
 }
