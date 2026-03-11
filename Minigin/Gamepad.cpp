@@ -14,6 +14,9 @@ public:
         : m_index(index)
 #endif
     {
+#ifdef __EMSCRIPTEN__
+        (void)index;
+#endif
     }
 
     void Update()
