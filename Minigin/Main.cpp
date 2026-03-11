@@ -10,6 +10,9 @@
 #include "ResourceManager.h"
 #include "Scene.h"
 
+#include "InputManager.h"
+#include "Commands.h"
+
 #include <filesystem>
 namespace fs = std::filesystem;
 
@@ -45,20 +48,46 @@ static void load()
 	scene.Add(std::move(objFps));
 
 	///////////////
-	auto center = std::make_unique<dae::GameObject>();
-	center->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
-	center->SetPosition(150, 400);
-	center->AddComponent<dae::RotatorComponent>(50.f, 0.5f);
+	auto& input = dae::InputManager::GetInstance();
 
-	auto satellite = std::make_unique<dae::GameObject>();
-	satellite->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
-	satellite->AddComponent<dae::RotatorComponent>(50.f, -2.f);
+	auto character1 = std::make_unique<dae::GameObject>();
+	character1->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
+	character1->SetPosition(200.f, 200.f);
+	
+	float speed1 = 5.f;
+	input.BindCommand(SDLK_W, dae::KeyState::Down,
+		std::make_unique<dae::MoveCommand>(character1.get(), 0.f, -speed1));
 
-	// Scenegraph relation
-	satellite->SetParent(center.get(), false);
+	input.BindCommand(SDLK_S, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character1.get(), 0.f, speed1));
 
-	scene.Add(std::move(center));
-	scene.Add(std::move(satellite));
+	input.BindCommand(SDLK_A, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character1.get(), -speed1, 0.f));
+
+	input.BindCommand(SDLK_D, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character1.get(), speed1, 0.f));
+
+	scene.Add(std::move(character1));
+
+	auto character2 = std::make_unique<dae::GameObject>();
+	character2->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
+	character2->SetPosition(250.f, 200.f);
+
+	float speed2 = speed1 * 2;
+	input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character2.get(), 0.f, -speed2));
+
+	input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character2.get(), 0.f, speed2));
+
+	input.BindGamepadCommand(dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character2.get(), -speed2, 0.f));
+
+	input.BindGamepadCommand(dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed,
+		std::make_unique<dae::MoveCommand>(character2.get(), speed2, 0.f));
+
+	scene.Add(std::move(character2));
+
 
 	/////////////
 }

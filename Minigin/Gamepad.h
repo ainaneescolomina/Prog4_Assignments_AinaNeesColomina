@@ -1,27 +1,30 @@
 #pragma once
-#include <Windows.h>
-#include <Xinput.h>
+#include <memory>
 
 namespace dae
 {
+    constexpr unsigned int GAMEPAD_DPAD_UP = 0x01;
+    constexpr unsigned int GAMEPAD_DPAD_DOWN = 0x02;
+    constexpr unsigned int GAMEPAD_DPAD_LEFT = 0x04;
+    constexpr unsigned int GAMEPAD_DPAD_RIGHT = 0x08;
+
     class Gamepad
     {
     public:
         Gamepad(int index);
+        ~Gamepad();
+
+        Gamepad(Gamepad&&) noexcept;
+        Gamepad& operator=(Gamepad&&) noexcept;
 
         void Update();
 
-        bool IsDown(WORD button) const;
-        bool IsPressed(WORD button) const;
-        bool IsUp(WORD button) const;
+        bool IsDown(unsigned int button) const;
+        bool IsPressed(unsigned int button) const;
+        bool IsUp(unsigned int button) const;
 
     private:
-        int m_Index;
-
-        XINPUT_STATE m_CurrentState{};
-        XINPUT_STATE m_PreviousState{};
-
-        WORD m_ButtonsPressedThisFrame{};
-        WORD m_ButtonsReleasedThisFrame{};
+        class Impl;
+        std::unique_ptr<Impl> m_impl;
     };
 }

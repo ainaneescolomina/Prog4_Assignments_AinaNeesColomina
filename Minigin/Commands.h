@@ -20,4 +20,18 @@ namespace dae
 		}
 	};
 
+	class GameObject;
+	class MoveCommand final : public Command
+	{
+	public:
+		MoveCommand(GameObject* obj, float inputX, float inputY);
+
+		void Execute() override;
+
+	private:
+		GameObject* m_object;
+		float m_inputX;
+		float m_inputY;
+	};
+
 }

@@ -5,31 +5,31 @@
 
 dae::InputManager::InputManager()
 {
-	m_Gamepad = std::make_unique<dae::Gamepad>(0);
+	m_gamepad = std::make_unique<dae::Gamepad>(0);
 	//BindCommand();
 }
 
 bool dae::InputManager::ProcessInput()
 {
-	m_Gamepad->Update();
+	m_gamepad->Update();
 
 	// Controller input
-	for (auto& binding : m_ControllerBindings)
+	for (auto& binding : m_gamepadBindings)
 	{
 		bool trigger = false;
 
 		switch (binding->state)
 		{
 		case KeyState::Down:
-			trigger = m_Gamepad->IsDown(binding->button);
+			trigger = m_gamepad->IsDown(binding->button);
 			break;
 
 		case KeyState::Pressed:
-			trigger = m_Gamepad->IsPressed(binding->button);
+			trigger = m_gamepad->IsPressed(binding->button);
 			break;
 
 		case KeyState::Up:
-			trigger = m_Gamepad->IsUp(binding->button);
+			trigger = m_gamepad->IsUp(binding->button);
 			break;
 		}
 
@@ -66,8 +66,7 @@ bool dae::InputManager::ProcessInput()
 			continue;
 		}
 	
-
-		for (auto& binding : m_Bindings)
+		for (auto& binding : m_bindings)
 		{
 			if (binding->key == e.key.key && binding->state == eventState)
 			{
@@ -78,33 +77,34 @@ bool dae::InputManager::ProcessInput()
 		//process event for IMGUI
 		ImGui_ImplSDL3_ProcessEvent(&e);
 	}
+
 	return true;
 }
 
 void dae::InputManager::BindCommand(SDL_Keycode key, KeyState state, std::unique_ptr<Command> command)
 {
 	auto newInputBinding = std::make_unique<InputBinding>(key, state, std::move(command));
-	m_Bindings.push_back(std::move(newInputBinding));
+	m_bindings.push_back(std::move(newInputBinding));
 }
 
-void dae::InputManager::BindCommand(WORD button, KeyState state, std::unique_ptr<Command> command)
+void dae::InputManager::BindGamepadCommand(unsigned int button, KeyState state, std::unique_ptr<Command> command)
 {
-	auto newControllerBinding = std::make_unique<ControllerBinding>(button, state, std::move(command));
-	m_ControllerBindings.push_back(std::move(newControllerBinding));
+	auto newGamepadBinding = std::make_unique<GamepadBinding>(button, state, std::move(command));
+	m_gamepadBindings.push_back(std::move(newGamepadBinding));
 }
 
 void dae::InputManager::UnbindCommand(SDL_Keycode key, KeyState state)
 {
-	m_Bindings.erase(
+	m_bindings.erase(
 		std::remove_if(
-			m_Bindings.begin(),
-			m_Bindings.end(),
+			m_bindings.begin(),
+			m_bindings.end(),
 			[key, state](const std::unique_ptr<InputBinding>& binding)
 			{
 				return binding->key == key && binding->state == state;
 			}
 		),
-		m_Bindings.end()
+		m_bindings.end()
 	);
 }
 

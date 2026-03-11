@@ -22,9 +22,9 @@ namespace dae
 		std::unique_ptr<Command> command;
 	};
 
-	struct ControllerBinding
+	struct GamepadBinding
 	{
-		WORD button;
+		unsigned int button;
 		KeyState state;
 		std::unique_ptr<Command> command;
 	};
@@ -37,15 +37,15 @@ namespace dae
 		bool ProcessInput();
 
 		void BindCommand(SDL_Keycode key, KeyState state, std::unique_ptr<Command> command);
-		void BindCommand(WORD button, KeyState state, std::unique_ptr<Command> command);
+		void BindGamepadCommand(unsigned int button, KeyState state, std::unique_ptr<Command> command);
 
 		void UnbindCommand(SDL_Keycode key, KeyState state);
 
 	private:
-		std::unique_ptr<dae::Gamepad> m_Gamepad;
+		std::unique_ptr<dae::Gamepad> m_gamepad;
 
-		std::vector<std::unique_ptr<InputBinding>> m_Bindings;
-		std::vector<std::unique_ptr<ControllerBinding>> m_ControllerBindings;
+		std::vector<std::unique_ptr<InputBinding>> m_bindings;
+		std::vector<std::unique_ptr<GamepadBinding>> m_gamepadBindings;
 	};
 
 }
