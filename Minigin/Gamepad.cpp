@@ -10,8 +10,11 @@ class dae::Gamepad::Impl
 {
 public:
     Impl(int index)
+#ifndef __EMSCRIPTEN__
         : m_index(index)
-    {}
+#endif
+    {
+    }
 
     void Update()
     {

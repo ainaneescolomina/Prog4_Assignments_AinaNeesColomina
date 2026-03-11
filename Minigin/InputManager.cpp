@@ -2,11 +2,9 @@
 #include "InputManager.h"
 #include <algorithm>
 
-
 dae::InputManager::InputManager()
 {
 	m_gamepad = std::make_unique<dae::Gamepad>(0);
-	//BindCommand();
 }
 
 bool dae::InputManager::ProcessInput()
