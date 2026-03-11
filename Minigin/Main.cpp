@@ -55,7 +55,7 @@ static void load()
 	character1->SetPosition(200.f, 200.f);
 	
 	float speed1 = 5.f;
-	input.BindCommand(SDLK_W, dae::KeyState::Down,
+	input.BindCommand(SDLK_W, dae::KeyState::Pressed,
 		std::make_unique<dae::MoveCommand>(character1.get(), 0.f, -speed1));
 
 	input.BindCommand(SDLK_S, dae::KeyState::Pressed,

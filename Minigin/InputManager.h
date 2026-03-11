@@ -5,6 +5,7 @@
 #include <vector>
 #include "Commands.h"
 #include "Gamepad.h"
+#include <unordered_map>
 
 namespace dae
 {
@@ -46,6 +47,8 @@ namespace dae
 
 		std::vector<std::unique_ptr<InputBinding>> m_bindings;
 		std::vector<std::unique_ptr<GamepadBinding>> m_gamepadBindings;
+
+		std::unordered_map<SDL_Keycode, bool> m_keysDown;
 	};
 
 }

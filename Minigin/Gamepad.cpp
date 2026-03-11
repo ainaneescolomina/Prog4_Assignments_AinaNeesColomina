@@ -10,28 +10,29 @@ class dae::Gamepad::Impl
 {
 public:
     Impl(int index)
-        : m_Index(index)
+        : m_index(index)
     {}
 
     void Update()
     {
 #ifndef __EMSCRIPTEN__
-        m_PreviousState = m_CurrentState;
+        m_previousState = m_currentState;
 
-        ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
-        XInputGetState(m_Index, &m_CurrentState);
+        ZeroMemory(&m_currentState, sizeof(XINPUT_STATE));
+        XInputGetState(m_index, &m_currentState);
 
-        WORD buttonChanges = m_CurrentState.Gamepad.wButtons ^ m_PreviousState.Gamepad.wButtons;
-        m_ButtonsPressedThisFrame = buttonChanges & m_CurrentState.Gamepad.wButtons;
-        m_ButtonsReleasedThisFrame = buttonChanges & (~m_CurrentState.Gamepad.wButtons);
+        WORD buttonChanges = m_currentState.Gamepad.wButtons ^ m_previousState.Gamepad.wButtons;
+        m_buttonsPressedThisFrame = buttonChanges & m_currentState.Gamepad.wButtons;
+        m_buttonsReleasedThisFrame = buttonChanges & (~m_currentState.Gamepad.wButtons);
 #endif
     }
 
     bool IsDown(unsigned int button) const
     {
 #ifndef __EMSCRIPTEN__
-        return m_ButtonsPressedThisFrame & button;
+        return m_buttonsPressedThisFrame & button;
 #else
+        (void)button;
         return false;
 #endif
     }
@@ -39,8 +40,9 @@ public:
     bool IsPressed(unsigned int button) const
     {
 #ifndef __EMSCRIPTEN__
-        return m_CurrentState.Gamepad.wButtons & button;
+        return m_currentState.Gamepad.wButtons & button;
 #else
+        (void)button;
         return false;
 #endif
     }
@@ -48,21 +50,22 @@ public:
     bool IsUp(unsigned int button) const
     {
 #ifndef __EMSCRIPTEN__
-        return m_ButtonsReleasedThisFrame & button;
+        return m_buttonsReleasedThisFrame & button;
 #else
+        (void)button;
         return false;
 #endif
     }
 
 private:
 #ifndef __EMSCRIPTEN__
-    int m_Index{};
+    int m_index{};
 
-    XINPUT_STATE m_CurrentState{};
-    XINPUT_STATE m_PreviousState{};
+    XINPUT_STATE m_currentState{};
+    XINPUT_STATE m_previousState{};
 
-    WORD m_ButtonsPressedThisFrame{};
-    WORD m_ButtonsReleasedThisFrame{};
+    WORD m_buttonsPressedThisFrame{};
+    WORD m_buttonsReleasedThisFrame{};
 #endif
 };
 

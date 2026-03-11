@@ -41,41 +41,48 @@ bool dae::InputManager::ProcessInput()
 
 	// Keyboard input
 	SDL_Event e;
-	while (SDL_PollEvent(&e)) {
-		//if (e.type == SDL_EVENT_QUIT) {
-		//	return false;
-		//}
-		//if (e.type == SDL_EVENT_KEY_DOWN) {
-		//}
-		//if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
-		//}
-		// etc...
+	std::unordered_map<SDL_Keycode, bool> keysJustPressed;
+	std::unordered_map<SDL_Keycode, bool> keysJustReleased;
 
+	while (SDL_PollEvent(&e))
+	{
 		if (e.type == SDL_EVENT_QUIT)
 			return false;
 
-		KeyState eventState;
-
 		if (e.type == SDL_EVENT_KEY_DOWN)
-			eventState = KeyState::Down;
-		else if (e.type == SDL_EVENT_KEY_UP)
-			eventState = KeyState::Up;
-		else
 		{
-			ImGui_ImplSDL3_ProcessEvent(&e);
-			continue;
+			if (!m_keysDown[e.key.key])
+				keysJustPressed[e.key.key] = true;
+			m_keysDown[e.key.key] = true;
 		}
-	
-		for (auto& binding : m_bindings)
+		else if (e.type == SDL_EVENT_KEY_UP)
 		{
-			if (binding->key == e.key.key && binding->state == eventState)
-			{
-				binding->command->Execute();
-			}
+			keysJustReleased[e.key.key] = true;
+			m_keysDown[e.key.key] = false;
 		}
 
-		//process event for IMGUI
 		ImGui_ImplSDL3_ProcessEvent(&e);
+	}
+
+	for (auto& binding : m_bindings)
+	{
+		bool trigger = false;
+
+		switch (binding->state)
+		{
+		case KeyState::Down:
+			trigger = keysJustPressed[binding->key];
+			break;
+		case KeyState::Pressed:
+			trigger = m_keysDown[binding->key];
+			break;
+		case KeyState::Up:
+			trigger = keysJustReleased[binding->key];
+			break;
+		}
+
+		if (trigger)
+			binding->command->Execute();
 	}
 
 	return true;
