@@ -123,7 +123,7 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 void dae::Minigin::RunOneFrame(float delta_time)
 {
-	m_quit = !InputManager::GetInstance().ProcessInput();
 	SceneManager::GetInstance().Update(delta_time);
+	m_quit = !InputManager::GetInstance().ProcessInput(delta_time);
 	Renderer::GetInstance().Render();
 }

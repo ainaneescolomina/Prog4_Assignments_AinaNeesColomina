@@ -35,18 +35,19 @@ namespace dae
 	public:
 		InputManager();
 
-		bool ProcessInput();
+		bool ProcessInput(float delta_time);
 
 		void BindCommand(SDL_Keycode key, KeyState state, std::unique_ptr<Command> command);
 		void BindGamepadCommand(unsigned int button, KeyState state, std::unique_ptr<Command> command);
 
 		void UnbindCommand(SDL_Keycode key, KeyState state);
+		void UnbindGamepadCommand(unsigned int button, KeyState state);
 
 	private:
-		std::unique_ptr<dae::Gamepad> m_gamepad;
+		std::unique_ptr<dae::Gamepad> m_pGamepad;
 
-		std::vector<std::unique_ptr<InputBinding>> m_bindings;
-		std::vector<std::unique_ptr<GamepadBinding>> m_gamepadBindings;
+		std::vector<std::unique_ptr<InputBinding>> m_pBindings;
+		std::vector<std::unique_ptr<GamepadBinding>> m_pGamepadBindings;
 
 		std::unordered_map<SDL_Keycode, bool> m_keysDown;
 	};

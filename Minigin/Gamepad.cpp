@@ -9,15 +9,12 @@
 class dae::Gamepad::Impl
 {
 public:
-    Impl(int index)
+    Impl([[maybe_unused]]int index)
 #ifndef __EMSCRIPTEN__
         : m_index(index)
 #endif
-    {
-#ifdef __EMSCRIPTEN__
-        (void)index;
-#endif
-    }
+    {}
+
 
     void Update()
     {
@@ -76,7 +73,7 @@ private:
 };
 
 dae::Gamepad::Gamepad(int index)
-    : m_impl(std::make_unique<Impl>(index))
+    : m_pImpl(std::make_unique<Impl>(index))
 {
 }
 
@@ -87,20 +84,20 @@ dae::Gamepad& dae::Gamepad::operator=(Gamepad&&) noexcept = default;
 
 void dae::Gamepad::Update()
 {
-    m_impl->Update();
+    m_pImpl->Update();
 }
 
 bool dae::Gamepad::IsDown(unsigned int button) const
 {
-    return m_impl->IsDown(button);
+    return m_pImpl->IsDown(button);
 }
 
 bool dae::Gamepad::IsPressed(unsigned int button) const
 {
-    return m_impl->IsPressed(button);
+    return m_pImpl->IsPressed(button);
 }
 
 bool dae::Gamepad::IsUp(unsigned int button) const
 {
-    return m_impl->IsUp(button);
+    return m_pImpl->IsUp(button);
 }

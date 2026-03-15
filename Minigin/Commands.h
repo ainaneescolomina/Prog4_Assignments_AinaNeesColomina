@@ -8,16 +8,7 @@ namespace dae
 	{
 	public:
 		virtual ~Command() {}
-		virtual void Execute() = 0;
-	};
-
-	class TestCommand : public Command
-	{
-	public:
-		void Execute() override
-		{
-			std::cout << "Command executed\n";
-		}
+		virtual void Execute(float delta_time) = 0;
 	};
 
 	class GameObject;
@@ -26,10 +17,10 @@ namespace dae
 	public:
 		MoveCommand(GameObject* obj, float inputX, float inputY);
 
-		void Execute() override;
+		void Execute(float delta_time) override;
 
 	private:
-		GameObject* m_object;
+		GameObject* m_pObject;
 		float m_inputX;
 		float m_inputY;
 	};
