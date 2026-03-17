@@ -437,7 +437,7 @@ void dae::LivesDisplayComponent::Render() const
 {
     if (m_texture == nullptr) return;
     const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
-    const float spacing = 40.f;
+    const float spacing = 65.f;
 
     for (int i = 0; i < m_lives; ++i)
     {
