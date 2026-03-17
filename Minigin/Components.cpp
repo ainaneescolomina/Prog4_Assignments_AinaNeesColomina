@@ -128,6 +128,7 @@ void dae::RotatorComponent::Update(float deltaTime)
                             center.y + offsetY);
 }
 
+/*
 void dae::Exercise1Component::Render() const
 {
     bool active = true;
@@ -398,4 +399,71 @@ void dae::Exercise2Component::Render() const
     }
 
     ImGui::End();
+}
+*/
+
+void dae::LivesComponent::TakeDamage(int damage)
+{
+    m_lives -= damage;
+
+    if (m_lives <= 0)
+    {
+        Event e(make_sdbm_hash("PlayerDied"));
+        NotifyObservers(e);
+    }
+
+    Event e(make_sdbm_hash("UpdateLives"));
+    NotifyObservers(e);
+}
+
+void dae::ScoreComponent::AddScore(int score)
+{
+    m_score += score;
+
+    Event e(make_sdbm_hash("UpdateScore"));
+    NotifyObservers(e);
+}
+
+void dae::LivesDisplayComponent::Notify(Event event, Subject* sender)
+{
+    if (event.id == make_sdbm_hash("UpdateLives"))
+    {
+        LivesComponent* component = static_cast<LivesComponent*>(sender);
+        m_lives = component->GetLives();
+    }
+}
+
+void dae::LivesDisplayComponent::Render() const
+{
+    if (m_texture == nullptr) return;
+    const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
+    const float spacing = 40.f;
+
+    for (int i = 0; i < m_lives; ++i)
+    {
+        Renderer::GetInstance().RenderTexture(*m_texture, pos.x + i * spacing, pos.y);
+    }
+}
+
+dae::ScoreDisplayComponent::ScoreDisplayComponent(GameObject* ownerRef, std::shared_ptr<Font> font, const SDL_Color& color)
+    : TextComponent(ownerRef, "", font, color)
+{
+    UpdateText();
+}
+
+void dae::ScoreDisplayComponent::Notify(Event event, Subject* sender)
+{
+    if (event.id == make_sdbm_hash("UpdateScore"))
+    {
+        ScoreComponent* component = static_cast<ScoreComponent*>(sender);
+        m_score = component->GetScore();
+
+        UpdateText();
+    }
+}
+
+void dae::ScoreDisplayComponent::UpdateText()
+{
+    std::string text = "Score: " + std::to_string(m_score);
+    SetText(text);
 }

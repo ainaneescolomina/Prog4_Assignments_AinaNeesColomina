@@ -48,10 +48,25 @@ static void load()
 	scene.Add(std::move(objFps));
 
 	///////////////
+	// UI
+	auto livesUI = std::make_unique<dae::GameObject>();
+	auto livesUIComponent = livesUI->AddComponent<dae::LivesDisplayComponent>(3);
+	livesUIComponent->SetTexture("enemy_butter.png");
+	livesUI->SetPosition(358, 180);
+
+	auto scoreUI = std::make_unique<dae::GameObject>();
+	auto scoreUIComponent = scoreUI->AddComponent<dae::ScoreDisplayComponent>(font);
+	scoreUI->SetPosition(358, 100);
+
 	auto& input = dae::InputManager::GetInstance();
 
+	// Player 1
 	auto character1 = std::make_unique<dae::GameObject>();
 	character1->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
+	//
+	character1->AddComponent<dae::LivesComponent>(3)->AddObserver(livesUIComponent);
+	character1->AddComponent<dae::ScoreComponent>()->AddObserver(scoreUIComponent);
+	//
 	character1->SetPosition(200.f, 200.f);
 	
 	float speed1 = 5.f;
@@ -67,8 +82,14 @@ static void load()
 	input.BindCommand(SDLK_D, dae::KeyState::Pressed,
 		std::make_unique<dae::MoveCommand>(character1.get(), speed1, 0.f));
 
-	scene.Add(std::move(character1));
+	input.BindCommand(SDLK_M, dae::KeyState::Up,
+		std::make_unique<dae::ShootCommand>(character1.get(), speed1, 0.f));
 
+	scene.Add(std::move(character1));
+	scene.Add(std::move(livesUI));
+	scene.Add(std::move(scoreUI));
+
+	// Player 2
 	auto character2 = std::make_unique<dae::GameObject>();
 	character2->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butter.png");
 	character2->SetPosition(250.f, 200.f);
@@ -87,7 +108,6 @@ static void load()
 		std::make_unique<dae::MoveCommand>(character2.get(), speed2, 0.f));
 
 	scene.Add(std::move(character2));
-
 
 	/////////////
 }

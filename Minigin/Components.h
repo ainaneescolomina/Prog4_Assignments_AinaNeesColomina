@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Transform.h"
+#include "Subject.h"
 #include <string>
 #include <memory>
 #include <SDL3/SDL.h>
@@ -100,7 +101,7 @@ namespace dae
 	class RotatorComponent final : public Component
 	{
 	public:
-		RotatorComponent(GameObject* ownerRef, float radius, float speed);
+		explicit RotatorComponent(GameObject* ownerRef, float radius, float speed);
 		virtual ~RotatorComponent() = default;
 		RotatorComponent(const RotatorComponent& other) = delete;
 		RotatorComponent(RotatorComponent&& other) = delete;
@@ -116,6 +117,7 @@ namespace dae
 		float m_angle{};
 	};
 
+	/*
 	class Exercise1Component final : public Component
 	{
 	public:
@@ -156,5 +158,78 @@ namespace dae
 
 		mutable bool m_hasValueResults{ false };
 		mutable bool m_hasPointerResults{ false };
+	};
+	*/
+
+	// Game Actor
+	class LivesComponent final : public Component, public Subject
+	{
+	public:
+		explicit LivesComponent(GameObject* ownerRef, int lives) : Component(ownerRef), m_lives{lives} {}
+		virtual ~LivesComponent() = default;
+		LivesComponent(const LivesComponent& other) = delete;
+		LivesComponent(LivesComponent&& other) = delete;
+		LivesComponent& operator=(const LivesComponent& other) = delete;
+		LivesComponent& operator=(LivesComponent&& other) = delete;
+
+		void TakeDamage(int damage);
+		int GetLives() const { return m_lives; };
+
+	private:
+		int m_lives;
+	};
+
+	class ScoreComponent final : public Component, public Subject
+	{
+	public:
+		explicit ScoreComponent(GameObject* ownerRef) : Component(ownerRef) {}
+		virtual ~ScoreComponent() = default;
+		ScoreComponent(const ScoreComponent& other) = delete;
+		ScoreComponent(ScoreComponent&& other) = delete;
+		ScoreComponent& operator=(const ScoreComponent& other) = delete;
+		ScoreComponent& operator=(ScoreComponent&& other) = delete;
+
+		void AddScore(int score);
+		int GetScore() const { return m_score; };
+
+	private:
+		int m_score{};
+	};
+
+	// UI
+	class LivesDisplayComponent : public RenderComponent, public Observer
+	{
+	public:
+		explicit LivesDisplayComponent(GameObject* ownerRef, int lives) : RenderComponent(ownerRef), m_lives{ lives } {}
+		virtual ~LivesDisplayComponent() = default;
+		LivesDisplayComponent(const LivesDisplayComponent& other) = delete;
+		LivesDisplayComponent(LivesDisplayComponent&& other) = delete;
+		LivesDisplayComponent& operator=(const LivesDisplayComponent& other) = delete;
+		LivesDisplayComponent& operator=(LivesDisplayComponent&& other) = delete;
+
+		virtual void Notify(Event event, Subject* sender) override;
+
+		virtual void Render() const override;
+
+	private:
+		int m_lives;
+	};
+
+	class ScoreDisplayComponent : public TextComponent, public Observer
+	{
+	public:
+		explicit ScoreDisplayComponent(GameObject* ownerRef, std::shared_ptr<Font> font, const SDL_Color& color = { 255, 255, 255, 255 });
+		virtual ~ScoreDisplayComponent() = default;
+		ScoreDisplayComponent(const ScoreDisplayComponent& other) = delete;
+		ScoreDisplayComponent(ScoreDisplayComponent&& other) = delete;
+		ScoreDisplayComponent& operator=(const ScoreDisplayComponent& other) = delete;
+		ScoreDisplayComponent& operator=(ScoreDisplayComponent&& other) = delete;
+
+		virtual void Notify(Event event, Subject* sender) override;
+
+	private:
+		void UpdateText();
+
+		int m_score{0};
 	};
 }
