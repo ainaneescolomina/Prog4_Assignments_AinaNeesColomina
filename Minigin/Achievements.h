@@ -16,7 +16,7 @@ namespace dae
 	class WinOneGameAchievement : public Observer
 	{
 	public:
-		void Notify(Event event, Subject* sender) override
+		void Notify([[maybe_unused]] Event event, [[maybe_unused]] Subject* sender) override
 		{
 #if USE_STEAMWORKS
 			// Check score event
