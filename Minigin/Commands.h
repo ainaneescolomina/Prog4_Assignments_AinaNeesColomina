@@ -25,17 +25,27 @@ namespace dae
 		float m_inputY;
 	};
 
-	class ShootCommand final : public Command
+	class DamageCommand final : public Command
 	{
 	public:
-		ShootCommand(GameObject* obj, float inputX, float inputY);
+		DamageCommand(GameObject* obj);
 
 		void Execute(float delta_time) override;
 
 	private:
 		GameObject* m_pObject;
-		float m_inputX;
-		float m_inputY;
+	};
+
+	class ScoreCommand final : public Command
+	{
+	public:
+		ScoreCommand(GameObject* obj, int score);
+
+		void Execute(float delta_time) override;
+
+	private:
+		GameObject* m_pObject;
+		int m_score;
 	};
 
 }

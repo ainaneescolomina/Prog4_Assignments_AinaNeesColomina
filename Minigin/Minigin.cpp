@@ -9,6 +9,10 @@
 #include <windows.h>
 #endif
 
+#if USE_STEAMWORKS
+#include <steam_api.h>
+#endif
+
 #include <SDL3/SDL.h>
 //#include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -123,7 +127,11 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 void dae::Minigin::RunOneFrame(float delta_time)
 {
-	SceneManager::GetInstance().Update(delta_time);
+#if USE_STEAMWORKS
+	SteamAPI_RunCallbacks();
+#endif 
+
 	m_quit = !InputManager::GetInstance().ProcessInput(delta_time);
+	SceneManager::GetInstance().Update(delta_time);
 	Renderer::GetInstance().Render();
 }
