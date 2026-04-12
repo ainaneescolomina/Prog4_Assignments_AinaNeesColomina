@@ -18,7 +18,7 @@ namespace dae
     constexpr unsigned int GAMEPAD_X = 0x4000;
     constexpr unsigned int GAMEPAD_Y = 0x8000;
 
-    class Gamepad
+    class Gamepad final
     {
     public:
         Gamepad(int index);

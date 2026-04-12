@@ -162,6 +162,7 @@ namespace dae
 	*/
 
 	// Game Actor
+	// Change to composition!!!!
 	class LivesComponent final : public Component, public Subject
 	{
 	public:
@@ -195,6 +196,9 @@ namespace dae
 	private:
 		int m_score{};
 	};
+
+	//class TagComponent
+	//class ColliderComponent
 
 	// UI
 	class LivesDisplayComponent : public RenderComponent, public Observer
