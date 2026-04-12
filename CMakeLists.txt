@@ -13,27 +13,6 @@ else()
   set(TARGET_PARAM WIN32)
 endif()
 
-# list source files here
-add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Minigin/Font.cpp
-  Minigin/GameObject.cpp
-  Minigin/InputManager.cpp
-  Minigin/Main.cpp
-  Minigin/Minigin.cpp
-  Minigin/Renderer.cpp
-  Minigin/ResourceManager.cpp
-  Minigin/Scene.cpp
-  Minigin/SceneManager.cpp
-  
-  Minigin/Texture2D.cpp
-  Minigin/Transform.cpp
-  Minigin/Components.cpp
-  Minigin/Commands.cpp
-  Minigin/Gamepad.cpp)
-
-# enable c++20 features
-target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
-
 include(FetchContent)
 # add glm
 find_package(glm CONFIG QUIET)
@@ -138,23 +117,48 @@ target_compile_features(imgui PUBLIC cxx_std_20)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/steam")
 find_package(Steamworks QUIET)
 
-target_include_directories("${TARGET_NAME}" PUBLIC
-  ${CMAKE_SOURCE_DIR}/Minigin/
-  ${glm_SOURCE_DIR}
-  ${sdl3_SOURCE_DIR}/include
-  ${sdl3_image_SOURCE_DIR}/include
-  ${sdl3_ttf_SOURCE_DIR}/include
-  ${imgui_SOURCE_DIR}
-  ${VLD_INCLUDE_DIR}
+# convert minigin to library
+# all engine files
+add_library(minigin_engine
+  Minigin/Font.cpp
+  Minigin/Minigin.cpp
+  Minigin/GameObject.cpp
+  Minigin/InputManager.cpp
+  Minigin/Renderer.cpp
+  Minigin/ResourceManager.cpp
+  Minigin/Scene.cpp
+  Minigin/SceneManager.cpp
+  Minigin/Texture2D.cpp
+  Minigin/Transform.cpp
+  Minigin/Components.cpp
+  Minigin/Commands.cpp
+  Minigin/Gamepad.cpp
 )
 
-target_link_libraries("${TARGET_NAME}" PUBLIC
+target_include_directories(minigin_engine PUBLIC
+  ${CMAKE_SOURCE_DIR}/Minigin/
+)
+
+target_link_libraries(minigin_engine PUBLIC
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
   glm::glm
   imgui
   ${VLD_LIBRARIES}
 )
+
+# enable c++20 features
+target_compile_features(minigin_engine PUBLIC cxx_std_20)
+
+# list source files here
+# all game files
+add_executable(${TARGET_NAME} ${TARGET_PARAM}
+  Galaga/Main.cpp 
+)
+
+target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)
+# enable c++20 features
+target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 
 if(WIN32)
   target_link_libraries(${TARGET_NAME} PUBLIC xinput)
