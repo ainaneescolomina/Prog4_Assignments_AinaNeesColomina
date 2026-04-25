@@ -153,7 +153,7 @@ target_compile_features(minigin_engine PUBLIC cxx_std_20)
 # list source files here
 # all game files
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Galaga/Main.cpp 
+  Galaga/Main.cpp
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)

@@ -18,8 +18,13 @@
 #include "Scene.h"
 
 #include "InputManager.h"
-#include "Commands.h"
+//#include "Commands.h"
 #include "Achievements.h"
+
+// ---------------
+
+//#include "Factory.h"
+#include "WaveSpawner.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -76,7 +81,9 @@ static void load()
 
 	scene.Add(std::move(instructionsPlayer2));
 
+	/*
 	// --- Player 1 ---
+
 	auto character1 = std::make_unique<dae::GameObject>();
 	character1->AddComponent<dae::RenderComponent>()->SetTexture("player.png");
 	character1->SetPosition(200.f, 200.f);
@@ -194,8 +201,34 @@ static void load()
 	}
 
 	scene.Add(std::move(character2));
+	*/
 
 	/////////////
+
+	// Player
+	auto player = ActorFactory::CreatePlayer(input, { 200, 200 });
+
+	// UI
+	auto livesUI = UIFactory::CreateUI_Lives({ 15, 500 }, "player.png");
+	auto livesScore = UIFactory::CreateUI_Score(font, { 15, 450 });
+
+	// Observer / Subject
+	player->GetComponent<dae::LivesComponent>()->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	player->GetComponent<dae::ScoreComponent>()->GetSubject().AddObserver(livesScore->GetComponent<dae::ScoreDisplayComponent>());
+
+	// Add to scene
+	scene.Add(std::move(player));
+	scene.Add(std::move(livesUI));
+	scene.Add(std::move(livesScore));
+
+	// Enemies
+	WaveSpawner spawner(scene);
+
+	EnemyWave wave1{
+		{{100,100},{150,100},{200,100},{250,100}}
+	};
+
+	spawner.SpawnWave(wave1);
 }
 
 int main(int, char*[]) {
