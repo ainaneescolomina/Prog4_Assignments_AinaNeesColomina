@@ -16,22 +16,35 @@ namespace dae
 	class WinOneGameAchievement : public Observer
 	{
 	public:
-		void Notify([[maybe_unused]] Event event, [[maybe_unused]] Subject* sender) override
+		void Notify([[maybe_unused]] Event event, [[maybe_unused]] void* sender) override
 		{
 #if USE_STEAMWORKS
-			// Check score event
-			if (event.id == make_sdbm_hash("UpdateScore"))
+			if (!m_check)
 			{
-				ScoreComponent* component = static_cast<ScoreComponent*>(sender);
-				auto score = component->GetScore();
+				// Check steam if already aschived before this session
+				SteamUserStats()->GetAchievement("ACH_WIN_ONE_GAME", &m_achieved);
+				m_check = true;
+			}
 
-				if (score >= 500)
-				{
-					SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
-					SteamUserStats()->StoreStats();
-				}
+			// Check if already achieved
+			if (m_achieved) return;
+			// Check score event
+			if (event.id != make_sdbm_hash("UpdateScore")) return;
+
+			ScoreComponent* component = static_cast<ScoreComponent*>(sender);
+			auto score = component->GetScore();
+
+			if (score >= 500)
+			{
+				SteamUserStats()->SetAchievement("ACH_WIN_ONE_GAME");
+				SteamUserStats()->StoreStats();
+				m_achieved = true;
 			}
 #endif
 		}
+
+	private:
+		bool m_check{ false };
+		bool m_achieved{ false };
 	};
 }

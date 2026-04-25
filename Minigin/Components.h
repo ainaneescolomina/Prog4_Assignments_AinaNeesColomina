@@ -23,13 +23,15 @@ namespace dae
 		virtual void Update(float) {}
 		virtual void Render() const {}
 
-	protected:
+		// Is it ok to be public?
+	//protected:
 		GameObject* GetOwner() const { return m_owner; };
 
 	private:
 		GameObject* m_owner;
 	};
 
+	// --- BASE ---
 	class Texture2D;
 
 	class RenderComponent : public Component
@@ -117,73 +119,33 @@ namespace dae
 		float m_angle{};
 	};
 
-	/*
-	class Exercise1Component final : public Component
+	// --- GAME ACTOR ---
+	class LivesComponent final : public Component, public Observer
 	{
 	public:
-		explicit Exercise1Component(GameObject* ownerRef) : Component(ownerRef) {};
-		virtual ~Exercise1Component() = default;
-
-		Exercise1Component(const Exercise1Component&) = delete;
-		Exercise1Component(Exercise1Component&&) = delete;
-		Exercise1Component& operator=(const Exercise1Component&) = delete;
-		Exercise1Component& operator=(Exercise1Component&&) = delete;
-
-		void Render() const override;
-
-	private:
-		mutable int m_value{ 100 };
-		mutable std::vector<float> m_data;
-		mutable bool m_hasResults{ false };
-	};
-
-	class Exercise2Component final : public Component
-	{
-	public:
-		explicit Exercise2Component(GameObject* ownerRef) : Component(ownerRef) {};
-		virtual ~Exercise2Component() = default;
-
-		Exercise2Component(const Exercise2Component&) = delete;
-		Exercise2Component(Exercise2Component&&) = delete;
-		Exercise2Component& operator=(const Exercise2Component&) = delete;
-		Exercise2Component& operator=(Exercise2Component&&) = delete;
-
-		void Render() const override;
-
-	private:
-		mutable int m_value{ 100 };
-
-		mutable std::vector<float> m_valueData;
-		mutable std::vector<float> m_pointerData;
-
-		mutable bool m_hasValueResults{ false };
-		mutable bool m_hasPointerResults{ false };
-	};
-	*/
-
-	// Game Actor
-	// Change to composition!!!!
-	class LivesComponent final : public Component, public Subject
-	{
-	public:
-		explicit LivesComponent(GameObject* ownerRef, int lives) : Component(ownerRef), m_lives{lives} {}
+		explicit LivesComponent(GameObject* ownerRef, int lives) : Component(ownerRef), m_lives{lives}, m_subject(this) {}
 		virtual ~LivesComponent() = default;
 		LivesComponent(const LivesComponent& other) = delete;
 		LivesComponent(LivesComponent&& other) = delete;
 		LivesComponent& operator=(const LivesComponent& other) = delete;
 		LivesComponent& operator=(LivesComponent&& other) = delete;
 
+		virtual void Notify(Event event, void* sender) override;
+
 		void TakeDamage(int damage);
 		int GetLives() const { return m_lives; };
 
+		Subject& GetSubject() { return m_subject; };
+
 	private:
 		int m_lives;
+		Subject m_subject;
 	};
 
-	class ScoreComponent final : public Component, public Subject
+	class ScoreComponent final : public Component
 	{
 	public:
-		explicit ScoreComponent(GameObject* ownerRef) : Component(ownerRef) {}
+		explicit ScoreComponent(GameObject* ownerRef) : Component(ownerRef), m_subject(this) {}
 		virtual ~ScoreComponent() = default;
 		ScoreComponent(const ScoreComponent& other) = delete;
 		ScoreComponent(ScoreComponent&& other) = delete;
@@ -193,14 +155,62 @@ namespace dae
 		void AddScore(int score);
 		int GetScore() const { return m_score; };
 
+		Subject& GetSubject() { return m_subject; };
+
 	private:
 		int m_score{};
+		Subject m_subject;
 	};
 
-	//class TagComponent
-	//class ColliderComponent
+	class TagComponent final : public Component
+	{
+	public:
+		explicit TagComponent(GameObject* ownerRef) : Component(ownerRef) {}
+		virtual ~TagComponent() = default;
+		TagComponent(const TagComponent& other) = delete;
+		TagComponent(TagComponent&& other) = delete;
+		TagComponent& operator=(const TagComponent& other) = delete;
+		TagComponent& operator=(TagComponent&& other) = delete;
 
-	// UI
+		void ChangeTag(std::string tag) { m_tag = tag; };
+		std::string GetTag() const { return m_tag; };
+
+	private:
+		std::string m_tag{};
+	};
+
+	class ColliderComponent final : public Component
+	{
+	public:
+		explicit ColliderComponent(GameObject* ownerRef, float width, float height) 
+			: Component(ownerRef)
+			, m_width(width), m_height(height)
+			, m_subject(this){}
+		virtual ~ColliderComponent() = default;
+		ColliderComponent(const ColliderComponent& other) = delete;
+		ColliderComponent(ColliderComponent&& other) = delete;
+		ColliderComponent& operator=(const ColliderComponent& other) = delete;
+		ColliderComponent& operator=(ColliderComponent&& other) = delete;
+
+		struct Rect
+		{
+			float x, y, w, h;
+		};
+
+		bool CheckCollision(const ColliderComponent& other);
+
+		Subject& GetSubject() { return m_subject; };
+
+	private:
+		float m_width{};
+		float m_height{};
+		Subject m_subject;
+
+		Rect GetWorldRect() const;
+		bool IsOverlapping(const ColliderComponent& other) const;
+	};
+
+	// --- UI ---
 	class LivesDisplayComponent : public RenderComponent, public Observer
 	{
 	public:
@@ -211,7 +221,7 @@ namespace dae
 		LivesDisplayComponent& operator=(const LivesDisplayComponent& other) = delete;
 		LivesDisplayComponent& operator=(LivesDisplayComponent&& other) = delete;
 
-		virtual void Notify(Event event, Subject* sender) override;
+		virtual void Notify(Event event, void* sender) override;
 
 		virtual void Render() const override;
 
@@ -229,7 +239,7 @@ namespace dae
 		ScoreDisplayComponent& operator=(const ScoreDisplayComponent& other) = delete;
 		ScoreDisplayComponent& operator=(ScoreDisplayComponent&& other) = delete;
 
-		virtual void Notify(Event event, Subject* sender) override;
+		virtual void Notify(Event event, void* sender) override;
 
 	private:
 		void UpdateText();

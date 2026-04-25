@@ -1,4 +1,7 @@
 #include "Components.h"
+#include "Components.h"
+#include "Components.h"
+#include "Components.h"
 
 #include <iostream>
 #include <sstream>
@@ -12,13 +15,7 @@
 #include "Texture2D.h"
 #include "GameObject.h"
 
-#include <imgui.h>
-#include <backends/imgui_impl_sdl3.h>
-#include <backends/imgui_impl_sdlrenderer3.h>
-
-#include <array>
-#include <vector>
-#include <chrono>
+#pragma region --- BASE ---
 
 void dae::RenderComponent::Render() const
 {
@@ -128,279 +125,23 @@ void dae::RotatorComponent::Update(float deltaTime)
                             center.y + offsetY);
 }
 
-/*
-void dae::Exercise1Component::Render() const
+#pragma endregion
+
+#pragma region --- GAME ACTOR ---
+
+void dae::LivesComponent::Notify(Event event, void* sender)
 {
-    bool active = true;
+	if (event.id == make_sdbm_hash("OnCollision"))
+	{
+		auto* otherCollider = static_cast<ColliderComponent*>(sender);
+		auto* otherTag = otherCollider->GetOwner()->GetComponent<TagComponent>();
 
-    ImGui::Begin("Exercise 1", &active, ImGuiWindowFlags_MenuBar);
-
-    ImGui::Text("Title");
-    ImGui::Separator();
-
-    ImGui::SetNextItemWidth(80);
-    ImGui::InputInt("##valueInput", &m_value);
-
-    ImGui::SameLine();
-    ImGui::Text("# samples");
-
-    ImGui::Spacing();
-
-    if (ImGui::Button("Thrash the cache"))
-    {
-        if (m_value == 0) return;
-
-        auto arr = new std::array<int, 10000000>;
-        m_data.clear();
-
-        for (int stepsize = 1; stepsize <= 1024; stepsize *= 2)
-        {
-            long long avgTime = 0;
-
-            for (int i = 0; i < m_value; i++)
-            {
-                const auto start = std::chrono::high_resolution_clock::now();
-
-                for (size_t j = 0; j < arr->size(); j += stepsize)
-                {
-                    (*arr)[static_cast<int>(j)] *= 2;
-                }
-
-                const auto end = std::chrono::high_resolution_clock::now();
-
-                avgTime += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            }
-
-            avgTime /= m_value;
-
-            m_data.push_back((float)avgTime);
-        }
-
-        delete arr;
-        m_hasResults = true;
-    }
-
-    if (m_hasResults && !m_data.empty())
-    {
-        float maxValue = *std::max_element(m_data.begin(), m_data.end());
-
-        ImGui::PlotLines(
-            "##Exercise1",
-            m_data.data(),
-            (int)m_data.size(),
-            0,
-            nullptr,
-            0.0f,
-            maxValue * 1.1f,
-            ImVec2(400, 200)
-        );
-    }
-
-    ImGui::End();
+		if (otherTag && otherTag->GetTag() == "Enemy")
+		{
+			TakeDamage(1);
+		}
+	}
 }
-
-void dae::Exercise2Component::Render() const
-{
-    bool active = true;
-
-    ImGui::Begin("Exercise 2", &active);
-
-    ImGui::Text("Title");
-    ImGui::Separator();
-
-    ImGui::SetNextItemWidth(80);
-    ImGui::InputInt("##valueInput", &m_value);
-
-    ImGui::SameLine();
-    ImGui::Text("# samples");
-
-    ImGui::Spacing();
-
-    struct TransformGameObject3D
-    {
-        float matrix[16]{
-            1,0,0,0,
-            0,1,0,0,
-            0,0,1,0,
-            0,0,0,1 };
-    };
-
-    float maxValue = 0.f;
-    // -------- VALUE VERSION --------
-    if (ImGui::Button("Thrash the cache with GameObject3D"))
-    {
-        if (m_value == 0) return;
-
-        struct GameObject3D
-        {
-            TransformGameObject3D transform;
-            int ID;
-        };
-
-        auto arr = new std::array<GameObject3D, 10000000>;
-
-        m_valueData.clear();
-
-        for (int stepsize = 1; stepsize <= 1024; stepsize *= 2)
-        {
-            long long avgTime = 0;
-
-            for (int i = 0; i < m_value; i++)
-            {
-                const auto start = std::chrono::high_resolution_clock::now();
-
-                for (size_t j = 0; j < arr->size(); j += stepsize)
-                {
-                    (*arr)[static_cast<int>(j)].ID *= 2;
-                }
-
-                const auto end = std::chrono::high_resolution_clock::now();
-
-                avgTime += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            }
-
-            avgTime /= m_value;
-
-            m_valueData.push_back((float)avgTime);
-        }
-
-        delete arr;
-        m_hasValueResults = true;
-    }
-
-    // -------- GRAPH 1 --------
-    if (m_hasValueResults)
-        maxValue = std::max(maxValue, *std::max_element(m_valueData.begin(), m_valueData.end()));
-    if (m_hasValueResults)
-    {
-        ImGui::PushStyleColor(ImGuiCol_PlotLines, ImVec4(0.0f, 0.5f, 1.0f, 1.0f));
-
-        ImGui::PlotLines(
-            "##Exercice2",
-            m_valueData.data(),
-            (int)m_valueData.size(),
-            0,
-            nullptr,
-            0.0f,
-            maxValue * 1.1f,
-            ImVec2(400, 200)
-        );
-
-        ImGui::PopStyleColor();
-    }
-
-    ImGui::Spacing();
-
-    // -------- POINTER VERSION --------
-    if (ImGui::Button("Thrash the cache with GameObject3DAlt"))
-    {
-        if (m_value == 0) return;
-
-        struct GameObject3DAlt
-        {
-            TransformGameObject3D* transform;
-            int ID;
-        };
-
-        auto arr = new std::array<GameObject3DAlt, 10000000>;
-
-        m_pointerData.clear();
-
-        for (int stepsize = 1; stepsize <= 1024; stepsize *= 2)
-        {
-            long long avgTime = 0;
-
-            for (int i = 0; i < m_value; i++)
-            {
-                const auto start = std::chrono::high_resolution_clock::now();
-
-                for (size_t j = 0; j < arr->size(); j += stepsize)
-                {
-                    (*arr)[static_cast<int>(j)].ID *= 2;
-                }
-
-                const auto end = std::chrono::high_resolution_clock::now();
-
-                avgTime += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-            }
-
-            avgTime /= m_value;
-
-            m_pointerData.push_back((float)avgTime);
-        }
-
-        delete arr;
-        m_hasPointerResults = true;
-    }
-
-    ImGui::Separator();
-
-    // -------- GRAPH 2 --------
-    if (m_hasPointerResults)
-        maxValue = std::max(maxValue, *std::max_element(m_pointerData.begin(), m_pointerData.end()));
-
-    if (m_hasPointerResults)
-    {
-        ImGui::PushStyleColor(ImGuiCol_PlotLines, ImVec4(0.0f, 1.0f, 0.5f, 1.0f));
-
-        ImGui::PlotLines(
-            "##Exercice2",
-            m_pointerData.data(),
-            (int)m_pointerData.size(),
-            0,
-            nullptr,
-            0.0f,
-            maxValue * 1.1f,
-            ImVec2(400, 200)
-        );
-
-        ImGui::PopStyleColor();
-    }
-
-    ImGui::Separator();
-
-    // -------- GRAPH 3 (Overlay Combined) --------
-    if (m_hasValueResults && m_hasPointerResults)
-    {
-        ImGui::Text("Overlay Comparison");
-
-        float maxValuePlot = *std::max_element(m_valueData.begin(), m_valueData.end());
-        float maxPointerPlot = *std::max_element(m_valueData.begin(), m_valueData.end());
-        float globalMax = std::max(maxValuePlot, maxPointerPlot);
-
-        ImVec2 size(400, 200);
-
-        // VALUE VERSION
-        ImGui::PushStyleColor(ImGuiCol_PlotLines, ImVec4(0.0f, 0.5f, 1.0f, 1.0f));
-        ImGui::PlotLines("##Exercice2 - Value",
-            m_valueData.data(),
-            (int)m_valueData.size(),
-            0,
-            nullptr,
-            0.0f,
-            globalMax * 1.1f,
-            size);
-        ImGui::PopStyleColor();
-
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() - size.y - 4);
-
-        // POINTER VERSION
-        ImGui::PushStyleColor(ImGuiCol_PlotLines, ImVec4(0.0f, 1.0f, 0.5f, 1.0f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0, 0, 0, 0));
-        ImGui::PlotLines("##Exercice2 - Pointer",
-            m_pointerData.data(),
-            (int)m_pointerData.size(),
-            0,
-            nullptr,
-            0.0f,
-            globalMax * 1.1f,
-            size);
-        ImGui::PopStyleColor(2);
-    }
-
-    ImGui::End();
-}
-*/
 
 void dae::LivesComponent::TakeDamage(int damage)
 {
@@ -409,11 +150,11 @@ void dae::LivesComponent::TakeDamage(int damage)
     if (m_lives <= 0)
     {
         Event e(make_sdbm_hash("PlayerDied"));
-        NotifyObservers(e);
+        m_subject.NotifyObservers(e);
     }
 
     Event e(make_sdbm_hash("UpdateLives"));
-    NotifyObservers(e);
+	m_subject.NotifyObservers(e);
 }
 
 void dae::ScoreComponent::AddScore(int score)
@@ -421,10 +162,44 @@ void dae::ScoreComponent::AddScore(int score)
     m_score += score;
 
     Event e(make_sdbm_hash("UpdateScore"));
-    NotifyObservers(e);
+	m_subject.NotifyObservers(e);
 }
 
-void dae::LivesDisplayComponent::Notify(Event event, Subject* sender)
+bool dae::ColliderComponent::CheckCollision(const ColliderComponent& other)
+{
+	bool isOverlapping = IsOverlapping(other);
+
+	if (isOverlapping)
+	{
+		Event e(make_sdbm_hash("OnCollision"));
+		m_subject.NotifyObservers(e, (void*)&other);
+	}
+
+	return isOverlapping;
+}
+
+dae::ColliderComponent::Rect dae::ColliderComponent::GetWorldRect() const
+{
+	const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
+	return { pos.x, pos.y, m_width, m_height };
+}
+
+bool dae::ColliderComponent::IsOverlapping(const ColliderComponent& other) const
+{
+	auto a = GetWorldRect();
+	auto b = other.GetWorldRect();
+
+	return (a.x < b.x + b.w &&
+		a.x + a.w > b.x &&
+		a.y < b.y + b.h &&
+		a.y + a.h > b.y);
+}
+
+#pragma endregion
+
+#pragma region --- UI ---
+
+void dae::LivesDisplayComponent::Notify(Event event, void* sender)
 {
     if (event.id == make_sdbm_hash("UpdateLives"))
     {
@@ -451,7 +226,7 @@ dae::ScoreDisplayComponent::ScoreDisplayComponent(GameObject* ownerRef, std::sha
     UpdateText();
 }
 
-void dae::ScoreDisplayComponent::Notify(Event event, Subject* sender)
+void dae::ScoreDisplayComponent::Notify(Event event, void* sender)
 {
     if (event.id == make_sdbm_hash("UpdateScore"))
     {
@@ -467,3 +242,6 @@ void dae::ScoreDisplayComponent::UpdateText()
     std::string text = "Score: " + std::to_string(m_score);
     SetText(text);
 }
+
+#pragma endregion
+

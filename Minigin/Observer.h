@@ -39,6 +39,6 @@ namespace dae
 	{
 	public:
 		virtual ~Observer() = default;
-		virtual void Notify(Event event, Subject* sender) = 0;
+		virtual void Notify(Event event, void* sender) = 0;
 	};
 }

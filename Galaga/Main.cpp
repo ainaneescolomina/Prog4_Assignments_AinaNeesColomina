@@ -106,7 +106,7 @@ static void load()
 			std::make_unique<dae::ScoreCommand>(character1.get(), 100));
 	}
 
-	// UI
+	// --- UI ---
 	{
 		auto livesUI = std::make_unique<dae::GameObject>();
 		auto livesUIComponent = livesUI->AddComponent<dae::LivesDisplayComponent>(3);
@@ -117,8 +117,8 @@ static void load()
 		auto scoreUIComponent = scoreUI->AddComponent<dae::ScoreDisplayComponent>(font);
 		scoreUI->SetPosition(15, 450);
 
-		character1->AddComponent<dae::LivesComponent>(3)->AddObserver(livesUIComponent);
-		character1->AddComponent<dae::ScoreComponent>()->AddObserver(scoreUIComponent);
+		character1->AddComponent<dae::LivesComponent>(3)->GetSubject().AddObserver(livesUIComponent);
+		character1->AddComponent<dae::ScoreComponent>()->GetSubject().AddObserver(scoreUIComponent);
 
 		scene.Add(std::move(livesUI));
 		scene.Add(std::move(scoreUI));
@@ -126,7 +126,7 @@ static void load()
 
 	// Achievement
 	{
-		character1->GetComponent<dae::ScoreComponent>()->AddObserver(&g_WinAchievement);
+		character1->GetComponent<dae::ScoreComponent>()->GetSubject().AddObserver(&g_WinAchievement);
 	}
 
 	scene.Add(std::move(character1));
@@ -172,8 +172,8 @@ static void load()
 		auto scoreUIComponent = scoreUI->AddComponent<dae::ScoreDisplayComponent>(font);
 		scoreUI->SetPosition(775, 450);
 
-		character2->AddComponent<dae::LivesComponent>(3)->AddObserver(livesUIComponent);
-		character2->AddComponent<dae::ScoreComponent>()->AddObserver(scoreUIComponent);
+		character2->AddComponent<dae::LivesComponent>(3)->GetSubject().AddObserver(livesUIComponent);
+		character2->AddComponent<dae::ScoreComponent>()->GetSubject().AddObserver(scoreUIComponent);
 
 		scene.Add(std::move(livesUI));
 		scene.Add(std::move(scoreUI));
@@ -181,7 +181,7 @@ static void load()
 
 	// Achievement
 	{
-		character2->GetComponent<dae::ScoreComponent>()->AddObserver(&g_WinAchievement);
+		character2->GetComponent<dae::ScoreComponent>()->GetSubject().AddObserver(&g_WinAchievement);
 	}
 
 	scene.Add(std::move(character2));

@@ -8,6 +8,7 @@ namespace dae
     class Subject
     {
     public:
+        explicit Subject(void* owner) : m_pOwner(owner) {}
 
         void AddObserver(Observer* observer) {
             // code to add an observer
@@ -25,13 +26,20 @@ namespace dae
                 m_observers.end());
         }
 
-    protected:
+        // Send the owner data
         void NotifyObservers(Event event) {
+            NotifyObservers(event, m_pOwner);
+        }
+
+        // Send the data of other (ex OnCollision)
+        void NotifyObservers(Event event, void* senderOverride)
+        {
             for (auto observer : m_observers)
-                observer->Notify(event, this);
+                observer->Notify(event, senderOverride);
         }
 
     private:
         std::vector<Observer*> m_observers;
+        void* m_pOwner;
     };
 }
