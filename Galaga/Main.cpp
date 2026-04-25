@@ -220,8 +220,11 @@ static void load()
 	auto livesScore = UIFactory::CreateUI_Score(font, { 15, 450 });
 
 	// Observer / Subject
+	auto score = player->GetComponent<dae::ScoreComponent>();
+	score->GetSubject().AddObserver(&g_WinAchievement);
+
 	player->GetComponent<dae::LivesComponent>()->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
-	player->GetComponent<dae::ScoreComponent>()->GetSubject().AddObserver(livesScore->GetComponent<dae::ScoreDisplayComponent>());
+	score->GetSubject().AddObserver(livesScore->GetComponent<dae::ScoreDisplayComponent>());
 	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(g_SpawManager.get());
 
 	// Add to scene
