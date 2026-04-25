@@ -18,6 +18,8 @@ namespace dae
 	public:
 		void Notify([[maybe_unused]] Event event, [[maybe_unused]] void* sender) override
 		{
+			if (m_check && m_achieved) return;
+
 #if USE_STEAMWORKS
 			if (!m_check)
 			{
