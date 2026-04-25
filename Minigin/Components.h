@@ -165,7 +165,7 @@ namespace dae
 	class TagComponent final : public Component
 	{
 	public:
-		explicit TagComponent(GameObject* ownerRef) : Component(ownerRef) {}
+		explicit TagComponent(GameObject* ownerRef, const std::string& tag) : Component(ownerRef), m_tag{ tag } {}
 		virtual ~TagComponent() = default;
 		TagComponent(const TagComponent& other) = delete;
 		TagComponent(TagComponent&& other) = delete;
@@ -176,7 +176,7 @@ namespace dae
 		std::string GetTag() const { return m_tag; };
 
 	private:
-		std::string m_tag{};
+		std::string m_tag;
 	};
 
 	class ColliderComponent final : public Component

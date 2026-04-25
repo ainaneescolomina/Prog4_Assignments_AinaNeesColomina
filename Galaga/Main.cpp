@@ -80,6 +80,9 @@ static void load()
 	auto character1 = std::make_unique<dae::GameObject>();
 	character1->AddComponent<dae::RenderComponent>()->SetTexture("player.png");
 	character1->SetPosition(200.f, 200.f);
+
+	character1->AddComponent<dae::TagComponent>("Player");
+	character1->AddComponent<dae::ColliderComponent>(45.f, 45.f);
 	
 	// Bindings
 	{
@@ -117,8 +120,11 @@ static void load()
 		auto scoreUIComponent = scoreUI->AddComponent<dae::ScoreDisplayComponent>(font);
 		scoreUI->SetPosition(15, 450);
 
-		character1->AddComponent<dae::LivesComponent>(3)->GetSubject().AddObserver(livesUIComponent);
+		auto lives = character1->AddComponent<dae::LivesComponent>(3);
+		lives->GetSubject().AddObserver(livesUIComponent);
 		character1->AddComponent<dae::ScoreComponent>()->GetSubject().AddObserver(scoreUIComponent);
+
+		character1->GetComponent<dae::ColliderComponent>()->GetSubject().AddObserver(lives);
 
 		scene.Add(std::move(livesUI));
 		scene.Add(std::move(scoreUI));
@@ -135,6 +141,9 @@ static void load()
 	auto character2 = std::make_unique<dae::GameObject>();
 	character2->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butterfly.png");
 	character2->SetPosition(250.f, 200.f);
+
+	character2->AddComponent<dae::TagComponent>("Enemy");
+	character2->AddComponent<dae::ColliderComponent>(45.f, 45.f);
 
 	// Bindings
 	{
