@@ -20,6 +20,7 @@
 #include "InputManager.h"
 //#include "Commands.h"
 #include "Achievements.h"
+#include "SpawnSystem.h"
 
 // ---------------
 
@@ -30,6 +31,8 @@
 namespace fs = std::filesystem;
 
 static dae::WinOneGameAchievement g_WinAchievement;
+static std::unique_ptr<dae::BulletSpawner> g_SpawManager;
+static std::unique_ptr<WaveSpawner> g_WaveSpawner;
 static void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
@@ -205,6 +208,10 @@ static void load()
 
 	/////////////
 
+	// Managers
+	g_SpawManager = std::make_unique<dae::BulletSpawner>(scene);
+	g_WaveSpawner = std::make_unique<WaveSpawner>(scene);
+
 	// Player
 	auto player = ActorFactory::CreatePlayer(input, { 200, 200 });
 
@@ -215,6 +222,7 @@ static void load()
 	// Observer / Subject
 	player->GetComponent<dae::LivesComponent>()->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
 	player->GetComponent<dae::ScoreComponent>()->GetSubject().AddObserver(livesScore->GetComponent<dae::ScoreDisplayComponent>());
+	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(g_SpawManager.get());
 
 	// Add to scene
 	scene.Add(std::move(player));
@@ -222,13 +230,11 @@ static void load()
 	scene.Add(std::move(livesScore));
 
 	// Enemies
-	WaveSpawner spawner(scene);
-
 	EnemyWave wave1{
 		{{100,100},{150,100},{200,100},{250,100}}
 	};
 
-	spawner.SpawnWave(wave1);
+	g_WaveSpawner->SpawnWave(wave1); 
 }
 
 int main(int, char*[]) {

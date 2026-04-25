@@ -130,8 +130,9 @@ void dae::LivesComponent::Notify(Event event, void* sender)
 {
 	if (event.id == make_sdbm_hash("OnCollision"))
 	{
-		auto* otherCollider = static_cast<ColliderComponent*>(sender);
-		auto* otherTag = otherCollider->GetOwner()->GetComponent<TagComponent>();
+		//auto* otherCollider = static_cast<ColliderComponent*>(sender);
+		auto* otherObj = static_cast<GameObject*>(sender);
+		auto* otherTag = otherObj->GetComponent<TagComponent>();
 
 		if (otherTag && otherTag->GetTag() == "Enemy")
 		{
@@ -169,7 +170,8 @@ bool dae::ColliderComponent::CheckCollision(const ColliderComponent& other)
 	if (isOverlapping)
 	{
 		Event e(make_sdbm_hash("OnCollision"));
-		m_subject.NotifyObservers(e, (void*)&other);
+		GameObject* otherOwner = other.GetOwner();
+		m_subject.NotifyObservers(e, (void*)otherOwner);
 	}
 
 	return isOverlapping;
@@ -190,6 +192,21 @@ bool dae::ColliderComponent::IsOverlapping(const ColliderComponent& other) const
 		a.x + a.w > b.x &&
 		a.y < b.y + b.h &&
 		a.y + a.h > b.y);
+}
+
+void dae::ShootComponent::Update(float delta_time)
+{
+	m_timer -= delta_time;
+}
+
+void dae::ShootComponent::Shoot()
+{
+	if (m_timer > 0.f) return;
+
+	m_timer = m_cooldown;
+
+	Event e(make_sdbm_hash("SpawnBullet"));
+	m_subject.NotifyObservers(e, GetOwner());
 }
 
 #pragma endregion

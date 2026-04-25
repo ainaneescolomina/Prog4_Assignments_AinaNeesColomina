@@ -23,8 +23,7 @@ namespace dae
 		virtual void Update(float) {}
 		virtual void Render() const {}
 
-		// Is it ok to be public?
-	//protected:
+	protected:
 		GameObject* GetOwner() const { return m_owner; };
 
 	private:
@@ -208,6 +207,30 @@ namespace dae
 
 		Rect GetWorldRect() const;
 		bool IsOverlapping(const ColliderComponent& other) const;
+	};
+
+	class ShootComponent final : public Component
+	{
+	public:
+		explicit ShootComponent(GameObject* ownerRef, float cooldown) : Component(ownerRef), m_cooldown{cooldown}
+			, m_subject(this) {}
+		virtual ~ShootComponent() = default;
+		ShootComponent(const ShootComponent& other) = delete;
+		ShootComponent(ShootComponent&& other) = delete;
+		ShootComponent& operator=(const ShootComponent& other) = delete;
+		ShootComponent& operator=(ShootComponent&& other) = delete;
+
+		virtual void Update(float deltaTime) override;
+
+		void Shoot();
+
+		Subject& GetSubject() { return m_subject; }
+
+	private:
+		float m_cooldown;
+		float m_timer{};
+
+		Subject m_subject;
 	};
 
 	// --- UI ---

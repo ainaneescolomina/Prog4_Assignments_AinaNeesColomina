@@ -28,6 +28,8 @@ namespace ActorFactory
         auto* lives = player->AddComponent<dae::LivesComponent>(3);
         player->AddComponent<dae::ScoreComponent>();
 
+        player->AddComponent<dae::ShootComponent>(1.f);
+
         // Input bindings
         float speed = 25.f;
 
@@ -51,6 +53,9 @@ namespace ActorFactory
 
         input.BindCommand(SDLK_X, dae::KeyState::Up,
             std::make_unique<dae::ScoreCommand>(player.get(), 100));
+
+        input.BindCommand(SDLK_M, dae::KeyState::Up,
+            std::make_unique<dae::ShootCommand>(player.get()));
 
         // Observer / Subject
         collider->GetSubject().AddObserver(lives);

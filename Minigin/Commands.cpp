@@ -37,3 +37,8 @@ void dae::ScoreCommand::Execute(float)
 {
 	m_pObject->GetComponent<dae::ScoreComponent>()->AddScore(m_score);
 }
+
+void dae::ShootCommand::Execute(float)
+{
+	m_pObject->GetComponent<ShootComponent>()->Shoot();
+}

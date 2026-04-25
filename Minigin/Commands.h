@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 
-
 namespace dae
 {
 	class Command
@@ -46,6 +45,17 @@ namespace dae
 	private:
 		GameObject* m_pObject;
 		int m_score;
+	};
+
+	class ShootCommand final : public Command
+	{
+	public:
+		ShootCommand(GameObject* obj) : m_pObject(obj) {}
+
+		void Execute(float delta_time) override;
+
+	private:
+		GameObject* m_pObject;
 	};
 
 }
