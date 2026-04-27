@@ -106,7 +106,7 @@ add_library(imgui STATIC
   ${imgui_SOURCE_DIR}/imgui_widgets.cpp
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp "Minigin/SdlSoundSystem.cpp")
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp)
 
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
@@ -153,7 +153,9 @@ add_library(minigin_engine
   Minigin/Components.cpp
   Minigin/Commands.cpp
   Minigin/Gamepad.cpp
- "Minigin/SdlSoundSystem.cpp")
+  Minigin/SdlSoundSystem.cpp
+  Minigin/SoundSystem.h
+  Minigin/SdlSoundSystem.h)
 
 target_include_directories(minigin_engine PUBLIC
   ${CMAKE_SOURCE_DIR}/Minigin/
@@ -169,13 +171,16 @@ target_link_libraries(minigin_engine PUBLIC
 )
 
 # enable c++20 features
+if(WIN32)
+  target_link_libraries(minigin_engine PUBLIC xinput)
+endif()
+
 target_compile_features(minigin_engine PUBLIC cxx_std_20)
 
 # list source files here
 # all game files
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Galaga/Main.cpp
- "Minigin/SdlSoundSystem.cpp")
+  Galaga/Main.cpp)
 
 target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)
 # enable c++20 features

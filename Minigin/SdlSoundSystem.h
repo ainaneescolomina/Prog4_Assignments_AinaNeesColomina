@@ -17,8 +17,8 @@ namespace dae
         sdl_sound_system& operator=(sdl_sound_system&& other) = delete;
 
     private:
-        class Impl; // Pimpl
-        std::unique_ptr<Impl> pImpl;
+        class SdlSoundSystemImpl; // Pimpl
+        std::unique_ptr<SdlSoundSystemImpl> pImpl;
     };
 
     class logging_sound_system final : public sound_system {

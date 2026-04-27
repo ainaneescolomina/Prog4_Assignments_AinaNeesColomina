@@ -3,6 +3,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <queue>
+#include <iostream>
 
 namespace dae {
 
@@ -12,17 +13,17 @@ namespace dae {
         float volume;
     };
 
-    class sdl_sound_system::Impl 
+    class sdl_sound_system::SdlSoundSystemImpl
     {
     public:
-        Impl()
+        SdlSoundSystemImpl()
         {
 #ifndef __EMSCRIPTEN__
-            m_Thread = std::thread(&Impl::ProcessQueue, this);
+            m_Thread = std::thread(&SdlSoundSystemImpl::ProcessQueue, this);
 #endif
         }
 
-        ~Impl() 
+        ~SdlSoundSystemImpl()
         {
 #ifndef __EMSCRIPTEN__
             m_Exit = true;
@@ -60,6 +61,8 @@ namespace dae {
 
         void Play(sound_id id, float volume) 
         {
+            (void)id;
+            volume = 1;
             // Place your SDL_mixer load and play logic here [cite: 221]
         }
 
@@ -72,7 +75,7 @@ namespace dae {
 
     // --- SdlSoundSystem Methods ---
 
-    sdl_sound_system::sdl_sound_system() : pImpl(std::make_unique<Impl>()) {}
+    sdl_sound_system::sdl_sound_system() : pImpl(std::make_unique<SdlSoundSystemImpl>()) {}
     sdl_sound_system::~sdl_sound_system() = default;
 
     void sdl_sound_system::play(const sound_id id, const float volume) 

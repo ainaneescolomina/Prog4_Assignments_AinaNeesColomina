@@ -38,18 +38,6 @@ static void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 
-	// 1. Setup Phase: Choose which system to use
-#if _DEBUG
-	dae::servicelocator::register_sound_system(
-		std::make_unique<logging_sound_system>(std::make_unique<sdl_sound_system>()));
-#else
-	servicelocator::register_sound_system(std::make_unique<sdl_sound_system>());
-#endif
-
-	// 2. Game Phase: Play sounds via the locator [cite: 205]
-	auto& ss = servicelocator::get_sound_system();
-	ss.play(10, 1.0f);
-
 	/*
 	auto objBackground = std::make_unique<dae::GameObject>();
 	objBackground->AddComponent<dae::RenderComponent>();
