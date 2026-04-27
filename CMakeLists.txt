@@ -139,7 +139,7 @@ find_package(Steamworks QUIET)
 
 # convert minigin to library
 # all engine files
-add_library(minigin_engine
+add_library(minigin_engine STATIC
   Minigin/Font.cpp
   Minigin/Minigin.cpp
   Minigin/GameObject.cpp
@@ -154,11 +154,10 @@ add_library(minigin_engine
   Minigin/Commands.cpp
   Minigin/Gamepad.cpp
   Minigin/SdlSoundSystem.cpp
-  Minigin/SoundSystem.h
-  Minigin/SdlSoundSystem.h)
+)
 
 target_include_directories(minigin_engine PUBLIC
-  ${CMAKE_SOURCE_DIR}/Minigin/
+  ${CMAKE_CURRENT_SOURCE_DIR}/Minigin
 )
 
 target_link_libraries(minigin_engine PUBLIC
