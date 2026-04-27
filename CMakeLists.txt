@@ -106,10 +106,30 @@ add_library(imgui STATIC
   ${imgui_SOURCE_DIR}/imgui_widgets.cpp
   ${imgui_SOURCE_DIR}/imgui_demo.cpp
   ${imgui_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp
-  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp)
+  ${imgui_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp "Minigin/SdlSoundSystem.cpp")
 
 target_include_directories(imgui PUBLIC ${imgui_SOURCE_DIR} ${sdl3_SOURCE_DIR}/include)
 target_link_libraries(imgui PUBLIC SDL3::SDL3)
+
+# Add SDL3_mixer
+find_package(SDL3_mixer 3.0 CONFIG QUIET)
+if(NOT SDL3_mixer_FOUND)
+    FetchContent_Declare(
+      SDL3_mixer
+      GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+      GIT_TAG release-3.2.0
+      GIT_SHALLOW TRUE
+      GIT_PROGRESS TRUE
+    )
+    
+    set(SDL3MIXER_VENDORED ON CACHE BOOL "" FORCE)
+    set(SDL3MIXER_OPUS OFF CACHE BOOL "" FORCE)
+    set(SDL3MIXER_FLAC OFF CACHE BOOL "" FORCE)
+    set(SDL3MIXER_GME OFF CACHE BOOL "" FORCE)
+    
+    FetchContent_MakeAvailable(SDL3_mixer)
+endif()
+
 # enable c++20 features
 target_compile_features(imgui PUBLIC cxx_std_20)
 
@@ -133,7 +153,7 @@ add_library(minigin_engine
   Minigin/Components.cpp
   Minigin/Commands.cpp
   Minigin/Gamepad.cpp
-)
+ "Minigin/SdlSoundSystem.cpp")
 
 target_include_directories(minigin_engine PUBLIC
   ${CMAKE_SOURCE_DIR}/Minigin/
@@ -142,6 +162,7 @@ target_include_directories(minigin_engine PUBLIC
 target_link_libraries(minigin_engine PUBLIC
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
+  SDL3_mixer::SDL3_mixer
   glm::glm
   imgui
   ${VLD_LIBRARIES}
@@ -154,7 +175,7 @@ target_compile_features(minigin_engine PUBLIC cxx_std_20)
 # all game files
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Main.cpp
-)
+ "Minigin/SdlSoundSystem.cpp")
 
 target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)
 # enable c++20 features
@@ -201,6 +222,7 @@ elseif(WIN32)
   set(SDL_RUNTIME_DLLS
     SDL3::SDL3
     SDL3_ttf::SDL3_ttf
+    SDL3_mixer::SDL3_mixer
   )
 
   foreach(dllTarget IN LISTS SDL_RUNTIME_DLLS)
