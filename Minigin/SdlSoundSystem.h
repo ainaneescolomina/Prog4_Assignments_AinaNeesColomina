@@ -9,7 +9,8 @@ namespace dae
         sdl_sound_system();
         ~sdl_sound_system() override;
 
-        void play(const sound_id id, const float volume) override;
+        virtual void play(const sound_id id, const float volume) override;
+        virtual void load(sound_id id, const std::string& path) override;
 
         sdl_sound_system(const sdl_sound_system& other) = delete;
         sdl_sound_system(sdl_sound_system&& other) = delete;

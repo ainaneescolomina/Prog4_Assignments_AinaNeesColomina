@@ -153,18 +153,19 @@ add_library(minigin_engine STATIC
   Minigin/Components.cpp
   Minigin/Commands.cpp
   Minigin/Gamepad.cpp
-  Minigin/SdlSoundSystem.cpp
-)
+  Minigin/SdlSoundSystem.cpp 
+  Minigin/ServiceLocator.cpp)
 
 target_include_directories(minigin_engine PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/Minigin
+  ${sdl3_mixer_SOURCE_DIR}/include
+  ${glm_SOURCE_DIR}
 )
 
 target_link_libraries(minigin_engine PUBLIC
   SDL3::SDL3
   SDL3_ttf::SDL3_ttf
   SDL3_mixer::SDL3_mixer
-  glm::glm
   imgui
   ${VLD_LIBRARIES}
 )

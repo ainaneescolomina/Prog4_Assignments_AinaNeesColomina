@@ -21,6 +21,8 @@
 //#include "Commands.h"
 #include "Achievements.h"
 #include "SpawnSystem.h"
+
+#include "ServiceLocator.h"
 #include "SdlSoundSystem.h"
 
 // ---------------
@@ -38,34 +40,16 @@ static void load()
 {
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 
-	/*
-	auto objBackground = std::make_unique<dae::GameObject>();
-	objBackground->AddComponent<dae::RenderComponent>();
-	objBackground->GetComponent<dae::RenderComponent>()->SetTexture("background.png");
-	
-	scene.Add(std::move(objBackground));
+	auto soundSystem = std::make_unique<dae::sdl_sound_system>();
+	dae::servicelocator::register_sound_system(std::move(soundSystem));
+	auto& sound = dae::servicelocator::get_sound_system();
 
-	auto objLogo = std::make_unique<dae::GameObject>();
-	objLogo->AddComponent<dae::RenderComponent>();
-	objLogo->GetComponent<dae::RenderComponent>()->SetTexture("logo.png");
-	objLogo->SetPosition(358, 180);
+	// preload sounds
+	sound.load(0, "Data/Sounds/Fighter_Shot1.mp3");
+	//sound.load(1, "Data/Sounds/sound_1.wav");
+	//sound.load(2, "Data/Sounds/sound_2.wav");
 
-	scene.Add(std::move(objLogo));
-
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	auto objTitle = std::make_unique<dae::GameObject>();
-	objTitle->AddComponent<dae::TextComponent>("Programming 4 Assignment", font);
-	objTitle->GetComponent<dae::TextComponent>()->SetColor({ 255, 255, 0, 255 });
-	objTitle->SetPosition(292, 20);
-
-	scene.Add(std::move(objTitle));
-
-	auto objFps = std::make_unique<dae::GameObject>();
-	objFps->AddComponent<dae::TextComponent>("0 FPS", font);
-	objFps->AddComponent<dae::FPSComponent>();
-
-	scene.Add(std::move(objFps));
-	*/
+	sound.play(0, 0.5f);
 
 	///////////////
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Silkscreen-Regular.ttf", 36);
@@ -262,6 +246,8 @@ int main(int, char*[]) {
 #endif
 	dae::Minigin engine(data_location);
 	engine.Run(load);
+
+	dae::servicelocator::shutdown();
 
 #if USE_STEAMWORKS
 	SteamAPI_Shutdown();

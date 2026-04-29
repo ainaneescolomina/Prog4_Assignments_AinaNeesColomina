@@ -1,4 +1,4 @@
-
+#pragma once
 #include "SoundSystem.h"
 #include <memory>
 
@@ -6,6 +6,7 @@ namespace dae
 {
     class null_sound_system final : public sound_system {
         void play(const sound_id, const float) override {}
+        void load(sound_id, const std::string&) override {};
     };
 
     class servicelocator final {
@@ -17,7 +18,9 @@ namespace dae
         static void register_sound_system(std::unique_ptr<sound_system>&& ss) {
             _ss_instance = ss == nullptr ? std::make_unique<null_sound_system>() : std::move(ss);
         }
-    };
 
-    std::unique_ptr<sound_system> servicelocator::_ss_instance{ std::make_unique<null_sound_system>() };
+        static void shutdown() {
+            _ss_instance.reset();
+        }
+    };
 }
