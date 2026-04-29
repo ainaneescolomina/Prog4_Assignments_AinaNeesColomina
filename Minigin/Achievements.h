@@ -23,6 +23,12 @@ namespace dae
 #if USE_STEAMWORKS
 			if (!m_check)
 			{
+				if (!SteamUserStats())
+				{
+					std::cerr << "SteamUserStats is null!\n";
+					return;
+				}
+
 				// Check steam if already aschived before this session
 				SteamUserStats()->GetAchievement("ACH_WIN_ONE_GAME", &m_achieved);
 				m_check = true;

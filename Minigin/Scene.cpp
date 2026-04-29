@@ -8,12 +8,6 @@ void Scene::Add(std::unique_ptr<GameObject> object)
 {
 	assert(object != nullptr && "Cannot add a null GameObject to the scene.");
 
-	// if obj has a collider component save to later check for collisions
-	if (auto* col = object->GetComponent<ColliderComponent>())
-	{
-		m_colliders.push_back(col);
-	}
-
 	m_objects.emplace_back(std::move(object));
 }
 
@@ -36,18 +30,6 @@ void Scene::RemoveAll()
 
 void dae::Scene::Cleanup()
 {
-	for (auto& obj : m_objects)
-	{
-		if (obj->IsMarkedForDestroy())
-		{
-			if (auto* col = obj->GetComponent<ColliderComponent>())
-			{
-				std::erase(m_colliders, col);
-			}
-		}
-	}
-
-
 	m_objects.erase(
 		std::remove_if(
 			m_objects.begin(),
@@ -81,22 +63,24 @@ void Scene::Render() const
 
 void dae::Scene::CheckCollisions()
 {
-	for (size_t i = 0; i < m_colliders.size(); ++i)
+	std::vector<ColliderComponent*> colliders;
+
+	for (auto& obj : m_objects)
 	{
-		for (size_t j = i + 1; j < m_colliders.size(); ++j)
+		if (auto* col = obj->GetComponent<ColliderComponent>())
+			colliders.push_back(col);
+	}
+
+	for (size_t i = 0; i < colliders.size(); ++i)
+	{
+		for (size_t j = i + 1; j < colliders.size(); ++j)
 		{
-			auto* a = m_colliders[i];
-			auto* b = m_colliders[j];
+			// PREGUNTAR!!!
+			auto* a = colliders[i];
+			auto* b = colliders[j];
 
 			a->CheckCollision(*b);
-
-			//if (a->CheckCollision(*b))
-			//{
-			//	Event e(make_sdbm_hash("OnCollision"));
-
-			//	a->GetSubject().NotifyObservers(e, b);
-			//	b->GetSubject().NotifyObservers(e, a);
-			//}
+			b->CheckCollision(*a);
 		}
 	}
 }

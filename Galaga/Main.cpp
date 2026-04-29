@@ -20,7 +20,7 @@
 #include "InputManager.h"
 //#include "Commands.h"
 #include "Achievements.h"
-#include "SpawnSystem.h"
+#include "BulletSpawner.h"
 
 #include "ServiceLocator.h"
 #include "SdlSoundSystem.h"
@@ -34,7 +34,7 @@
 namespace fs = std::filesystem;
 
 static dae::WinOneGameAchievement g_WinAchievement;
-static std::unique_ptr<dae::BulletSpawner> g_SpawManager;
+static std::unique_ptr<dae::BulletSpawner> g_BulletSpawner;
 static std::unique_ptr<WaveSpawner> g_WaveSpawner;
 static void load()
 {
@@ -46,10 +46,6 @@ static void load()
 
 	// preload sounds
 	sound.load(0, "Data/Sounds/Fighter_Shot1.mp3");
-	//sound.load(1, "Data/Sounds/sound_1.wav");
-	//sound.load(2, "Data/Sounds/sound_2.wav");
-
-	sound.play(0, 0.5f);
 
 	///////////////
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Silkscreen-Regular.ttf", 36);
@@ -57,17 +53,23 @@ static void load()
 	auto& input = dae::InputManager::GetInstance();
 
 	// --- UI ---
-	auto instructionsPlayer1 = std::make_unique<dae::GameObject>();
-	instructionsPlayer1->AddComponent<dae::TextComponent>("Move Player 1 with WASD, use C to self inflict damage, use Z and X to get points", fontSmall);
-	instructionsPlayer1->SetPosition(15.f, 15.f);
+	auto movementInstructions = std::make_unique<dae::GameObject>();
+	movementInstructions->AddComponent<dae::TextComponent>("Move Player with WASD or D-Pad, shoot bullets with E or button A", fontSmall);
+	movementInstructions->SetPosition(15.f, 15.f);
 
-	scene.Add(std::move(instructionsPlayer1));
+	scene.Add(std::move(movementInstructions));
 
-	auto instructionsPlayer2 = std::make_unique<dae::GameObject>();
-	instructionsPlayer2->AddComponent<dae::TextComponent>("Move Player 2 with D-Pad, use X to self inflict damage, use A and B to get points", fontSmall);
-	instructionsPlayer2->SetPosition(15.f, 40.f);
+	auto liveInstructions = std::make_unique<dae::GameObject>();
+	liveInstructions->AddComponent<dae::TextComponent>("You lose lives by colliding against enemies", fontSmall);
+	liveInstructions->SetPosition(15.f, 40.f);
 
-	scene.Add(std::move(instructionsPlayer2));
+	scene.Add(std::move(liveInstructions));
+
+	auto scoreInstructions = std::make_unique<dae::GameObject>();
+	scoreInstructions->AddComponent<dae::TextComponent>("You gain points by shooting enemies", fontSmall);
+	scoreInstructions->SetPosition(15.f, 65.f);
+
+	scene.Add(std::move(scoreInstructions));
 
 	/*
 	// --- Player 1 ---
@@ -194,11 +196,11 @@ static void load()
 	/////////////
 
 	// Managers
-	g_SpawManager = std::make_unique<dae::BulletSpawner>(scene);
+	g_BulletSpawner = std::make_unique<dae::BulletSpawner>(scene);
 	g_WaveSpawner = std::make_unique<WaveSpawner>(scene);
 
 	// Player
-	auto player = ActorFactory::CreatePlayer(input, { 200, 200 });
+	auto player = ActorFactory::CreatePlayer(input, { 450, 400 });
 
 	// UI
 	auto livesUI = UIFactory::CreateUI_Lives({ 15, 500 }, "player.png");
@@ -208,21 +210,24 @@ static void load()
 	auto score = player->GetComponent<dae::ScoreComponent>();
 	score->GetSubject().AddObserver(&g_WinAchievement);
 
-	player->GetComponent<dae::LivesComponent>()->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	auto lives = player->GetComponent<dae::LivesComponent>();
+	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	
 	score->GetSubject().AddObserver(livesScore->GetComponent<dae::ScoreDisplayComponent>());
-	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(g_SpawManager.get());
+	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(g_BulletSpawner.get());
+
+	// Enemies
+	EnemyWave wave1{
+		{{400,150},{450,150},{500,150},{550,150}}
+	};
+
+	g_WaveSpawner->SpawnWave(wave1, score); 
 
 	// Add to scene
 	scene.Add(std::move(player));
 	scene.Add(std::move(livesUI));
 	scene.Add(std::move(livesScore));
-
-	// Enemies
-	EnemyWave wave1{
-		{{100,100},{150,100},{200,100},{250,100}}
-	};
-
-	g_WaveSpawner->SpawnWave(wave1); 
 }
 
 int main(int, char*[]) {

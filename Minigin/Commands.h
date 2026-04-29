@@ -24,29 +24,6 @@ namespace dae
 		float m_inputY;
 	};
 
-	class DamageCommand final : public Command
-	{
-	public:
-		DamageCommand(GameObject* obj);
-
-		void Execute(float delta_time) override;
-
-	private:
-		GameObject* m_pObject;
-	};
-
-	class ScoreCommand final : public Command
-	{
-	public:
-		ScoreCommand(GameObject* obj, int score);
-
-		void Execute(float delta_time) override;
-
-	private:
-		GameObject* m_pObject;
-		int m_score;
-	};
-
 	class ShootCommand final : public Command
 	{
 	public:

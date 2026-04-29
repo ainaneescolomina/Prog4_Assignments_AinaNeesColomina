@@ -5,6 +5,7 @@
 
 namespace dae
 {
+    // Engine or Game?
     class BulletSpawner final : public Observer
     {
     public:
@@ -26,16 +27,19 @@ namespace dae
         {
             auto bullet = std::make_unique<GameObject>();
 
-            bullet->AddComponent<RenderComponent>()->SetTexture("player.png");
+            bullet->AddComponent<RenderComponent>()->SetTexture("bullet.png");
 
             auto pos = shooter->GetTransform().GetWorldPosition();
             bullet->SetPosition(pos.x, pos.y - 20.f);
 
-            bullet->AddComponent<TagComponent>("Bullet");
-            bullet->AddComponent<ColliderComponent>(10.f, 20.f);
+            bullet->AddComponent<TagComponent>(dae::TagComponent::Tags::Bullet);
+            auto* collider = bullet->AddComponent<ColliderComponent>(10.f, 20.f);
+            auto* lives = bullet->AddComponent<dae::LivesComponent>(1);
 
-            // later:
-            // bullet->AddComponent<VelocityComponent>(0.f, -300.f);
+            bullet->AddComponent<VelocityComponent>(0.f, -300.f);
+
+            // Observer / Subject
+            collider->GetSubject().AddObserver(lives);
 
             m_scene.Add(std::move(bullet));
         }

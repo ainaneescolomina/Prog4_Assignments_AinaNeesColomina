@@ -12,11 +12,19 @@ public:
         : m_scene(scene) {
     }
 
-    void SpawnWave(const EnemyWave& wave)
+    void SpawnWave(const EnemyWave& wave, dae::ScoreComponent* playerScore)
     {
         for (const auto& pos : wave.positions)
         {
             auto enemy = ActorFactory::CreateEnemy(pos);
+
+            if (playerScore)
+            {
+                enemy->GetComponent<dae::LivesComponent>()
+                    ->GetSubject()
+                    .AddObserver(playerScore);
+            }
+
             m_scene.Add(std::move(enemy));
         }
     }

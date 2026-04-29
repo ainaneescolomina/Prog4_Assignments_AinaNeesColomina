@@ -28,8 +28,6 @@ namespace dae
 		explicit Scene() = default;
 
 		std::vector < std::unique_ptr<GameObject>> m_objects{};
-
-		std::vector<ColliderComponent*> m_colliders;
 		void CheckCollisions();
 	};
 

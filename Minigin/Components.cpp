@@ -12,6 +12,8 @@
 #include "Texture2D.h"
 #include "GameObject.h"
 
+#include "ServiceLocator.h"
+
 #pragma region --- BASE ---
 
 void dae::RenderComponent::Render() const
@@ -132,9 +134,21 @@ void dae::LivesComponent::Notify(Event event, void* sender)
 	{
 		//auto* otherCollider = static_cast<ColliderComponent*>(sender);
 		auto* otherObj = static_cast<GameObject*>(sender);
-		auto* otherTag = otherObj->GetComponent<TagComponent>();
+		auto* otherTagComp = otherObj->GetComponent<TagComponent>();
+		auto* myTagComp = GetOwner()->GetComponent<TagComponent>();
 
-		if (otherTag && otherTag->GetTag() == "Enemy")
+		// Preguntar
+		if (!myTagComp || !otherTagComp) return;
+		auto myTag = myTagComp->GetTag();
+		auto otherTag = otherTagComp->GetTag();
+
+		if (myTag == TagComponent::Tags::Player && otherTag == TagComponent::Tags::Enemy)
+		{
+			GetOwner()->SetPosition(450.f, 400.f);
+			TakeDamage(1);
+		}
+		else if ((myTag == TagComponent::Tags::Bullet && otherTag == TagComponent::Tags::Enemy) ||
+			(myTag == TagComponent::Tags::Enemy && otherTag == TagComponent::Tags::Bullet))
 		{
 			TakeDamage(1);
 		}
@@ -147,12 +161,32 @@ void dae::LivesComponent::TakeDamage(int damage)
 
     if (m_lives <= 0)
     {
-        Event e(make_sdbm_hash("PlayerDied"));
-        m_subject.NotifyObservers(e);
+        Event e(make_sdbm_hash("ActorDied"));
+        m_subject.NotifyObservers(e, GetOwner());
+
+		// Ask!
+		GetOwner()->MarkForDestroy();
     }
 
     Event e(make_sdbm_hash("UpdateLives"));
 	m_subject.NotifyObservers(e);
+}
+
+void dae::ScoreComponent::Notify(Event event, void* sender)
+{
+	if (event.id == make_sdbm_hash("ActorDied"))
+	{
+		auto* otherObj = static_cast<GameObject*>(sender);
+		auto* otherTag = otherObj->GetComponent<TagComponent>();
+
+		// Preguntar
+		if (!otherTag) return;
+
+		if (otherTag->GetTag() == TagComponent::Tags::Enemy)
+		{
+			AddScore(100);
+		}
+	}
 }
 
 void dae::ScoreComponent::AddScore(int score)
@@ -205,8 +239,21 @@ void dae::ShootComponent::Shoot()
 
 	m_timer = m_cooldown;
 
+	//sound
+	auto& sound = dae::servicelocator::get_sound_system();
+	sound.play(0, 0.5f);
+
 	Event e(make_sdbm_hash("SpawnBullet"));
 	m_subject.NotifyObservers(e, GetOwner());
+}
+
+void dae::VelocityComponent::Update(float delta_time)
+{
+	auto pos = GetOwner()->GetTransform().GetPosition();
+	GetOwner()->SetPosition(
+		pos.x + m_velocity.x * delta_time,
+		pos.y + m_velocity.y * delta_time
+	);
 }
 
 #pragma endregion

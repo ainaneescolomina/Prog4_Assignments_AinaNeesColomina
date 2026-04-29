@@ -141,7 +141,7 @@ namespace dae
 		Subject m_subject;
 	};
 
-	class ScoreComponent final : public Component
+	class ScoreComponent final : public Component, public Observer
 	{
 	public:
 		explicit ScoreComponent(GameObject* ownerRef) : Component(ownerRef), m_subject(this) {}
@@ -150,6 +150,8 @@ namespace dae
 		ScoreComponent(ScoreComponent&& other) = delete;
 		ScoreComponent& operator=(const ScoreComponent& other) = delete;
 		ScoreComponent& operator=(ScoreComponent&& other) = delete;
+
+		virtual void Notify(Event event, void* sender) override;
 
 		void AddScore(int score);
 		int GetScore() const { return m_score; };
@@ -164,18 +166,25 @@ namespace dae
 	class TagComponent final : public Component
 	{
 	public:
-		explicit TagComponent(GameObject* ownerRef, const std::string& tag) : Component(ownerRef), m_tag{ tag } {}
+		enum class Tags
+		{
+			Player,
+			Enemy,
+			Bullet
+		};
+
+		explicit TagComponent(GameObject* ownerRef, Tags tag) : Component(ownerRef), m_tag{ tag } {}
 		virtual ~TagComponent() = default;
 		TagComponent(const TagComponent& other) = delete;
 		TagComponent(TagComponent&& other) = delete;
 		TagComponent& operator=(const TagComponent& other) = delete;
 		TagComponent& operator=(TagComponent&& other) = delete;
 
-		void ChangeTag(std::string tag) { m_tag = tag; };
-		std::string GetTag() const { return m_tag; };
+		void ChangeTag(Tags tag) { m_tag = tag; };
+		Tags GetTag() const { return m_tag; };
 
 	private:
-		std::string m_tag;
+		Tags m_tag;
 	};
 
 	class ColliderComponent final : public Component
@@ -231,6 +240,25 @@ namespace dae
 		float m_timer{};
 
 		Subject m_subject;
+	};
+
+	class VelocityComponent  final : public Component
+	{
+	public:
+		explicit VelocityComponent(GameObject* owner, float vx, float vy)
+			: Component(owner), m_velocity{ vx, vy } {
+		}
+
+		virtual ~VelocityComponent() = default;
+		VelocityComponent(const VelocityComponent& other) = delete;
+		VelocityComponent(VelocityComponent&& other) = delete;
+		VelocityComponent& operator=(const VelocityComponent& other) = delete;
+		VelocityComponent& operator=(VelocityComponent&& other) = delete;
+
+		virtual void Update(float deltaTime) override;
+
+	private:
+		glm::vec2 m_velocity;
 	};
 
 	// --- UI ---
