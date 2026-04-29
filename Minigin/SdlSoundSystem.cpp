@@ -1,4 +1,5 @@
 #include "SdlSoundSystem.h"
+#include "SdlSoundSystem.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
@@ -156,5 +157,10 @@ namespace dae {
     {
         _real_ss->play(id, volume);
         std::cout << "Playing sound " << id << " at volume " << volume << "\n";
+    }
+    void dae::logging_sound_system::load(sound_id id, const std::string& path)
+    {
+        _real_ss->load(id, path);
+        std::cout << "Loading sound " << id << "\n";
     }
 }

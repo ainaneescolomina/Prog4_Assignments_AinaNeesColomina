@@ -27,6 +27,7 @@ namespace dae
         logging_sound_system(std::unique_ptr<sound_system>&& ss) : _real_ss(std::move(ss)) {}
 
         void play(const sound_id id, const float volume) override;
+        void load(sound_id id, const std::string& path) override;
 
     private:
         std::unique_ptr<sound_system> _real_ss;
