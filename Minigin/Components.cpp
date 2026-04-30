@@ -138,6 +138,9 @@ void dae::LivesComponent::Notify(Event event, void* sender)
 		auto* myTagComp = GetOwner()->GetComponent<TagComponent>();
 
 		// Preguntar
+		// esta bé fer totes les comprovacions aqui?
+		// sino aqui a on?
+		// nomes reb info hauria de processar un altre component
 		if (!myTagComp || !otherTagComp) return;
 		auto myTag = myTagComp->GetTag();
 		auto otherTag = otherTagComp->GetTag();

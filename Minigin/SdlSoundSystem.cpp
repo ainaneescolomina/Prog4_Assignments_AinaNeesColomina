@@ -70,6 +70,7 @@ namespace dae {
 #ifdef __EMSCRIPTEN__
             Play(id, volume);
 #else
+            // necessitio?
             std::lock_guard<std::mutex> lock(m_Mutex);
             m_Queue.push({ id, volume });
             m_Condition.notify_one();
@@ -102,6 +103,7 @@ namespace dae {
                     if (m_Exit && m_Queue.empty()) return;
                     message = m_Queue.front();
                     m_Queue.pop();
+                    lock.unlock();
                 }
                 Play(message.id, message.volume);
             }

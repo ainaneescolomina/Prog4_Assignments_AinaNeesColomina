@@ -76,6 +76,8 @@ void dae::Scene::CheckCollisions()
 		for (size_t j = i + 1; j < colliders.size(); ++j)
 		{
 			// PREGUNTAR!!!
+			// perque necessito dos checks?
+			// ara si pero no hauria
 			auto* a = colliders[i];
 			auto* b = colliders[j];
 

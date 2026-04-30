@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-project(Minigin)
+project(Galaga)
 
 if(EMSCRIPTEN)
   message("Using Emscripten!")

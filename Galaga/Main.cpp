@@ -53,6 +53,11 @@ static void load()
 	auto& input = dae::InputManager::GetInstance();
 
 	// --- UI ---
+	auto background = std::make_unique<dae::GameObject>();
+	background->AddComponent<dae::RenderComponent>()->SetTexture("background.png");
+	
+	scene.Add(std::move(background));
+
 	auto movementInstructions = std::make_unique<dae::GameObject>();
 	movementInstructions->AddComponent<dae::TextComponent>("Move Player with WASD or D-Pad, shoot bullets with E or button A", fontSmall);
 	movementInstructions->SetPosition(15.f, 15.f);
