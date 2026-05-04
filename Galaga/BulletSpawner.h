@@ -34,12 +34,15 @@ namespace dae
 
             bullet->AddComponent<TagComponent>(dae::TagComponent::Tags::Bullet);
             auto* collider = bullet->AddComponent<ColliderComponent>(10.f, 20.f);
+            auto* damage = bullet->AddComponent<dae::DamageManager>();
             auto* lives = bullet->AddComponent<dae::LivesComponent>(1);
 
             bullet->AddComponent<VelocityComponent>(0.f, -300.f);
 
             // Observer / Subject
-            collider->GetSubject().AddObserver(lives);
+            collider->GetSubject().AddObserver(damage);
+            damage->GetSubject().AddObserver(lives);
+            damage->AddThreat(dae::TagComponent::Tags::Enemy);
 
             m_scene.Add(std::move(bullet));
         }

@@ -130,30 +130,14 @@ void dae::RotatorComponent::Update(float deltaTime)
 
 void dae::LivesComponent::Notify(Event event, void* sender)
 {
-	if (event.id == make_sdbm_hash("OnCollision"))
+	if (event.id == make_sdbm_hash("TakeDamage"))
 	{
-		//auto* otherCollider = static_cast<ColliderComponent*>(sender);
-		auto* otherObj = static_cast<GameObject*>(sender);
-		auto* otherTagComp = otherObj->GetComponent<TagComponent>();
-		auto* myTagComp = GetOwner()->GetComponent<TagComponent>();
+		TakeDamage(1);
 
-		// Preguntar
-		// esta bé fer totes les comprovacions aqui?
-		// sino aqui a on?
-		// nomes reb info hauria de processar un altre component
-		if (!myTagComp || !otherTagComp) return;
-		auto myTag = myTagComp->GetTag();
-		auto otherTag = otherTagComp->GetTag();
-
-		if (myTag == TagComponent::Tags::Player && otherTag == TagComponent::Tags::Enemy)
+		if (auto* myTagComp = GetOwner()->GetComponent<TagComponent>(); myTagComp 
+			&& myTagComp->GetTag() == TagComponent::Tags::Player)
 		{
 			GetOwner()->SetPosition(450.f, 400.f);
-			TakeDamage(1);
-		}
-		else if ((myTag == TagComponent::Tags::Bullet && otherTag == TagComponent::Tags::Enemy) ||
-			(myTag == TagComponent::Tags::Enemy && otherTag == TagComponent::Tags::Bullet))
-		{
-			TakeDamage(1);
 		}
 	}
 }
@@ -257,6 +241,31 @@ void dae::VelocityComponent::Update(float delta_time)
 		pos.x + m_velocity.x * delta_time,
 		pos.y + m_velocity.y * delta_time
 	);
+}
+
+void dae::DamageManager::Notify(Event event, void* sender)
+{
+	if (event.id == make_sdbm_hash("OnCollision"))
+	{
+		auto* otherObj = static_cast<GameObject*>(sender);
+		auto* otherTagComp = otherObj->GetComponent<TagComponent>();
+		auto* myTagComp = GetOwner()->GetComponent<TagComponent>();
+
+		if (!myTagComp || !otherTagComp) return;
+		auto otherTag = otherTagComp->GetTag();
+
+		for (auto threat : m_threats)
+		{
+			if (threat != otherTag) continue;
+			Event e(make_sdbm_hash("TakeDamage"));
+			m_subject.NotifyObservers(e);
+		}
+	}
+}
+
+void dae::DamageManager::AddThreat(dae::TagComponent::Tags threat)
+{
+	m_threats.emplace_back(threat);
 }
 
 #pragma endregion

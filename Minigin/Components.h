@@ -242,6 +242,27 @@ namespace dae
 		Subject m_subject;
 	};
 
+	class DamageManager final : public Component, public Observer
+	{
+	public:
+		explicit DamageManager(GameObject* ownerRef) : Component(ownerRef), m_subject(this) {}
+		virtual ~DamageManager() = default;
+		DamageManager(const DamageManager& other) = delete;
+		DamageManager(DamageManager&& other) = delete;
+		DamageManager& operator=(const DamageManager& other) = delete;
+		DamageManager& operator=(DamageManager&& other) = delete;
+
+		virtual void Notify(Event event, void* sender) override;
+		
+		void AddThreat(TagComponent::Tags threat);
+
+		Subject& GetSubject() { return m_subject; }
+
+	private:
+		std::vector<TagComponent::Tags> m_threats;
+		Subject m_subject;
+	};
+
 	class VelocityComponent  final : public Component
 	{
 	public:

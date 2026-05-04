@@ -15,11 +15,13 @@ namespace ActorFactory
         player->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Player);
 
         auto* collider = player->AddComponent<dae::ColliderComponent>(45.f, 45.f);
+        auto* damage = player->AddComponent<dae::DamageManager>();
         auto* lives = player->AddComponent<dae::LivesComponent>(3);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(1.f);
 
         float speed = 75.f;
+        // Keyboard bindings
         input.BindCommand(SDLK_W, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -speed));
         input.BindCommand(SDLK_S, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, speed));
         input.BindCommand(SDLK_A, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
@@ -33,7 +35,10 @@ namespace ActorFactory
         input.BindGamepadCommand(dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
         input.BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
 
-        collider->GetSubject().AddObserver(lives);
+        // Observer / Subject
+        collider->GetSubject().AddObserver(damage);
+        damage->GetSubject().AddObserver(lives);
+        damage->AddThreat(dae::TagComponent::Tags::Enemy);
         return player;
     }
 
@@ -44,8 +49,13 @@ namespace ActorFactory
         enemy->SetPosition(pos.x, pos.y);
         enemy->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Enemy);
         auto* collider = enemy->AddComponent<dae::ColliderComponent>(45.f, 45.f);
+        auto* damage = enemy->AddComponent<dae::DamageManager>();
         auto* lives = enemy->AddComponent<dae::LivesComponent>(1);
-        collider->GetSubject().AddObserver(lives);
+
+        // Observer / Subject
+        collider->GetSubject().AddObserver(damage);
+        damage->GetSubject().AddObserver(lives);
+        damage->AddThreat(dae::TagComponent::Tags::Bullet);
         return enemy;
     }
 }
