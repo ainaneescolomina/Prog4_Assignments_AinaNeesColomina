@@ -13,31 +13,17 @@
 #endif
 
 #include "Minigin.h"
-#include "SceneManager.h"
-#include "ResourceManager.h"
-#include "Scene.h"
-
-#include "InputManager.h"
-//#include "Commands.h"
-#include "Achievements.h"
-#include "BulletSpawner.h"
 
 #include "ServiceLocator.h"
-#include "SdlSoundSystem.h"
-
-// ---------------
-
-//#include "Factory.h"
-#include "WaveSpawner.h"
+#include "States/MenuState.h"
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
-static dae::WinOneGameAchievement g_WinAchievement;
-static std::unique_ptr<dae::BulletSpawner> g_BulletSpawner;
-static std::unique_ptr<WaveSpawner> g_WaveSpawner;
+/*
 static void load()
 {
+	/*
 	auto& scene = dae::SceneManager::GetInstance().CreateScene();
 
 	auto soundSystem = std::make_unique<dae::sdl_sound_system>();
@@ -196,7 +182,7 @@ static void load()
 	}
 
 	scene.Add(std::move(character2));
-	*/
+	
 
 	/////////////
 
@@ -233,7 +219,9 @@ static void load()
 	scene.Add(std::move(player));
 	scene.Add(std::move(livesUI));
 	scene.Add(std::move(livesScore));
+	
 }
+*/
 
 int main(int, char*[]) {
 #if USE_STEAMWORKS
@@ -255,7 +243,11 @@ int main(int, char*[]) {
 		data_location = "../Data/";
 #endif
 	dae::Minigin engine(data_location);
-	engine.Run(load);
+
+	auto menuState = std::make_unique<dae::MenuState>(&engine.GetGameStateManager());
+	engine.SetInitialState(std::move(menuState));
+
+	engine.Run([]() {});
 
 	dae::servicelocator::shutdown();
 

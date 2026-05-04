@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 namespace dae
 {
@@ -34,5 +33,4 @@ namespace dae
 	private:
 		GameObject* m_pObject;
 	};
-
 }

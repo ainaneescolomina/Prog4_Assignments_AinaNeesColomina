@@ -154,7 +154,8 @@ add_library(minigin_engine STATIC
   Minigin/Commands.cpp
   Minigin/Gamepad.cpp
   Minigin/SdlSoundSystem.cpp 
-  Minigin/ServiceLocator.cpp)
+  Minigin/ServiceLocator.cpp 
+  Minigin/GameStateManager.cpp)
 
 target_include_directories(minigin_engine PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/Minigin
@@ -180,7 +181,11 @@ target_compile_features(minigin_engine PUBLIC cxx_std_20)
 # list source files here
 # all game files
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
-  Galaga/Main.cpp)
+  Galaga/Main.cpp
+  Galaga/Factory.cpp
+  Galaga/States/MenuState.cpp
+  Galaga/States/PlayState.cpp
+  Galaga/States/HighscoreState.cpp)
 
 target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)
 # enable c++20 features
@@ -218,9 +223,7 @@ if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
 elseif(WIN32)
-  # Set minigin as the default startup project
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${TARGET_NAME})
-  # Set working directory to output folder
   set_target_properties(${TARGET_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TARGET_NAME}>")
 
   # Copy SDL dlls to output folder

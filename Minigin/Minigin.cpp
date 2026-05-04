@@ -1,4 +1,5 @@
-﻿#include <stdexcept>
+﻿#include "Minigin.h"
+#include <stdexcept>
 #include <sstream>
 #include <iostream>
 #include <chrono>
@@ -16,7 +17,6 @@
 #include <SDL3/SDL.h>
 //#include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
-#include "Minigin.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "Renderer.h"
@@ -132,6 +132,13 @@ void dae::Minigin::RunOneFrame(float delta_time)
 #endif 
 
 	m_quit = !InputManager::GetInstance().ProcessInput(delta_time);
+
+	m_gameStateManager.Update(delta_time);
 	SceneManager::GetInstance().Update(delta_time);
 	Renderer::GetInstance().Render();
+}
+
+void dae::Minigin::SetInitialState(std::unique_ptr<GameState> pInitialState)
+{
+	m_gameStateManager.ChangeState(std::move(pInitialState));
 }
