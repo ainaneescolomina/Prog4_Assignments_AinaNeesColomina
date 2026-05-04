@@ -80,7 +80,7 @@ dae::Minigin::Minigin(const std::filesystem::path& dataPath)
 	g_window = SDL_CreateWindow(
 		"Programming 4 assignment",
 		1024,
-		576,
+		915,
 		SDL_WINDOW_OPENGL
 	);
 	if (g_window == nullptr) 
@@ -133,12 +133,12 @@ void dae::Minigin::RunOneFrame(float delta_time)
 
 	m_quit = !InputManager::GetInstance().ProcessInput(delta_time);
 
-	m_gameStateManager.Update(delta_time);
+	GameStateManager::GetInstance().Update(delta_time);
 	SceneManager::GetInstance().Update(delta_time);
 	Renderer::GetInstance().Render();
 }
 
 void dae::Minigin::SetInitialState(std::unique_ptr<GameState> pInitialState)
 {
-	m_gameStateManager.ChangeState(std::move(pInitialState));
+	GameStateManager::GetInstance().ChangeState(std::move(pInitialState));
 }

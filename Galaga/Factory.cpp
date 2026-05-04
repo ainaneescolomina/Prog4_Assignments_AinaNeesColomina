@@ -45,7 +45,7 @@ namespace ActorFactory
     std::unique_ptr<dae::GameObject> CreateEnemy(const glm::vec2& pos)
     {
         auto enemy = std::make_unique<dae::GameObject>();
-        enemy->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butterfly.png");
+        enemy->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butterfly_1.png");
         enemy->SetPosition(pos.x, pos.y);
         enemy->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Enemy);
         auto* collider = enemy->AddComponent<dae::ColliderComponent>(45.f, 45.f);
@@ -75,6 +75,15 @@ namespace UIFactory
     {
         auto ui = std::make_unique<dae::GameObject>();
         ui->AddComponent<dae::ScoreDisplayComponent>(font);
+        ui->SetPosition(pos.x, pos.y);
+        return ui;
+    }
+
+    std::unique_ptr<dae::GameObject> CreateUI_Text(std::shared_ptr<dae::Font> font, const glm::vec2& pos, std::string text, const SDL_Color& color)
+    {
+        auto ui = std::make_unique<dae::GameObject>();
+        auto textComp = ui->AddComponent<dae::TextComponent>(text, font);
+        textComp->SetColor(color);
         ui->SetPosition(pos.x, pos.y);
         return ui;
     }

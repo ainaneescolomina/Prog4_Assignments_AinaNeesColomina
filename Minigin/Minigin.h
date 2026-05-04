@@ -20,10 +20,8 @@ namespace dae
 		Minigin& operator=(Minigin&& other) = delete;
 
 		void SetInitialState(std::unique_ptr<GameState> pInitialState);
-		GameStateManager& GetGameStateManager() { return m_gameStateManager; };
 
 	private:
-		GameStateManager m_gameStateManager;
 		bool m_quit{};
 	};
 }

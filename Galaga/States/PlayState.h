@@ -4,17 +4,24 @@
 #include "../BulletSpawner.h"
 #include "../WaveSpawner.h"
 
-class PlayState final : public dae::GameState 
+namespace dae
 {
-public:
-    void OnEnter() override;
+    class Scene;
+    class PlayState final : public dae::GameState
+    {
+    public:
+        void OnEnter() override;
+        void OnExit() override;
 
-    std::unique_ptr<dae::GameState> Update(float deltaTime) override;
+        std::unique_ptr<dae::GameState> Update(float deltaTime) override;
 
-private:
-    bool m_playerDied;
+    private:
+        Scene* m_pScene = nullptr;
 
-    dae::WinOneGameAchievement m_pWinAchievement;
-    std::unique_ptr<dae::BulletSpawner> m_pBulletSpawner;
-    std::unique_ptr<WaveSpawner> m_pWaveSpawner;
-};
+        bool m_playerDied{};
+
+        dae::WinOneGameAchievement m_pWinAchievement;
+        std::unique_ptr<dae::BulletSpawner> m_pBulletSpawner;
+        std::unique_ptr<WaveSpawner> m_pWaveSpawner;
+    };
+}

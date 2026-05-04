@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
 #include "GameState.h"
+#include "Singleton.h"
 
 namespace dae 
 {
-
-    class GameStateManager 
+    class GameStateManager : public Singleton<GameStateManager>
     {
     public:
         void Update(float deltaTime);
@@ -14,5 +14,4 @@ namespace dae
     private:
         std::unique_ptr<GameState> m_pCurrentState;
     };
-
 }

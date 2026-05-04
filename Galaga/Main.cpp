@@ -42,7 +42,7 @@ int main(int, char*[]) {
 #endif
 	dae::Minigin engine(data_location);
 
-	auto menuState = std::make_unique<dae::MenuState>(&engine.GetGameStateManager());
+	auto menuState = std::make_unique<dae::MenuState>();
 	engine.SetInitialState(std::move(menuState));
 
 	engine.Run([]() {});

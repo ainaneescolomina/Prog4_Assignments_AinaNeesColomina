@@ -312,7 +312,7 @@ void dae::ScoreDisplayComponent::Notify(Event event, void* sender)
 
 void dae::ScoreDisplayComponent::UpdateText()
 {
-    std::string text = "Score: " + std::to_string(m_score);
+    std::string text = std::to_string(m_score);
     SetText(text);
 }
 

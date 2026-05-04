@@ -14,9 +14,9 @@
 
 //#include "Factory.h"
 
-void PlayState::OnEnter()
+void dae::PlayState::OnEnter()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene();
+	m_pScene = &SceneManager::GetInstance().CreateScene();
 
 	auto soundSystem = std::make_unique<dae::sdl_sound_system>();
 	dae::servicelocator::register_sound_system(std::move(soundSystem));
@@ -33,37 +33,27 @@ void PlayState::OnEnter()
 	// --- UI ---
 	auto background = std::make_unique<dae::GameObject>();
 	background->AddComponent<dae::RenderComponent>()->SetTexture("background.png");
+	m_pScene->Add(std::move(background));
 
-	scene.Add(std::move(background));
+	auto highscoreTitle = UIFactory::CreateUI_Text(font, { 750, 200 }, "High Score", { 255, 0, 0, 255 });
+	m_pScene->Add(std::move(highscoreTitle));
 
-	auto movementInstructions = std::make_unique<dae::GameObject>();
-	movementInstructions->AddComponent<dae::TextComponent>("Move Player with WASD or D-Pad, shoot bullets with E or button A", fontSmall);
-	movementInstructions->SetPosition(15.f, 15.f);
+	auto highscoreScore = UIFactory::CreateUI_Text(font, { 850, 250 }, "00000");
+	m_pScene->Add(std::move(highscoreScore));
 
-	scene.Add(std::move(movementInstructions));
+	// --- MANAGERS ---
+	m_pBulletSpawner = std::make_unique<dae::BulletSpawner>(*m_pScene);
+	m_pWaveSpawner = std::make_unique<WaveSpawner>(*m_pScene);
 
-	auto liveInstructions = std::make_unique<dae::GameObject>();
-	liveInstructions->AddComponent<dae::TextComponent>("You lose lives by colliding against enemies", fontSmall);
-	liveInstructions->SetPosition(15.f, 40.f);
-
-	scene.Add(std::move(liveInstructions));
-
-	auto scoreInstructions = std::make_unique<dae::GameObject>();
-	scoreInstructions->AddComponent<dae::TextComponent>("You gain points by shooting enemies", fontSmall);
-	scoreInstructions->SetPosition(15.f, 65.f);
-
-	scene.Add(std::move(scoreInstructions));
-
-	// Managers
-	m_pBulletSpawner = std::make_unique<dae::BulletSpawner>(scene);
-	m_pWaveSpawner = std::make_unique<WaveSpawner>(scene);
-
+	// --- ACTORS ---
 	// Player
 	auto player = ActorFactory::CreatePlayer(input, { 450, 400 });
 
 	// UI
-	auto livesUI = UIFactory::CreateUI_Lives({ 15, 500 }, "player.png");
-	auto livesScore = UIFactory::CreateUI_Score(font, { 15, 450 });
+	auto scoreTitle = UIFactory::CreateUI_Text(font, { 850, 400 }, "1 Up", { 255, 0, 0, 255 });
+	m_pScene->Add(std::move(scoreTitle));
+	auto scoreUI = UIFactory::CreateUI_Score(font, { 850, 450 });
+	auto livesUI = UIFactory::CreateUI_Lives({ 800, 600 }, "player.png");
 
 	// Observer / Subject
 	auto score = player->GetComponent<dae::ScoreComponent>();
@@ -73,7 +63,7 @@ void PlayState::OnEnter()
 	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
 	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
 
-	score->GetSubject().AddObserver(livesScore->GetComponent<dae::ScoreDisplayComponent>());
+	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
 	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(m_pBulletSpawner.get());
 
 	// Enemies
@@ -84,12 +74,17 @@ void PlayState::OnEnter()
 	m_pWaveSpawner->SpawnWave(wave1, score);
 
 	// Add to scene
-	scene.Add(std::move(player));
-	scene.Add(std::move(livesUI));
-	scene.Add(std::move(livesScore));
+	m_pScene->Add(std::move(player));
+	m_pScene->Add(std::move(livesUI));
+	m_pScene->Add(std::move(scoreUI));
 }
 
-std::unique_ptr<dae::GameState> PlayState::Update(float)
+void dae::PlayState::OnExit()
+{
+	m_pScene->RemoveAll();
+}
+
+std::unique_ptr<dae::GameState> dae::PlayState::Update(float)
 {
     if (m_playerDied) {
         return std::make_unique<HighscoreState>();

@@ -1,12 +1,22 @@
 #include <memory>
 #include "GameState.h"
+#include "Commands.h"
 
-class HighscoreState final : public dae::GameState
-{
-public:
-    void OnEnter() override;
+namespace dae {
+    class Scene;
 
-    std::unique_ptr<dae::GameState> Update(float deltaTime) override;
+    class HighscoreState final : public GameState
+    {
+    public:
+        void OnEnter() override;
+        void OnExit() override;
+        std::unique_ptr<GameState> Update(float deltaTime) override;
+    private:
+        Scene* m_pScene = nullptr;
+    };
 
-private:
-};
+    class ReturnGameCommand final : public dae::Command {
+    public:
+        void Execute(float) override;
+    };
+}
