@@ -10,11 +10,11 @@ void dae::EnemyIdleState::OnEnter(dae::GameObject*)
 
 void dae::EnemyIdleState::OnExit(dae::GameObject*){}
 
-std::unique_ptr<dae::EnemyState> dae::EnemyIdleState::Update(dae::GameObject* owner, float delta_time)
+std::unique_ptr<dae::EnemyState> dae::EnemyIdleState::Update(dae::GameObject*, float delta_time)
 {
     m_timer += delta_time;
 
-    auto pos = owner->GetTransform().GetPosition();
+    //auto pos = owner->GetTransform().GetPosition();
     //float xOffset = std::sin(m_timer * 2.f) * 0.5f;
     //owner->SetPosition(pos.x + xOffset, pos.y);
 
