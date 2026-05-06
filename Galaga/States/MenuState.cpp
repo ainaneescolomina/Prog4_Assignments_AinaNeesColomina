@@ -5,9 +5,12 @@
 #include "ResourceManager.h"
 #include "GameStateManager.h"
 
+#include "Factory.h"
+
 void dae::MenuState::OnEnter()
 {
     InputManager::GetInstance().BindCommand(SDLK_SPACE, KeyState::Down, std::make_unique<StartGameCommand>());
+    InputManager::GetInstance().BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<StartGameCommand>());
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
@@ -33,20 +36,24 @@ void dae::MenuState::OnEnter()
     auto gameModeVersus = UIFactory::CreateUI_Text(font, { 300.f, 600.f }, "2 Players Versus");
     m_pScene->Add(std::move(gameModeVersus));
 
-    auto movementInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 750.f }, "Move Player with WASD or D-Pad, shoot bullets with E or button A");
+    auto movementInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 700.f }, "Move Player with WASD or D-Pad, shoot bullets with E or button A");
     m_pScene->Add(std::move(movementInstructions));
 
-    auto liveInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 800.f }, "You lose lives by colliding against enemies");
+    auto liveInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 750.f }, "You lose lives by colliding against enemies");
     m_pScene->Add(std::move(liveInstructions));
 
-    auto scoreInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 850.f }, "You gain points by shooting enemies");
+    auto scoreInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 800.f }, "You gain points by shooting enemies");
     m_pScene->Add(std::move(scoreInstructions));
+
+    auto menuInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 850.f }, "Press Space or button A to start the game");
+    m_pScene->Add(std::move(menuInstructions));
 }
 
 void dae::MenuState::OnExit()
 {
     m_pScene->RemoveAll();
     InputManager::GetInstance().UnbindCommand(SDLK_SPACE, KeyState::Down);
+    InputManager::GetInstance().UnbindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Pressed);
 }
 
 std::unique_ptr<dae::GameState> dae::MenuState::Update(float)

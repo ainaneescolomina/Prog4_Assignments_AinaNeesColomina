@@ -12,7 +12,7 @@
 
 // ---------------
 
-//#include "Factory.h"
+#include "Factory.h"
 
 void dae::PlayState::OnEnter()
 {
@@ -47,7 +47,7 @@ void dae::PlayState::OnEnter()
 
 	// --- ACTORS ---
 	// Player
-	auto player = ActorFactory::CreatePlayer(input, { 450, 400 });
+	auto player = ActorFactory::CreatePlayer(input, { 450, 650 });
 
 	// UI
 	auto scoreTitle = UIFactory::CreateUI_Text(font, { 850, 400 }, "1 Up", { 255, 0, 0, 255 });
@@ -68,7 +68,7 @@ void dae::PlayState::OnEnter()
 
 	// Enemies
 	EnemyWave wave1{
-		{{400,150},{450,150},{500,150},{550,150}}
+		{{450,200},{350,250},{400,250},{450,250},{500,250},{550,250},{600,250},{500,200}}
 	};
 
 	m_pWaveSpawner->SpawnWave(wave1, score);
@@ -86,8 +86,10 @@ void dae::PlayState::OnExit()
 
 std::unique_ptr<dae::GameState> dae::PlayState::Update(float)
 {
-    if (m_playerDied) {
+    if (m_playerDied) 
+	{
         return std::make_unique<HighscoreState>();
     }
+
     return nullptr;
 }

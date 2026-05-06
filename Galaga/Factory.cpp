@@ -4,6 +4,7 @@
 #include "Commands.h"
 #include "Components.h"
 #include <SDL3/SDL_keycode.h>
+#include <EnemyStateComponent.h>
 
 namespace ActorFactory
 {
@@ -20,7 +21,7 @@ namespace ActorFactory
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(1.f);
 
-        float speed = 75.f;
+        float speed = 150.f;
         // Keyboard bindings
         input.BindCommand(SDLK_W, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -speed));
         input.BindCommand(SDLK_S, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, speed));
@@ -51,6 +52,7 @@ namespace ActorFactory
         auto* collider = enemy->AddComponent<dae::ColliderComponent>(45.f, 45.f);
         auto* damage = enemy->AddComponent<dae::DamageManager>();
         auto* lives = enemy->AddComponent<dae::LivesComponent>(1);
+        enemy->AddComponent<EnemyStateComponent>();
 
         // Observer / Subject
         collider->GetSubject().AddObserver(damage);

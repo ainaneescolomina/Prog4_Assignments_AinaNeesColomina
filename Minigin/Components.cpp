@@ -105,9 +105,9 @@ dae::RotatorComponent::RotatorComponent(GameObject* ownerRef, float radius, floa
 	m_startPosition = GetOwner()->GetTransform().GetPosition();
 }
 
-void dae::RotatorComponent::Update(float deltaTime)
+void dae::RotatorComponent::Update(float delta_time)
 {
-    m_angle += m_speed * deltaTime;
+    m_angle += m_speed * delta_time;
     m_angle = std::fmod(m_angle, glm::two_pi<float>());
 
     float offsetX = cos(m_angle) * m_radius;
@@ -134,10 +134,11 @@ void dae::LivesComponent::Notify(Event event, void* sender)
 	{
 		TakeDamage(1);
 
+		// CANVIAR!!!
 		if (auto* myTagComp = GetOwner()->GetComponent<TagComponent>(); myTagComp 
 			&& myTagComp->GetTag() == TagComponent::Tags::Player)
 		{
-			GetOwner()->SetPosition(450.f, 400.f);
+			GetOwner()->SetPosition(450, 600);
 		}
 	}
 }

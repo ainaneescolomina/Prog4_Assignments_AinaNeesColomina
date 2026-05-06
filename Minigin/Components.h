@@ -109,7 +109,7 @@ namespace dae
 		RotatorComponent& operator=(const RotatorComponent& other) = delete;
 		RotatorComponent& operator=(RotatorComponent&& other) = delete;
 
-		virtual void Update(float deltaTime) override;
+		virtual void Update(float delta_time) override;
 
 	private:
 		glm::vec3 m_startPosition{};
@@ -229,7 +229,7 @@ namespace dae
 		ShootComponent& operator=(const ShootComponent& other) = delete;
 		ShootComponent& operator=(ShootComponent&& other) = delete;
 
-		virtual void Update(float deltaTime) override;
+		virtual void Update(float delta_time) override;
 
 		void Shoot();
 
@@ -276,7 +276,7 @@ namespace dae
 		VelocityComponent& operator=(const VelocityComponent& other) = delete;
 		VelocityComponent& operator=(VelocityComponent&& other) = delete;
 
-		virtual void Update(float deltaTime) override;
+		virtual void Update(float delta_time) override;
 
 	private:
 		glm::vec2 m_velocity;

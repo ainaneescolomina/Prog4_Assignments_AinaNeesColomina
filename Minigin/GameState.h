@@ -11,6 +11,6 @@ namespace dae
         virtual void OnEnter() {}
         virtual void OnExit() {}
 
-        virtual std::unique_ptr<GameState> Update(float deltaTime) = 0;
+        virtual std::unique_ptr<GameState> Update(float delta_time) = 0;
     };
 }

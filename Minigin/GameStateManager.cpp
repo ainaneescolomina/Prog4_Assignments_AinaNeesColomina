@@ -1,10 +1,10 @@
 #include "GameStateManager.h"
 
-void dae::GameStateManager::Update(float deltaTime)
+void dae::GameStateManager::Update(float delta_time)
 {
     if (m_pCurrentState) 
     {
-        auto pNewState = m_pCurrentState->Update(deltaTime);
+        auto pNewState = m_pCurrentState->Update(delta_time);
 
         if (pNewState != nullptr) {
             ChangeState(std::move(pNewState));

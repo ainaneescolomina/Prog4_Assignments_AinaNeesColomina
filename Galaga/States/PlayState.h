@@ -1,8 +1,8 @@
 #include <memory>
 #include "GameState.h"
 #include "Achievements.h"
-#include "../BulletSpawner.h"
-#include "../WaveSpawner.h"
+#include "BulletSpawner.h"
+#include "WaveSpawner.h"
 
 namespace dae
 {
@@ -13,7 +13,7 @@ namespace dae
         void OnEnter() override;
         void OnExit() override;
 
-        std::unique_ptr<dae::GameState> Update(float deltaTime) override;
+        std::unique_ptr<dae::GameState> Update(float delta_time) override;
 
     private:
         Scene* m_pScene = nullptr;

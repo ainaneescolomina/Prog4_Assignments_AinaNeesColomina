@@ -15,7 +15,7 @@
 #include "Minigin.h"
 
 #include "ServiceLocator.h"
-#include "States/MenuState.h"
+#include "MenuState.h"
 
 #include <filesystem>
 #include <iostream>

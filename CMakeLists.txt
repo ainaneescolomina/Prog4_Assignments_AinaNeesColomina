@@ -185,7 +185,18 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Factory.cpp
   Galaga/States/MenuState.cpp
   Galaga/States/PlayState.cpp
-  Galaga/States/HighscoreState.cpp)
+  Galaga/States/HighscoreState.cpp 
+  Galaga/Enemies/WaveSpawner.cpp 
+  Galaga/Enemies/EnemyStateComponent.cpp 
+  Galaga/Enemies/EnemyFormationState.cpp
+  Galaga/Enemies/EnemyIdleState.cpp
+  Galaga/Enemies/BeeEnemyDiveState.cpp)
+
+target_include_directories(${TARGET_NAME} PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Enemies
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/States
+)
 
 target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)
 # enable c++20 features

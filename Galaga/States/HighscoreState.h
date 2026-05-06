@@ -10,7 +10,7 @@ namespace dae {
     public:
         void OnEnter() override;
         void OnExit() override;
-        std::unique_ptr<GameState> Update(float deltaTime) override;
+        std::unique_ptr<GameState> Update(float delta_time) override;
     private:
         Scene* m_pScene = nullptr;
     };

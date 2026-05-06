@@ -8,7 +8,7 @@ namespace dae
     class GameStateManager : public Singleton<GameStateManager>
     {
     public:
-        void Update(float deltaTime);
+        void Update(float delta_time);
         void ChangeState(std::unique_ptr<GameState> newState);
 
     private:
