@@ -45,10 +45,11 @@ namespace dae
 
 		virtual void Render() const override;
 
-		void SetTexture(const std::string& filename);
+		void SetTexture(const std::string& filename, bool center = false);
 
 	protected:
 		std::shared_ptr<Texture2D> m_texture{};
+		bool m_centerTexture{ false };
 	};
 
 	class Font;

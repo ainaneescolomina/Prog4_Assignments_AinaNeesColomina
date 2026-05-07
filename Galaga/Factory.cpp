@@ -11,7 +11,7 @@ namespace ActorFactory
     std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos)
     {
         auto player = std::make_unique<dae::GameObject>();
-        player->AddComponent<dae::RenderComponent>()->SetTexture("player.png");
+        player->AddComponent<dae::RenderComponent>()->SetTexture("player.png", true);
         player->SetPosition(pos.x, pos.y);
         player->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Player);
 
@@ -19,7 +19,7 @@ namespace ActorFactory
         auto* damage = player->AddComponent<dae::DamageManager>();
         auto* lives = player->AddComponent<dae::LivesComponent>(3);
         player->AddComponent<dae::ScoreComponent>();
-        player->AddComponent<dae::ShootComponent>(1.f);
+        player->AddComponent<dae::ShootComponent>(0.25f);
 
         float speed = 150.f;
         // Keyboard bindings
@@ -46,7 +46,7 @@ namespace ActorFactory
     std::unique_ptr<dae::GameObject> CreateEnemy(const glm::vec2& pos)
     {
         auto enemy = std::make_unique<dae::GameObject>();
-        enemy->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butterfly_1.png");
+        enemy->AddComponent<dae::RenderComponent>()->SetTexture("enemy_butterfly_1.png", true);
         enemy->SetPosition(pos.x, pos.y);
         enemy->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Enemy);
         auto* collider = enemy->AddComponent<dae::ColliderComponent>(45.f, 45.f);

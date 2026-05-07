@@ -27,7 +27,7 @@ namespace dae
         {
             auto bullet = std::make_unique<GameObject>();
 
-            bullet->AddComponent<RenderComponent>()->SetTexture("bullet.png");
+            bullet->AddComponent<RenderComponent>()->SetTexture("bullet.png", true);
 
             auto pos = shooter->GetTransform().GetWorldPosition();
             bullet->SetPosition(pos.x, pos.y - 20.f);

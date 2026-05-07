@@ -20,12 +20,22 @@ void dae::RenderComponent::Render() const
 {
 	if (m_texture == nullptr) return;
 	const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
-	Renderer::GetInstance().RenderTexture(*m_texture, pos.x, pos.y);
+	glm::vec2 texturePos{ pos.x, pos.y };
+
+	if (m_centerTexture)
+	{
+		auto textureSize = m_texture->GetSize();
+		texturePos.x = pos.x - (textureSize.x / 2);
+		texturePos.y = pos.y - (textureSize.y / 2);
+	}
+
+	Renderer::GetInstance().RenderTexture(*m_texture, texturePos.x, texturePos.y);
 }
 
-void dae::RenderComponent::SetTexture(const std::string& filename)
+void dae::RenderComponent::SetTexture(const std::string& filename, bool center)
 {
 	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
+	m_centerTexture = center;
 }
 
 void dae::TextComponent::Update(float)
