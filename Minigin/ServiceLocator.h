@@ -1,22 +1,22 @@
 #pragma once
-#include "SoundSystem.h"
+#include "ISoundSystem.h"
 #include <memory>
 
 namespace dae
 {
-    class null_sound_system final : public sound_system {
+    class NullSoundSystem final : public ISoundSystem {
         void play(const sound_id, const float) override {}
         void load(sound_id, const std::string&) override {};
     };
 
     class servicelocator final {
-        static std::unique_ptr<sound_system> _ss_instance;
+        static std::unique_ptr<ISoundSystem> _ss_instance;
 
     public:
-        static sound_system& get_sound_system() { return *_ss_instance; }
+        static ISoundSystem& get_sound_system() { return *_ss_instance; }
 
-        static void register_sound_system(std::unique_ptr<sound_system>&& ss) {
-            _ss_instance = ss == nullptr ? std::make_unique<null_sound_system>() : std::move(ss);
+        static void register_sound_system(std::unique_ptr<ISoundSystem>&& ss) {
+            _ss_instance = ss == nullptr ? std::make_unique<NullSoundSystem>() : std::move(ss);
         }
 
         static void shutdown() {

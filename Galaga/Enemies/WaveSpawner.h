@@ -12,7 +12,7 @@ namespace dae
         std::vector<glm::vec2> positions;
     };
 
-    class WaveSpawner
+    class WaveSpawner final
     {
     public:
         explicit WaveSpawner(dae::Scene& scene) : m_pScene(&scene) {}

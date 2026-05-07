@@ -18,7 +18,7 @@ void dae::PlayState::OnEnter()
 {
 	m_pScene = &SceneManager::GetInstance().CreateScene();
 
-	auto soundSystem = std::make_unique<dae::sdl_sound_system>();
+	auto soundSystem = std::make_unique<dae::SdlSoundSystem>();
 	dae::servicelocator::register_sound_system(std::move(soundSystem));
 	auto& sound = dae::servicelocator::get_sound_system();
 

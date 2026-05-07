@@ -6,7 +6,7 @@ namespace dae
 {
     class GameObject;
 
-    class EnemyIdleState : public EnemyState
+    class EnemyIdleState final : public EnemyState
     {
     public:
         virtual ~EnemyIdleState() = default;

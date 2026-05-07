@@ -7,7 +7,7 @@ namespace dae
 {
     class GameObject;
 
-    class EnemyFormationState : public EnemyState
+    class EnemyFormationState final : public EnemyState
     {
     public:
         explicit EnemyFormationState(float speed, const glm::vec2& target) : m_speed{ speed }, m_targetPos{ target } {}

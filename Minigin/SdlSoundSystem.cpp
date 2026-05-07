@@ -1,5 +1,4 @@
 #include "SdlSoundSystem.h"
-#include "SdlSoundSystem.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
@@ -20,7 +19,7 @@ namespace dae {
         float volume;
     };
 
-    class sdl_sound_system::SdlSoundSystemImpl
+    class SdlSoundSystem::SdlSoundSystemImpl
     {
     public:
         SdlSoundSystemImpl() {
@@ -140,27 +139,27 @@ namespace dae {
 
     // --- SdlSoundSystem Methods ---
 
-    sdl_sound_system::sdl_sound_system() : pImpl(std::make_unique<SdlSoundSystemImpl>()) {}
-    sdl_sound_system::~sdl_sound_system() = default;
+    SdlSoundSystem::SdlSoundSystem() : pImpl(std::make_unique<SdlSoundSystemImpl>()) {}
+    SdlSoundSystem::~SdlSoundSystem() = default;
 
-    void sdl_sound_system::play(const sound_id id, const float volume) 
+    void SdlSoundSystem::play(const sound_id id, const float volume) 
     {
         pImpl->AddToQueue(id, volume);
     }
 
-    void sdl_sound_system::load(const sound_id id, const std::string& path)
+    void SdlSoundSystem::load(const sound_id id, const std::string& path)
     {
         pImpl->Load(id, path);
     }
 
     // --- Logging Methods ---
 
-    void logging_sound_system::play(const sound_id id, const float volume) 
+    void LoggingSoundSystem::play(const sound_id id, const float volume) 
     {
         _real_ss->play(id, volume);
         std::cout << "Playing sound " << id << " at volume " << volume << "\n";
     }
-    void dae::logging_sound_system::load(sound_id id, const std::string& path)
+    void dae::LoggingSoundSystem::load(sound_id id, const std::string& path)
     {
         _real_ss->load(id, path);
         std::cout << "Loading sound " << id << "\n";

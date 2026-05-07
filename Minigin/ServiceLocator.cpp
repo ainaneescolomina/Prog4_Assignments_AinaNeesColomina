@@ -2,5 +2,5 @@
 
 namespace dae
 {
-    std::unique_ptr<sound_system> servicelocator::_ss_instance{ std::make_unique<null_sound_system>() };
+    std::unique_ptr<ISoundSystem> servicelocator::_ss_instance{ std::make_unique<NullSoundSystem>() };
 }

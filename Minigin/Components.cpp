@@ -227,7 +227,7 @@ void dae::ShootComponent::Shoot()
 
 	m_timer = m_cooldown;
 
-	//sound
+	//sound here?
 	auto& sound = dae::servicelocator::get_sound_system();
 	sound.play(0, 0.5f);
 

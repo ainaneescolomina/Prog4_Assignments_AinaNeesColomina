@@ -7,7 +7,7 @@ namespace dae
 {
     class GameObject;
 
-    class BeeEnemyDiveState : public EnemyState
+    class BeeEnemyDiveState final : public EnemyState
     {
     public:
         virtual ~BeeEnemyDiveState() = default;
@@ -19,6 +19,6 @@ namespace dae
 
     private:
         float m_speed = 150.f;
-        glm::vec2 m_startPos;
+        glm::vec2 m_startPos{};
     };
 }
