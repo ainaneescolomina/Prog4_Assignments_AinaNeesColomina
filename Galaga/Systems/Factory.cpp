@@ -17,9 +17,9 @@ namespace ActorFactory
 
         auto* collider = player->AddComponent<dae::ColliderComponent>(45.f, 45.f);
         auto* damage = player->AddComponent<dae::DamageManager>();
-        auto* lives = player->AddComponent<dae::LivesComponent>(3);
+        auto* lives = player->AddComponent<dae::LivesComponent>(3, dae::LivesComponent::DeathAction::Destroy);
         player->AddComponent<dae::ScoreComponent>();
-        player->AddComponent<dae::ShootComponent>(0.25f);
+        player->AddComponent<dae::ShootComponent>(0.1f);
 
         float speed = 150.f;
         // Keyboard bindings
@@ -75,7 +75,7 @@ namespace ActorFactory
 
         auto* collider = enemy->AddComponent<dae::ColliderComponent>(45.f, 45.f);
         auto* damage = enemy->AddComponent<dae::DamageManager>();
-        auto* lives = enemy->AddComponent<dae::LivesComponent>(livesAmount);
+        auto* lives = enemy->AddComponent<dae::LivesComponent>(livesAmount, dae::LivesComponent::DeathAction::Destroy);
         enemy->AddComponent<EnemyStateComponent>();
 
         // Observer / Subject

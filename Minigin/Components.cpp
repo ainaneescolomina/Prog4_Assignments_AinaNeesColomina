@@ -13,7 +13,6 @@
 #include "GameObject.h"
 
 
-
 #pragma region --- BASE ---
 
 void dae::RenderComponent::Render() const
@@ -176,6 +175,11 @@ void dae::VelocityComponent::Update(float delta_time)
 		pos.x + m_velocity.x * delta_time,
 		pos.y + m_velocity.y * delta_time
 	);
+}
+
+void dae::VelocityComponent::SetVelocity(float vx, float vy)
+{
+	m_velocity = { vx, vy };
 }
 
 #pragma endregion

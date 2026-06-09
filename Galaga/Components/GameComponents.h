@@ -9,7 +9,15 @@ namespace dae
 	class LivesComponent final : public Component, public Observer
 	{
 	public:
-		explicit LivesComponent(GameObject* ownerRef, int lives) : Component(ownerRef), m_lives{ lives }, m_subject(this) {}
+		enum class DeathAction
+		{
+			Destroy,
+			Deactivate
+		};
+
+		explicit LivesComponent(GameObject* ownerRef, int lives, DeathAction action)
+			: Component(ownerRef), m_lives{ lives }, m_deathAction{ action }, m_subject(this) {
+		}
 		virtual ~LivesComponent() = default;
 		LivesComponent(const LivesComponent& other) = delete;
 		LivesComponent(LivesComponent&& other) = delete;
@@ -25,6 +33,7 @@ namespace dae
 
 	private:
 		int m_lives;
+		DeathAction m_deathAction;
 		Subject m_subject;
 	};
 
@@ -118,6 +127,19 @@ namespace dae
 	private:
 		std::vector<TagComponent::Tags> m_threats;
 		Subject m_subject;
+	};
+
+	class OffscreenDeactivateComponent final : public Component
+	{
+	public:
+		OffscreenDeactivateComponent(GameObject* owner,float height, float width)
+			: Component(owner), m_height(height), m_width(width){}
+
+		virtual void Update(float delta_time) override;
+
+	private:
+		float m_height;
+		float m_width;
 	};
 
 	// --- UI ---

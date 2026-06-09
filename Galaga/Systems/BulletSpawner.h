@@ -1,49 +1,30 @@
+#pragma once
+#include <memory>
+#include <vector>
 #include "Observer.h"
-#include "GameObject.h"
-#include "GameComponents.h"
-#include "Scene.h"
 
 namespace dae
 {
+    class GameObject;
+    class Scene;
+
     class BulletSpawner final : public Observer
     {
     public:
-        BulletSpawner(Scene& scene) : m_scene(scene) {}
+        BulletSpawner(Scene& scene);
 
-        void Notify(Event event, void* sender) override
-        {
-            if (event.id == make_sdbm_hash("SpawnBullet"))
-            {
-                auto* shooter = static_cast<GameObject*>(sender);
-                SpawnBullet(shooter);
-            }
-        }
+        void Notify(Event event, void* sender) override;
 
     private:
         Scene& m_scene;
+        std::vector<GameObject*> m_playerBulletPool;
+        std::vector<GameObject*> m_enemyBulletPool;
 
-        void SpawnBullet(GameObject* shooter)
-        {
-            auto bullet = std::make_unique<GameObject>();
+        const int maxPlayerBullets = 2;
+        const int maxEnemyBullets = 15;
 
-            bullet->AddComponent<RenderComponent>()->SetTexture("Images/bullet.png", true);
-
-            auto pos = shooter->GetTransform().GetWorldPosition();
-            bullet->SetPosition(pos.x, pos.y - 20.f);
-
-            bullet->AddComponent<TagComponent>(dae::TagComponent::Tags::Bullet);
-            auto* collider = bullet->AddComponent<ColliderComponent>(10.f, 20.f);
-            auto* damage = bullet->AddComponent<dae::DamageManager>();
-            auto* lives = bullet->AddComponent<dae::LivesComponent>(1);
-
-            bullet->AddComponent<VelocityComponent>(0.f, -300.f);
-
-            // Observer / Subject
-            collider->GetSubject().AddObserver(damage);
-            damage->GetSubject().AddObserver(lives);
-            damage->AddThreat(dae::TagComponent::Tags::Enemy);
-
-            m_scene.Add(std::move(bullet));
-        }
+        bool SpawnPlayerBullet(GameObject* shooter);
+        bool SpawnEnemyBullet(GameObject* shooter);
+        std::unique_ptr<dae::GameObject> CreateBullet(bool isPlayerBullet);
     };
 }

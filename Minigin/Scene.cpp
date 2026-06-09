@@ -45,6 +45,7 @@ void Scene::Update(float delta_time)
 {
 	for(auto& object : m_objects)
 	{
+		if (!object->IsActive())continue;
 		object->Update(delta_time);
 	}
 
@@ -57,6 +58,7 @@ void Scene::Render() const
 {
 	for (const auto& object : m_objects)
 	{
+		if (!object->IsActive())continue;
 		object->Render();
 	}
 }
@@ -67,6 +69,7 @@ void dae::Scene::CheckCollisions()
 
 	for (auto& obj : m_objects)
 	{
+		if (!obj->IsActive())continue;
 		if (auto* col = obj->GetComponent<ColliderComponent>())
 			colliders.push_back(col);
 	}

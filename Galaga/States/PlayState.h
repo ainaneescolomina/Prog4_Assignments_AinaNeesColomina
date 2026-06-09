@@ -1,3 +1,4 @@
+#pragma once
 #include <memory>
 #include "GameState.h"
 #include "Commands.h"

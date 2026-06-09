@@ -14,6 +14,7 @@ namespace dae
 
 		Transform m_transform{this};
 		bool m_isMarkedForDestroy{ false };
+		bool m_isActive{ true };
 
 		// Scene Graph
 		GameObject* m_parent{};
@@ -33,6 +34,8 @@ namespace dae
 
 		void MarkForDestroy() { m_isMarkedForDestroy = true; }
 		bool IsMarkedForDestroy() const { return m_isMarkedForDestroy; }
+		bool IsActive() const { return m_isActive; }
+		void SetActive(bool active) { m_isActive = active; }
 
 		GameObject() = default;
 		~GameObject();

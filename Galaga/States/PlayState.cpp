@@ -13,6 +13,7 @@
 // ---------------
 
 #include "Factory.h"
+#include "GameComponents.h"
 
 void dae::PlayState::OnEnter()
 {

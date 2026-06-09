@@ -167,6 +167,8 @@ namespace dae
 
 		virtual void Update(float delta_time) override;
 
+		void SetVelocity(float vx, float vy);
+
 	private:
 		glm::vec2 m_velocity;
 	};

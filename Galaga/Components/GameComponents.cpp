@@ -1,6 +1,5 @@
 #include "GameComponents.h"
 #include "GameObject.h"
-#include "ServiceLocator.h"
 #include "Renderer.h"
 #include "EnemyComponents.h"
 
@@ -31,8 +30,10 @@ void dae::LivesComponent::TakeDamage(int damage)
 		Event e(make_sdbm_hash("ActorDied"));
 		m_subject.NotifyObservers(e, GetOwner());
 
-		// Ask!
-		GetOwner()->MarkForDestroy();
+		if (m_deathAction == DeathAction::Destroy)
+			GetOwner()->MarkForDestroy();
+		else
+			GetOwner()->SetActive(false);
 	}
 
 	Event e(make_sdbm_hash("UpdateLives"));
@@ -77,10 +78,6 @@ void dae::ShootComponent::Shoot()
 	if (m_timer > 0.f) return;
 
 	m_timer = m_cooldown;
-
-	//sound here?
-	auto& sound = dae::servicelocator::get_sound_system();
-	sound.play(0, 0.5f);
 
 	Event e(make_sdbm_hash("SpawnBullet"));
 	m_subject.NotifyObservers(e, GetOwner());
@@ -160,3 +157,14 @@ void dae::ScoreDisplayComponent::UpdateText()
 }
 
 #pragma endregion
+
+void dae::OffscreenDeactivateComponent::Update(float)
+{
+	const auto pos = GetOwner()->GetTransform().GetWorldPosition();
+
+	if (pos.x < 20.f || pos.x > m_width ||
+		pos.y < 20.f || pos.y > m_height)
+	{
+		GetOwner()->SetActive(false);
+	}
+}
