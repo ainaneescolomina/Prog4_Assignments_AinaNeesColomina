@@ -1,6 +1,6 @@
 #pragma once
 #include "Observer.h"
-#include "Components.h"
+#include "GameComponents.h"
 #include <iostream>
 
 #if USE_STEAMWORKS

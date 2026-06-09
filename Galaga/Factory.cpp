@@ -1,10 +1,10 @@
 #include "Factory.h"
 #include "GameObject.h"
 #include "InputManager.h"
-#include "Commands.h"
-#include "Components.h"
+#include "GameCommands.h"
+#include "GameComponents.h"
+#include "EnemyStateComponent.h"
 #include <SDL3/SDL_keycode.h>
-#include <EnemyStateComponent.h>
 
 namespace ActorFactory
 {

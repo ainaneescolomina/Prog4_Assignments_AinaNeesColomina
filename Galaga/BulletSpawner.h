@@ -1,11 +1,10 @@
 #include "Observer.h"
 #include "GameObject.h"
-#include "Components.h"
+#include "GameComponents.h"
 #include "Scene.h"
 
 namespace dae
 {
-    // Engine or Game?
     class BulletSpawner final : public Observer
     {
     public:

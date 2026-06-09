@@ -16,8 +16,3 @@ void dae::MoveCommand::Execute(float delta_time)
 	auto pos = m_pObject->GetTransform().GetPosition();
 	m_pObject->SetPosition(pos.x + (m_inputX * delta_time), pos.y + (m_inputY * delta_time));
 }
-
-void dae::ShootCommand::Execute(float)
-{
-	m_pObject->GetComponent<ShootComponent>()->Shoot();
-}

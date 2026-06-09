@@ -1,6 +1,6 @@
 #include "WaveSpawner.h"
 #include "Scene.h"
-#include "Components.h"
+#include "GameComponents.h"
 #include "Factory.h"
 #include "EnemyStateComponent.h"
 #include "EnemyFormationState.h"
