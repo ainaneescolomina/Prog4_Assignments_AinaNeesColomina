@@ -12,7 +12,7 @@ namespace dae {
 
 namespace ActorFactory
 {
-    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos);
+    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput = true, bool gamepadInput = true);
     std::unique_ptr<dae::GameObject> CreateEnemy(const glm::vec2& pos);
 }
 

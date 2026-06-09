@@ -8,7 +8,7 @@
 
 namespace ActorFactory
 {
-    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput = true, bool gamepadInput = true)
+    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput, bool gamepadInput)
     {
         auto player = std::make_unique<dae::GameObject>();
         player->AddComponent<dae::RenderComponent>()->SetTexture("player.png", true);
