@@ -43,6 +43,8 @@ namespace dae
 		void UnbindCommand(SDL_Keycode key, KeyState state);
 		void UnbindGamepadCommand(unsigned int button, KeyState state);
 
+		void ClearAllBindings();
+
 	private:
 		std::unique_ptr<dae::Gamepad> m_pGamepad;
 

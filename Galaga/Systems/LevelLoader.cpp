@@ -20,19 +20,20 @@ std::vector<EnemySpawnData>LevelLoader::LoadLevel(const std::string& filepath)
         return enemies;
     }
 
-    constexpr float startX{ 150.f };
-    constexpr float startY{ 100.f };
+    constexpr float startX{ 625.f };
+    constexpr float startY{ 300.f };
 
     constexpr float marginX{ 70.f };
     constexpr float marginY{ 60.f };
 
     std::string line{};
     int row{};
+    float delay = 0.f;
 
     while (std::getline(inputFile, line))
     {
         if (line.empty()) continue;
-        for (int idx{}; idx < line.size(); ++idx)
+        for (int idx{}; idx < static_cast<int>(line.size()); ++idx)
         {
             EnemyType type{};
 
@@ -57,13 +58,16 @@ std::vector<EnemySpawnData>LevelLoader::LoadLevel(const std::string& filepath)
 
             glm::vec2 pos
             {
-                startX + idx * marginX,
-                startY + row * marginY
+                startX - idx * marginX,
+                startY - row * marginY
             };
 
-            enemies.push_back({type, pos});
+            enemies.push_back({type, pos, delay});
+
+            delay += 0.08f;
         }
 
+        delay += 0.35f;
         ++row;
     }
 

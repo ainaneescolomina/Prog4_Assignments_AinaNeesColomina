@@ -1,3 +1,4 @@
+#include "InputManager.h"
 #include <backends/imgui_impl_sdl3.h>
 #include "InputManager.h"
 #include <algorithm>
@@ -126,6 +127,12 @@ void dae::InputManager::UnbindGamepadCommand(unsigned int button, KeyState state
 		),
 		m_pGamepadBindings.end()
 	);
+}
+
+void dae::InputManager::ClearAllBindings()
+{
+	m_pBindings.clear();
+	m_pGamepadBindings.clear();
 }
 
 

@@ -1,5 +1,5 @@
-..B..B..
-.GGGGGG.
-..GGGG..
-ZZZZZZZZ
 .ZZZZZZ.
+ZZZZZZZZ
+..GGGG..
+.GGGGGG.
+..B..B..

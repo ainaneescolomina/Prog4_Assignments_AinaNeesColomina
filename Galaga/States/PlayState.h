@@ -7,13 +7,17 @@
 namespace dae
 {
     class Scene;
-    class PlayState final : public dae::GameState
+    class PlayState final : public dae::GameState, public Observer
     {
     public:
+        // GameState Functions
         void OnEnter() override;
         void OnExit() override;
 
         std::unique_ptr<dae::GameState> Update(float delta_time) override;
+
+        // Observer Functions
+        virtual void Notify(Event event, void* sender) override;
 
     private:
         Scene* m_pScene = nullptr;

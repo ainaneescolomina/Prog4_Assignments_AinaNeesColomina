@@ -66,8 +66,10 @@ void dae::PlayState::OnEnter()
 	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
 	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(m_pBulletSpawner.get());
 
-	// Enemies
-	m_pWaveSpawner->SpawnWave(score);
+	// --- GAMEPLAY ---
+	m_pWaveSpawner->SetPlayerScore(score);
+	m_pWaveSpawner->SpawnWave();
+	lives->GetSubject().AddObserver(this);
 
 	// Add to scene
 	m_pScene->Add(std::move(player));
@@ -77,15 +79,33 @@ void dae::PlayState::OnEnter()
 
 void dae::PlayState::OnExit()
 {
+	dae::InputManager::GetInstance().ClearAllBindings();
 	m_pScene->RemoveAll();
 }
 
-std::unique_ptr<dae::GameState> dae::PlayState::Update(float)
+std::unique_ptr<dae::GameState> dae::PlayState::Update(float delta_time)
 {
+	m_pWaveSpawner->Update(delta_time);
+
     if (m_playerDied) 
 	{
         return std::make_unique<HighscoreState>();
     }
 
     return nullptr;
+}
+
+void dae::PlayState::Notify(Event event, void* sender)
+{
+	if (event.id == make_sdbm_hash("ActorDied"))
+	{
+		auto* otherObj = static_cast<GameObject*>(sender);
+		auto* otherTag = otherObj->GetComponent<TagComponent>();
+
+		if (!otherTag) return;
+		if (otherTag->GetTag() == TagComponent::Tags::Player)
+		{
+			m_playerDied = true;
+		}
+	}
 }
