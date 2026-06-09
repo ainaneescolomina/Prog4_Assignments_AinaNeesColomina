@@ -4,6 +4,7 @@
 #include "Factory.h"
 #include "EnemyComponents.h"
 #include "EnemyFormationState.h"
+#include "GameObject.h"
 
 void dae::WaveSpawner::Notify(Event event, void* sender)
 {
@@ -48,6 +49,24 @@ void dae::WaveSpawner::SpawnWave()
     m_enemiesToSpawn = LevelLoader::LoadLevel(levelPath);
 }
 
+void dae::WaveSpawner::SkipLevel()
+{
+    for (auto* enemy : m_spawnedEnemies)
+    {
+        if (enemy)
+            enemy->MarkForDestroy();
+    }
+
+    m_spawnedEnemies.clear();
+
+    m_aliveEnemies = 0;
+    m_enemiesToSpawn.clear();
+
+    m_levelIdx = (m_levelIdx % 3) + 1;
+
+    SpawnWave();
+}
+
 void dae::WaveSpawner::SpawnEnemy(const EnemySpawnData& enemyData)
 {
     auto enemy = ActorFactory::CreateEnemy(enemyData.type, enemyData.pos);
@@ -72,7 +91,10 @@ void dae::WaveSpawner::SpawnEnemy(const EnemySpawnData& enemyData)
     auto stateComp = enemy->GetComponent<EnemyStateComponent>();
     enemy->SetPosition(spawnPos.x, spawnPos.y - 400.f);
     stateComp->SetState(std::make_unique<EnemyFormationState>(215.f, enemyData.pos));
+    
+    auto* enemyPtr = enemy.get();
     m_pScene->Add(std::move(enemy));
 
     ++m_aliveEnemies;
+    m_spawnedEnemies.push_back(enemyPtr);
 }

@@ -7,6 +7,7 @@ namespace dae
 {
     class Scene;
     class ScoreComponent;
+    class GameObject;
 
     class WaveSpawner final : public Observer
     {
@@ -19,12 +20,16 @@ namespace dae
         void Update(float delta_time);
         void SpawnWave();
 
+        void SkipLevel();
+
     private:
         void SpawnEnemy(const EnemySpawnData& enemyData);
 
         dae::Scene* m_pScene = nullptr;
         dae::ScoreComponent* m_pPlayerScore = nullptr;
+
         std::vector<EnemySpawnData> m_enemiesToSpawn;
+        std::vector<dae::GameObject*> m_spawnedEnemies;
 
         int m_levelIdx = 1;
         int m_aliveEnemies{};

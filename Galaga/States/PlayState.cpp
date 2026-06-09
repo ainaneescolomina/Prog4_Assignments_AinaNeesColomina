@@ -16,6 +16,8 @@
 
 void dae::PlayState::OnEnter()
 {
+	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(this));
+
 	m_pScene = &SceneManager::GetInstance().CreateScene();
 
 	auto soundSystem = std::make_unique<dae::SdlSoundSystem>();
@@ -57,7 +59,7 @@ void dae::PlayState::OnEnter()
 
 	// Observer / Subject
 	auto score = player->GetComponent<dae::ScoreComponent>();
-	score->GetSubject().AddObserver(&m_pWinAchievement);
+	//score->GetSubject().AddObserver(&m_pWinAchievement);
 
 	auto lives = player->GetComponent<dae::LivesComponent>();
 	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
@@ -79,6 +81,7 @@ void dae::PlayState::OnEnter()
 
 void dae::PlayState::OnExit()
 {
+	InputManager::GetInstance().UnbindCommand(SDLK_F1, KeyState::Down);
 	dae::InputManager::GetInstance().ClearAllBindings();
 	m_pScene->RemoveAll();
 }
@@ -108,4 +111,14 @@ void dae::PlayState::Notify(Event event, void* sender)
 			m_playerDied = true;
 		}
 	}
+}
+
+void dae::PlayState::SkipLevel()
+{
+	m_pWaveSpawner->SkipLevel();
+}
+
+void dae::SkipLevelCommand::Execute(float)
+{
+	m_pPlayState->SkipLevel();
 }
