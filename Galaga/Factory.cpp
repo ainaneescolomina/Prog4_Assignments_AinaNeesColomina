@@ -8,7 +8,7 @@
 
 namespace ActorFactory
 {
-    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos)
+    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput = true, bool gamepadInput = true)
     {
         auto player = std::make_unique<dae::GameObject>();
         player->AddComponent<dae::RenderComponent>()->SetTexture("player.png", true);
@@ -23,18 +23,24 @@ namespace ActorFactory
 
         float speed = 150.f;
         // Keyboard bindings
-        input.BindCommand(SDLK_W, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -speed));
-        input.BindCommand(SDLK_S, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, speed));
-        input.BindCommand(SDLK_A, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
-        input.BindCommand(SDLK_D, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
-        input.BindCommand(SDLK_E, dae::KeyState::Up, std::make_unique<dae::ShootCommand>(player.get()));
+        if (keyboardInput)
+        {
+            input.BindCommand(SDLK_W, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -speed));
+            input.BindCommand(SDLK_S, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, speed));
+            input.BindCommand(SDLK_A, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
+            input.BindCommand(SDLK_D, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
+            input.BindCommand(SDLK_E, dae::KeyState::Up, std::make_unique<dae::ShootCommand>(player.get()));
+        }
 
         // Gamepad bindings
-        input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -speed));
-        input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, speed));
-        input.BindGamepadCommand(dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
-        input.BindGamepadCommand(dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
-        input.BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
+        if (gamepadInput)
+        {
+            input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, -speed));
+            input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), 0.f, speed));
+            input.BindGamepadCommand(dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
+            input.BindGamepadCommand(dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
+            input.BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
+        }
 
         // Observer / Subject
         collider->GetSubject().AddObserver(damage);

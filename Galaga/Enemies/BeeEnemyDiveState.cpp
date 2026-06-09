@@ -17,11 +17,8 @@ std::unique_ptr<dae::EnemyState> dae::BeeEnemyDiveState::Update(dae::GameObject*
     pos.y += m_speed * delta_time;
     owner->SetPosition(pos.x, pos.y);
 
-    if (pos.y > 750) 
-    {
-        //owner->SetPosition(pos.x, -50);
+    if (pos.y > 750)
         return std::make_unique<dae::EnemyFormationState>(150.f, m_startPos);
-    }
 
     return nullptr;
 }

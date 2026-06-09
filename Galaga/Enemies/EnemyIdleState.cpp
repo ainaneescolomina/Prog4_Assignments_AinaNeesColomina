@@ -18,6 +18,7 @@ std::unique_ptr<dae::EnemyState> dae::EnemyIdleState::Update(dae::GameObject*, f
     //float xOffset = std::sin(m_timer * 2.f) * 0.5f;
     //owner->SetPosition(pos.x + xOffset, pos.y);
 
+    // fer com un enum de attack strategy i passar
     if (m_timer >= m_waitAttack) 
     {
         return std::make_unique<dae::BeeEnemyDiveState>();
