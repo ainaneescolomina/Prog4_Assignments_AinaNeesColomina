@@ -1,5 +1,6 @@
-#include "EnemyStateComponent.h"
+#include "EnemyComponents.h"
 
+EnemyComponent::~EnemyComponent() = default;
 EnemyStateComponent::~EnemyStateComponent() = default;
 
 void EnemyStateComponent::Update(float delta_time)

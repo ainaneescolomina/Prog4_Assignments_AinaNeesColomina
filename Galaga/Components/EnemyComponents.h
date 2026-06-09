@@ -1,5 +1,21 @@
 #include "Components.h"
 #include "EnemyState.h"
+#include "EnemyType.h"
+
+class EnemyComponent final : public dae::Component {
+public:
+    explicit EnemyComponent(dae::GameObject* owner, EnemyType type) : Component(owner), m_Type(type) {}
+    virtual ~EnemyComponent();
+    EnemyComponent(const EnemyComponent& other) = delete;
+    EnemyComponent(EnemyComponent&& other) = delete;
+    EnemyComponent& operator=(const EnemyComponent& other) = delete;
+    EnemyComponent& operator=(EnemyComponent&& other) = delete;
+
+    EnemyType GetType() const { return m_Type; }
+
+private:
+    EnemyType m_Type;
+};
 
 class EnemyStateComponent final : public dae::Component {
 public:

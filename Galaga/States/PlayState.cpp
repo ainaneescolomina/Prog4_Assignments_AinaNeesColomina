@@ -26,13 +26,13 @@ void dae::PlayState::OnEnter()
 	sound.load(0, "Data/Sounds/Fighter_Shot1.mp3");
 
 	///////////////
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Silkscreen-Regular.ttf", 36);
-	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Silkscreen-Regular.ttf", 18);
+	auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
+	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 18);
 	auto& input = dae::InputManager::GetInstance();
 
 	// --- UI ---
 	auto background = std::make_unique<dae::GameObject>();
-	background->AddComponent<dae::RenderComponent>()->SetTexture("background.png");
+	background->AddComponent<dae::RenderComponent>()->SetTexture("Images/background.png");
 	m_pScene->Add(std::move(background));
 
 	auto highscoreTitle = UIFactory::CreateUI_Text(font, { 750, 200 }, "High Score", { 255, 0, 0, 255 });
@@ -53,7 +53,7 @@ void dae::PlayState::OnEnter()
 	auto scoreTitle = UIFactory::CreateUI_Text(font, { 850, 400 }, "1 Up", { 255, 0, 0, 255 });
 	m_pScene->Add(std::move(scoreTitle));
 	auto scoreUI = UIFactory::CreateUI_Score(font, { 850, 450 });
-	auto livesUI = UIFactory::CreateUI_Lives({ 800, 600 }, "player.png");
+	auto livesUI = UIFactory::CreateUI_Lives({ 800, 600 }, "Images/player.png");
 
 	// Observer / Subject
 	auto score = player->GetComponent<dae::ScoreComponent>();
@@ -67,11 +67,7 @@ void dae::PlayState::OnEnter()
 	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(m_pBulletSpawner.get());
 
 	// Enemies
-	EnemyWave wave1{
-		{{450,200},{350,250},{400,250},{450,250},{500,250},{550,250},{600,250},{500,200}}
-	};
-
-	m_pWaveSpawner->SpawnWave(wave1, score);
+	m_pWaveSpawner->SpawnWave(score);
 
 	// Add to scene
 	m_pScene->Add(std::move(player));

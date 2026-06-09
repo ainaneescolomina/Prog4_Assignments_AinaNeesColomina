@@ -182,25 +182,28 @@ target_compile_features(minigin_engine PUBLIC cxx_std_20)
 # all game files
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Main.cpp
-  Galaga/Factory.cpp
+  Galaga/Systems/Factory.cpp
+  Galaga/Systems/WaveSpawner.cpp 
+  Galaga/Systems/LevelLoader.cpp
   Galaga/States/MenuState.cpp
   Galaga/States/PlayState.cpp
   Galaga/States/HighscoreState.cpp 
-  Galaga/Enemies/WaveSpawner.cpp 
-  Galaga/Components/EnemyStateComponent.cpp
   Galaga/Enemies/EnemyFormationState.cpp
   Galaga/Enemies/EnemyIdleState.cpp
   Galaga/Enemies/BeeEnemyDiveState.cpp 
   Galaga/Commands/GameCommands.cpp
-  Galaga/Components/GameComponents.cpp)
+  Galaga/Components/EnemyComponents.cpp
+  Galaga/Components/GameComponents.cpp )
 
 target_include_directories(${TARGET_NAME} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga
-    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Enemies
-    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/States
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Achievements
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Commands
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Components
-    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Achievements
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Enemies
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Enums
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/States
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Systems
 )
 
 target_link_libraries(${TARGET_NAME} PRIVATE minigin_engine)

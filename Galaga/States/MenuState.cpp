@@ -14,16 +14,16 @@ void dae::MenuState::OnEnter()
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
-    auto font = dae::ResourceManager::GetInstance().LoadFont("Silkscreen-Regular.ttf", 36);
-    auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Silkscreen-Regular.ttf", 18);
+    auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
+    auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 18);
 
     // --- UI ---
     auto background = std::make_unique<dae::GameObject>();
-    background->AddComponent<dae::RenderComponent>()->SetTexture("background.png");
+    background->AddComponent<dae::RenderComponent>()->SetTexture("Images/background.png");
     m_pScene->Add(std::move(background));
 
     auto logo = std::make_unique<dae::GameObject>();
-    logo->AddComponent<dae::RenderComponent>()->SetTexture("logo.png");
+    logo->AddComponent<dae::RenderComponent>()->SetTexture("Images/logo.png");
     logo->SetPosition(350.f, 217.f);
     m_pScene->Add(std::move(logo));
 
