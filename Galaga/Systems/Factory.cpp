@@ -50,7 +50,7 @@ namespace ActorFactory
         auto enemy = std::make_unique<dae::GameObject>();
         enemy->SetPosition(pos.x, pos.y);
         enemy->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Enemy);
-        enemy->AddComponent<EnemyComponent>(enemyType);
+        enemy->AddComponent<dae::EnemyComponent>(enemyType);
 
         auto* render = enemy->AddComponent<dae::RenderComponent>();
         int livesAmount{ 1 };

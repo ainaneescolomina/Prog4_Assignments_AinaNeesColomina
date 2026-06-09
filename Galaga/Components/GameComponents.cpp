@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "ServiceLocator.h"
 #include "Renderer.h"
+#include "EnemyComponents.h"
 
 
 #pragma region --- GAME ACTOR ---
@@ -44,13 +45,16 @@ void dae::ScoreComponent::Notify(Event event, void* sender)
 	{
 		auto* otherObj = static_cast<GameObject*>(sender);
 		auto* otherTag = otherObj->GetComponent<TagComponent>();
+		auto* otherEnemy = otherObj->GetComponent<EnemyComponent>();
 
 		// Preguntar
 		if (!otherTag) return;
-
 		if (otherTag->GetTag() == TagComponent::Tags::Enemy)
 		{
-			AddScore(100);
+			if (otherEnemy)
+				AddScore(otherEnemy->GetScoreValue());
+			else
+				AddScore(100);
 		}
 	}
 }

@@ -2,20 +2,29 @@
 #include "EnemyState.h"
 #include "EnemyType.h"
 
-class EnemyComponent final : public dae::Component {
-public:
-    explicit EnemyComponent(dae::GameObject* owner, EnemyType type) : Component(owner), m_Type(type) {}
-    virtual ~EnemyComponent();
-    EnemyComponent(const EnemyComponent& other) = delete;
-    EnemyComponent(EnemyComponent&& other) = delete;
-    EnemyComponent& operator=(const EnemyComponent& other) = delete;
-    EnemyComponent& operator=(EnemyComponent&& other) = delete;
+namespace dae
+{
+    class EnemyComponent final : public dae::Component {
+    public:
+        explicit EnemyComponent(dae::GameObject* owner, EnemyType type) : Component(owner), m_Type(type) {}
+        virtual ~EnemyComponent();
+        EnemyComponent(const EnemyComponent& other) = delete;
+        EnemyComponent(EnemyComponent&& other) = delete;
+        EnemyComponent& operator=(const EnemyComponent& other) = delete;
+        EnemyComponent& operator=(EnemyComponent&& other) = delete;
 
-    EnemyType GetType() const { return m_Type; }
+        EnemyType GetType() const { return m_Type; }
 
-private:
-    EnemyType m_Type;
-};
+        void SetDiving(bool diving) { m_IsDiving = diving; }
+        bool IsDiving() const { return m_IsDiving; }
+
+        int GetScoreValue() const;
+
+    private:
+        EnemyType m_Type;
+        bool m_IsDiving{};
+    };
+}
 
 class EnemyStateComponent final : public dae::Component {
 public:

@@ -1,7 +1,24 @@
 #include "EnemyComponents.h"
 
-EnemyComponent::~EnemyComponent() = default;
+dae::EnemyComponent::~EnemyComponent() = default;
 EnemyStateComponent::~EnemyStateComponent() = default;
+
+int dae::EnemyComponent::GetScoreValue() const
+{
+    switch (m_Type)
+    {
+    case EnemyType::Bee:
+        return m_IsDiving? 100 : 50;
+
+    case EnemyType::Butterfly:
+        return m_IsDiving? 160 : 80;
+
+    case EnemyType::BossGalaga:
+        return m_IsDiving? 400 : 150;
+    }
+
+    return 0;
+}
 
 void EnemyStateComponent::Update(float delta_time)
 {
