@@ -56,6 +56,8 @@ void dae::ButterflyDiveState::OnEnter(dae::GameObject* owner)
 
     // return
     m_points.push_back({baseX + xOffset * 1.5f, base.y + 75.f});
+
+    m_segmentSpeed = m_speed;
 }
 
 void dae::ButterflyDiveState::OnExit(dae::GameObject* owner)
@@ -66,7 +68,7 @@ void dae::ButterflyDiveState::OnExit(dae::GameObject* owner)
 
 std::unique_ptr<dae::EnemyState> dae::ButterflyDiveState::Update(dae::GameObject* owner, float delta_time)
 {
-    if (m_currentPoint >= m_points.size())
+    if (m_currentPoint >= static_cast<int>(m_points.size()))
         return std::make_unique<EnemyFormationState>(250.f, m_startPos);
 
     auto pos3D = owner->GetTransform().GetPosition();
@@ -83,8 +85,6 @@ std::unique_ptr<dae::EnemyState> dae::ButterflyDiveState::Update(dae::GameObject
         m_segmentSpeed = m_speed * (0.8f + (float)(rand() % 41) / 100.f);
         return nullptr;
     }
-
-    if (m_segmentSpeed <= 0) m_segmentSpeed = m_speed;
 
     dir = glm::normalize(dir);
     pos += dir * m_segmentSpeed * delta_time;

@@ -6,6 +6,28 @@ namespace dae
 	class GameObject;
 
 	// --- GAME ACTOR ---
+	class MovementComponent final : public Component, public Observer
+	{
+	public:
+		explicit MovementComponent(GameObject* ownerRef, float xPos, float yPos)
+			: Component(ownerRef), m_resetPos(xPos, yPos) {}
+
+		virtual ~MovementComponent() = default;
+		MovementComponent(const MovementComponent& other) = delete;
+		MovementComponent(MovementComponent&& other) = delete;
+		MovementComponent& operator=(const MovementComponent& other) = delete;
+		MovementComponent& operator=(MovementComponent&& other) = delete;
+
+		virtual void Notify(Event event, void* sender) override;
+
+		void SetIsFrozen(bool frozen) { m_isFrozen = frozen; };
+		bool GetIsFrozen() const { return m_isFrozen; };
+
+	private:
+		glm::vec2 m_resetPos;
+		bool m_isFrozen{false};
+	};
+
 	class LivesComponent final : public Component, public Observer
 	{
 	public:
@@ -66,7 +88,8 @@ namespace dae
 		{
 			Player,
 			Enemy,
-			Bullet
+			Bullet,
+			TractorBeam
 		};
 
 		explicit TagComponent(GameObject* ownerRef, Tags tag) : Component(ownerRef), m_tag{ tag } {}
@@ -121,6 +144,7 @@ namespace dae
 		virtual void Notify(Event event, void* sender) override;
 
 		void AddThreat(TagComponent::Tags threat);
+		void HandleTractorBeamCapture(GameObject* beamObject);
 
 		Subject& GetSubject() { return m_subject; }
 
@@ -140,6 +164,21 @@ namespace dae
 	private:
 		float m_height;
 		float m_width;
+	};
+
+	class TractorBeamTargetComponent final : public Component
+	{
+	public:
+		TractorBeamTargetComponent(GameObject* owner, float xPos, float yPos)
+			: Component(owner), m_targetPos(xPos, yPos), m_subject(this) {}
+
+		virtual void Update(float delta_time) override;
+
+		Subject& GetSubject() { return m_subject; };
+
+	private:
+		glm::vec2 m_targetPos;
+		Subject m_subject;
 	};
 
 	// --- UI ---

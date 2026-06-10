@@ -1,7 +1,11 @@
 #include "EnemyComponents.h"
+#include "GameObject.h"
 
-dae::EnemyComponent::~EnemyComponent() = default;
-EnemyStateComponent::~EnemyStateComponent() = default;
+dae::EnemyComponent::~EnemyComponent()
+{
+    if (m_pBeamObject)
+        m_pBeamObject->MarkForDestroy();
+}
 
 int dae::EnemyComponent::GetScoreValue() const
 {
@@ -19,6 +23,8 @@ int dae::EnemyComponent::GetScoreValue() const
 
     return 0;
 }
+
+EnemyStateComponent::~EnemyStateComponent() = default;
 
 void EnemyStateComponent::Update(float delta_time)
 {

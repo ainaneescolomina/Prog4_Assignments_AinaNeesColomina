@@ -72,6 +72,12 @@ void dae::WaveSpawner::SpawnEnemy(const EnemySpawnData& enemyData)
     auto enemy = ActorFactory::CreateEnemy(enemyData.type, enemyData.pos);
 
     if (!enemy) return;
+    if (enemyData.type == EnemyType::BossGalaga)
+    {
+        auto beam = ActorFactory::CreateTractorBeam(enemy.get());
+        m_pScene->Add(std::move(beam));
+    }
+
     if (auto* lives = enemy->GetComponent<dae::LivesComponent>())
     {
         lives->GetSubject().AddObserver(this);

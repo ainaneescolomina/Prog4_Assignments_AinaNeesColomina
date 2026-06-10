@@ -23,16 +23,25 @@ std::unique_ptr<dae::EnemyState> dae::EnemyIdleState::Update(dae::GameObject* ow
 
     if (m_timer >= m_waitAttack)
     {
+        m_timer = 0.f;
+
         switch (enemyComp->GetType())
         {
-        case EnemyType::Bee:
-            return std::make_unique<BeeDiveState>();
+            case EnemyType::Bee:
+                return std::make_unique<BeeDiveState>();
+                break;
 
-        case EnemyType::Butterfly:
-            return std::make_unique<ButterflyDiveState>();
+            case EnemyType::Butterfly:
+                return std::make_unique<ButterflyDiveState>();
+                break;
 
-        case EnemyType::BossGalaga:
-            return std::make_unique<BeeDiveState>(); // placeholder
+            case EnemyType::BossGalaga:
+            {
+                bool tractorBeam = (rand() % 100) < 30;
+
+                if (tractorBeam) return std::make_unique<GalagaTractorBeamState>();
+                return std::make_unique<GalagaDiveState>();
+            }
         }
     }
 

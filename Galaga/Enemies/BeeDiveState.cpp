@@ -70,6 +70,8 @@ void dae::BeeDiveState::OnEnter(dae::GameObject* owner)
     baseX + xOffset * 0.2f,
     base.y + 50.f   // direction of the "escape"
         });
+
+    m_segmentSpeed = m_speed;
 }
 
 void dae::BeeDiveState::OnExit(dae::GameObject* owner)
@@ -80,7 +82,7 @@ void dae::BeeDiveState::OnExit(dae::GameObject* owner)
 
 std::unique_ptr<dae::EnemyState> dae::BeeDiveState::Update(dae::GameObject* owner, float delta_time)
 {
-    if (m_currentPoint >= m_points.size())
+    if (m_currentPoint >= static_cast<int>(m_points.size()))
         return std::make_unique<EnemyFormationState>(250.f,m_startPos);
 
     auto ownerPos = owner->GetTransform().GetPosition();
@@ -97,8 +99,6 @@ std::unique_ptr<dae::EnemyState> dae::BeeDiveState::Update(dae::GameObject* owne
         m_segmentSpeed = m_speed * (0.7f + (float)(rand() % 61) / 100.f);
         return nullptr;
     }
-
-    if (m_segmentSpeed <= 0) m_segmentSpeed = m_speed;
 
     dir = glm::normalize(dir);
     pos += dir * m_segmentSpeed * delta_time;

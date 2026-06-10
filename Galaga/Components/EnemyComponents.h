@@ -20,9 +20,15 @@ namespace dae
 
         int GetScoreValue() const;
 
+        void SetBeamObject(GameObject* beam) { m_pBeamObject = beam; }
+        GameObject* GetBeamObject() const { return m_pBeamObject; }
+
     private:
         EnemyType m_type;
         bool m_isDiving{};
+
+        // Boss Galaga Beam
+        GameObject* m_pBeamObject{};
     };
 }
 

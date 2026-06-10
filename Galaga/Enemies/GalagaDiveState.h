@@ -18,8 +18,11 @@ namespace dae
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time);
 
     private:
-        float m_speed = 150.f;
         glm::vec2 m_startPos{};
-        float m_timer{};
+        float m_speed{ 220.f };
+        float m_segmentSpeed{ 0.f };
+
+        std::vector<glm::vec2> m_points{};
+        int m_currentPoint{ 0 };
     };
 }

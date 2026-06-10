@@ -6,6 +6,7 @@
 namespace dae
 {
     class GameObject;
+    class EnemyComponent;
 
     class GalagaTractorBeamState final : public EnemyState
     {
@@ -18,17 +19,18 @@ namespace dae
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time);
 
     private:
-        enum class Phase
-        {
-            Looping,
-            MoveDown,
-            TractorBeam,
-            Return
-        };
+        dae::EnemyComponent* m_enemyComp{};
 
-        float m_speed = 150.f;
         glm::vec2 m_startPos{};
-        float m_timer{};
-        Phase m_phase = Phase::Looping;
+        float m_speed{ 220.f };
+        float m_segmentSpeed{ 0.f };
+
+        std::vector<glm::vec2> m_points{};
+        int m_currentPoint{ 0 };
+
+
+        bool m_beamActive{ false };
+        float m_beamTimer{ 0.f };
+        float m_beamDuration{ 3.f };
     };
 }

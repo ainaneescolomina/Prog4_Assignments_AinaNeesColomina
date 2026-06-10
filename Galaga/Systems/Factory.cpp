@@ -21,6 +21,8 @@ namespace ActorFactory
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
 
+        auto* movement = player->AddComponent<dae::MovementComponent>(pos.x, pos.y);
+
         float speed = 150.f;
         // Keyboard bindings
         if (keyboardInput)
@@ -42,6 +44,9 @@ namespace ActorFactory
         collider->GetSubject().AddObserver(damage);
         damage->GetSubject().AddObserver(lives);
         damage->AddThreat(dae::TagComponent::Tags::Enemy);
+        damage->AddThreat(dae::TagComponent::Tags::TractorBeam);
+        lives->GetSubject().AddObserver(movement);
+
         return player;
     }
 
@@ -83,6 +88,28 @@ namespace ActorFactory
         damage->GetSubject().AddObserver(lives);
         damage->AddThreat(dae::TagComponent::Tags::Bullet);
         return enemy;
+    }
+
+    std::unique_ptr<dae::GameObject> CreateTractorBeam(dae::GameObject* enemy)
+    {
+        // Create the Beam GameObject
+        auto beam = std::make_unique<dae::GameObject>();
+        beam->AddComponent<dae::RenderComponent>()->SetTexture("Images/player_explosion_2.png", true);
+
+        // Position it directly underneath the Boss
+        beam->SetPosition(0.f, 50.f);
+        beam->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::TractorBeam);
+
+        beam->AddComponent<dae::ColliderComponent>(60.f, 400.f);
+
+        // deactivated initially
+        beam->SetActive(false);
+        beam->SetParent(enemy, false);
+
+        auto* enemyComp = enemy->GetComponent<dae::EnemyComponent>();
+        enemyComp->SetBeamObject(beam.get());
+
+        return beam;
     }
 }
 
