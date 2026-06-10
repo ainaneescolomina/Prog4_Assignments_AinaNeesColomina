@@ -64,7 +64,7 @@ std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameOb
 
         m_beamTimer += delta_time;
 
-        if (m_beamTimer >= 3.f)
+        if (m_beamTimer >= m_beamDuration)
         {
             m_beamActive = false;
             if (m_enemyComp) m_enemyComp->GetBeamObject()->SetActive(false);
