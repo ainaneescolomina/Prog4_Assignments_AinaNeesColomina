@@ -191,10 +191,14 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/States/HighscoreState.cpp 
   Galaga/Enemies/EnemyFormationState.cpp
   Galaga/Enemies/EnemyIdleState.cpp
-  Galaga/Enemies/BeeEnemyDiveState.cpp 
+  Galaga/Enemies/BeeDiveState.cpp
+  Galaga/Enemies/ButterflyDiveState.cpp
+  Galaga/Enemies/GalagaDiveState.cpp
+  Galaga/Enemies/GalagaTractorBeamState.cpp
+  Galaga/Enemies/EnemyDiveState.cpp
   Galaga/Commands/GameCommands.cpp
   Galaga/Components/EnemyComponents.cpp
-  Galaga/Components/GameComponents.cpp)
+  Galaga/Components/GameComponents.cpp )
 
 target_include_directories(${TARGET_NAME} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga

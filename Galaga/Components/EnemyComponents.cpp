@@ -5,16 +5,16 @@ EnemyStateComponent::~EnemyStateComponent() = default;
 
 int dae::EnemyComponent::GetScoreValue() const
 {
-    switch (m_Type)
+    switch (m_type)
     {
     case EnemyType::Bee:
-        return m_IsDiving? 100 : 50;
+        return m_isDiving? 100 : 50;
 
     case EnemyType::Butterfly:
-        return m_IsDiving? 160 : 80;
+        return m_isDiving? 160 : 80;
 
     case EnemyType::BossGalaga:
-        return m_IsDiving? 400 : 150;
+        return m_isDiving? 400 : 150;
     }
 
     return 0;

@@ -1,27 +1,39 @@
 #include "EnemyIdleState.h"
 #include "GameObject.h"
 #include <random>
-#include "BeeEnemyDiveState.h"
+
+#include "EnemyComponents.h"
+#include "BeeDiveState.h"
+#include "ButterflyDiveState.h"
+#include "GalagaDiveState.h"
+#include "GalagaTractorBeamState.h"
 
 void dae::EnemyIdleState::OnEnter(dae::GameObject*)
 {
-	m_waitAttack = static_cast<float>(rand() % 15 + 5);
+	m_waitAttack = static_cast<float>(rand() % 15 + 1);
 }
 
 void dae::EnemyIdleState::OnExit(dae::GameObject*){}
 
-std::unique_ptr<dae::EnemyState> dae::EnemyIdleState::Update(dae::GameObject*, float delta_time)
+std::unique_ptr<dae::EnemyState> dae::EnemyIdleState::Update(dae::GameObject* owner, float delta_time)
 {
     m_timer += delta_time;
 
-    //auto pos = owner->GetTransform().GetPosition();
-    //float xOffset = std::sin(m_timer * 2.f) * 0.5f;
-    //owner->SetPosition(pos.x + xOffset, pos.y);
+    auto* enemyComp = owner->GetComponent<EnemyComponent>();
 
-    // fer com un enum de attack strategy i passar
-    if (m_timer >= m_waitAttack) 
+    if (m_timer >= m_waitAttack)
     {
-        return std::make_unique<dae::BeeEnemyDiveState>();
+        switch (enemyComp->GetType())
+        {
+        case EnemyType::Bee:
+            return std::make_unique<BeeDiveState>();
+
+        case EnemyType::Butterfly:
+            return std::make_unique<ButterflyDiveState>();
+
+        case EnemyType::BossGalaga:
+            return std::make_unique<BeeDiveState>(); // placeholder
+        }
     }
 
     return nullptr;
