@@ -20,6 +20,7 @@ namespace ActorFactory
         auto* lives = player->AddComponent<dae::LivesComponent>(3, dae::LivesComponent::DeathAction::Destroy);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
+        player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
 
         auto* movement = player->AddComponent<dae::MovementComponent>(pos.x, pos.y);
 

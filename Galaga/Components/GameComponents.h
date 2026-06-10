@@ -153,6 +153,30 @@ namespace dae
 		Subject m_subject;
 	};
 
+	class ScreenBoundsComponent final : public Component
+	{
+	public:
+		ScreenBoundsComponent(GameObject* owner, float minX, float maxX, float minY, float maxY)
+			: Component(owner)
+			, m_minX(minX), m_maxX(maxX)
+			, m_minY(minY), m_maxY(maxY)
+		{}
+
+		virtual ~ScreenBoundsComponent() = default;
+		ScreenBoundsComponent(const ScreenBoundsComponent& other) = delete;
+		ScreenBoundsComponent(ScreenBoundsComponent&& other) = delete;
+		ScreenBoundsComponent& operator=(const ScreenBoundsComponent& other) = delete;
+		ScreenBoundsComponent& operator=(ScreenBoundsComponent&& other) = delete;
+
+		virtual void Update(float delta_time) override;
+
+	private:
+		float m_minX;
+		float m_maxX;
+		float m_minY;
+		float m_maxY;
+	};
+
 	class OffscreenDeactivateComponent final : public Component
 	{
 	public:

@@ -153,6 +153,20 @@ void dae::DamageManager::HandleTractorBeamCapture(GameObject* beamObject)
 	}
 }
 
+
+void dae::ScreenBoundsComponent::Update(float)
+{
+	auto pos = GetOwner()->GetTransform().GetWorldPosition();
+
+	// Clamp the position within the set bounding box
+	float clampedX = std::clamp(pos.x, m_minX, m_maxX);
+	float clampedY = std::clamp(pos.y, m_minY, m_maxY);
+
+	// Change the position if it's outside the bounds
+	if (clampedX != pos.x || clampedY != pos.y)
+		GetOwner()->SetPosition(clampedX, clampedY);
+}
+
 void dae::OffscreenDeactivateComponent::Update(float)
 {
 	const auto pos = GetOwner()->GetTransform().GetWorldPosition();
