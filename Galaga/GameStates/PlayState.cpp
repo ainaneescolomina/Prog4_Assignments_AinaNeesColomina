@@ -1,5 +1,5 @@
 #include "PlayState.h"
-#include "HighscoreState.h"
+#include "GameOverState.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -47,6 +47,7 @@ void dae::PlayState::OnEnter()
 	// --- MANAGERS ---
 	m_pBulletSpawner = std::make_unique<dae::BulletSpawner>(*m_pScene);
 	m_pWaveSpawner = std::make_unique<WaveSpawner>(*m_pScene);
+	m_pGameStats = std::make_unique<GameStatsManager>();
 
 	// --- ACTORS ---
 	// Player
@@ -67,10 +68,15 @@ void dae::PlayState::OnEnter()
 	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
 
 	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
-	player->GetComponent<dae::ShootComponent>()->GetSubject().AddObserver(m_pBulletSpawner.get());
+	auto shoot = player->GetComponent<dae::ShootComponent>();
+	shoot->GetSubject().AddObserver(m_pBulletSpawner.get());
+	shoot->GetSubject().AddObserver(m_pGameStats.get());
+
+	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
 
 	// --- GAMEPLAY ---
 	m_pWaveSpawner->SetPlayerScore(score);
+	m_pWaveSpawner->SetGameStats(m_pGameStats.get());
 	m_pWaveSpawner->SpawnWave();
 	lives->GetSubject().AddObserver(this);
 
@@ -93,7 +99,11 @@ std::unique_ptr<dae::GameState> dae::PlayState::Update(float delta_time)
 
     if (m_playerDied) 
 	{
-        return std::make_unique<HighscoreState>();
+        return std::make_unique<GameOverState>(
+			m_pGameStats->GetShotsFired(), 
+			m_pGameStats->GetHitsScored(), 
+			m_pGameStats->GetHitMissRatio(), 
+			m_pGameStats->GetFinalScore());
     }
 
     return nullptr;

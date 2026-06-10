@@ -5,7 +5,8 @@
 #include "ServiceLocator.h"
 
 dae::BulletSpawner::BulletSpawner(dae::Scene& scene)
-    : m_scene(scene) 
+    : m_scene(scene),
+    m_subject(this)
 {
     // PLAYER BULLETS
     for (int i{}; i < maxPlayerBullets; ++i)
@@ -26,7 +27,7 @@ dae::BulletSpawner::BulletSpawner(dae::Scene& scene)
 
 void dae::BulletSpawner::Notify(Event event, void* sender)
 {
-    if (event.id == make_sdbm_hash("SpawnBullet"))
+    if (event.id == make_sdbm_hash("TriggerSpawnBullet"))
     {
         auto* shooter = static_cast<GameObject*>(sender);
         auto* otherTag = shooter->GetComponent<dae::TagComponent>();
@@ -44,7 +45,12 @@ void dae::BulletSpawner::Notify(Event event, void* sender)
 
         //sound here?
         auto& sound = dae::servicelocator::get_sound_system();
-        if(success) sound.play(0, 0.5f);
+        if (success)
+        {
+            sound.play(0, 0.5f);
+            Event e(make_sdbm_hash("SpawnBullet"));
+            m_subject.NotifyObservers(e, this);
+        }
     }
 }
 

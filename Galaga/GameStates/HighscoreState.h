@@ -11,11 +11,12 @@ namespace dae {
         void OnEnter() override;
         void OnExit() override;
         std::unique_ptr<GameState> Update(float delta_time) override;
+
     private:
         Scene* m_pScene = nullptr;
     };
 
-    class ReturnGameCommand final : public dae::Command {
+    class OpenMenuCommand final : public dae::Command {
     public:
         void Execute(float) override;
     };

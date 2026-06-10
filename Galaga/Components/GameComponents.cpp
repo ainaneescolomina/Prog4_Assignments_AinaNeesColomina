@@ -95,7 +95,7 @@ void dae::ShootComponent::Shoot()
 
 	m_timer = m_cooldown;
 
-	Event e(make_sdbm_hash("SpawnBullet"));
+	Event e(make_sdbm_hash("TriggerSpawnBullet"));
 	m_subject.NotifyObservers(e, GetOwner());
 }
 

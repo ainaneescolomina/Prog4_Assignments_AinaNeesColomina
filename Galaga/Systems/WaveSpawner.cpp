@@ -4,6 +4,7 @@
 #include "Factory.h"
 #include "EnemyComponents.h"
 #include "EnemyFormationState.h"
+#include "GameStatsManager.h"
 #include "GameObject.h"
 
 void dae::WaveSpawner::Notify(Event event, void* sender)
@@ -84,6 +85,9 @@ void dae::WaveSpawner::SpawnEnemy(const EnemySpawnData& enemyData)
 
         if (m_pPlayerScore)
             lives->GetSubject().AddObserver(m_pPlayerScore);
+
+        if (m_pGameStats)
+            lives->GetSubject().AddObserver(m_pGameStats);
     }
 
     bool fromLeft = rand() % 2 == 0;

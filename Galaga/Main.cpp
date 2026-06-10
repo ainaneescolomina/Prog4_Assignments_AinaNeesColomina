@@ -16,6 +16,7 @@
 
 #include "ServiceLocator.h"
 #include "MenuState.h"
+#include "GameOverState.h"
 
 #include <filesystem>
 #include <iostream>
@@ -43,6 +44,7 @@ int main(int, char*[]) {
 	dae::Minigin engine(data_location);
 
 	auto menuState = std::make_unique<dae::MenuState>();
+	//auto menuState = std::make_unique<dae::GameOverState>(0,0,0,0);
 	engine.SetInitialState(std::move(menuState));
 
 	engine.Run([]() {});

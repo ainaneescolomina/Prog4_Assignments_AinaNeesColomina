@@ -5,6 +5,7 @@
 //#include "Achievements.h"
 #include "BulletSpawner.h"
 #include "WaveSpawner.h"
+#include "GameStatsManager.h"
 
 namespace dae
 {
@@ -32,6 +33,7 @@ namespace dae
         //dae::WinOneGameAchievement m_pWinAchievement;
         std::unique_ptr<dae::BulletSpawner> m_pBulletSpawner;
         std::unique_ptr<WaveSpawner> m_pWaveSpawner;
+        std::unique_ptr<GameStatsManager> m_pGameStats;
     };
 
     class SkipLevelCommand final : public Command {

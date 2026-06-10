@@ -186,9 +186,13 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Systems/WaveSpawner.cpp 
   Galaga/Systems/LevelLoader.cpp
   Galaga/Systems/BulletSpawner.cpp
-  Galaga/States/MenuState.cpp
-  Galaga/States/PlayState.cpp
-  Galaga/States/HighscoreState.cpp 
+  Galaga/Systems/GameStatsManager.cpp
+  Galaga/Systems/HighscoreManager.cpp
+  Galaga/GameStates/MenuState.cpp
+  Galaga/GameStates/PlayState.cpp
+  Galaga/GameStates/HighscoreState.cpp 
+  Galaga/GameStates/GameOverState.cpp
+  Galaga/GameStates/NameEntryState.cpp
   Galaga/Enemies/EnemyFormationState.cpp
   Galaga/Enemies/EnemyIdleState.cpp
   Galaga/Enemies/BeeDiveState.cpp
@@ -206,7 +210,7 @@ target_include_directories(${TARGET_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Components
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Enemies
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Enums
-    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/States
+    ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/GameStates
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga/Systems
 )
 

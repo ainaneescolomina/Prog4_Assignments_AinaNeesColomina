@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include "Observer.h"
+#include "Subject.h"
 
 namespace dae
 {
@@ -14,9 +15,12 @@ namespace dae
         BulletSpawner(Scene& scene);
 
         void Notify(Event event, void* sender) override;
+        Subject& GetSubject() { return m_subject; };
 
     private:
         Scene& m_scene;
+        Subject m_subject;
+
         std::vector<GameObject*> m_playerBulletPool;
         std::vector<GameObject*> m_enemyBulletPool;
 

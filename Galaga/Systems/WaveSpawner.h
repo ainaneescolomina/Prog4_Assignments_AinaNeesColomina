@@ -7,6 +7,7 @@ namespace dae
 {
     class Scene;
     class ScoreComponent;
+    class GameStatsManager;
     class GameObject;
 
     class WaveSpawner final : public Observer
@@ -14,6 +15,7 @@ namespace dae
     public:
         explicit WaveSpawner(dae::Scene& scene) : m_pScene(&scene){}
         void SetPlayerScore(dae::ScoreComponent* score) { m_pPlayerScore = score; }
+        void SetGameStats(dae::GameStatsManager* stats) { m_pGameStats = stats; }
 
         virtual void Notify(Event event, void* sender) override;
 
@@ -27,6 +29,7 @@ namespace dae
 
         dae::Scene* m_pScene = nullptr;
         dae::ScoreComponent* m_pPlayerScore = nullptr;
+        dae::GameStatsManager* m_pGameStats = nullptr;
 
         std::vector<EnemySpawnData> m_enemiesToSpawn;
         std::vector<dae::GameObject*> m_spawnedEnemies;
