@@ -13,10 +13,10 @@ namespace dae
 
         EnemyStateType GetType() const override { return EnemyStateType::Idle; }
 
-        virtual void OnEnter(GameObject* owner);
-        virtual void OnExit(GameObject* owner);
+        virtual void OnEnter(GameObject* owner) override;
+        virtual void OnExit(GameObject* owner) override;
 
-        virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time);
+        virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time) override;
 
         void SetFormationOffset(float x) { m_formationOffset = x; }
 
