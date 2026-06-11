@@ -4,7 +4,7 @@
 #include "Commands.h"
 //#include "Achievements.h"
 #include "BulletSpawner.h"
-#include "WaveSpawner.h"
+#include "LevelManager.h"
 #include "GameStatsManager.h"
 
 namespace dae
@@ -32,7 +32,7 @@ namespace dae
 
         //dae::WinOneGameAchievement m_pWinAchievement;
         std::unique_ptr<dae::BulletSpawner> m_pBulletSpawner;
-        std::unique_ptr<WaveSpawner> m_pWaveSpawner;
+        std::unique_ptr<LevelManager> m_pLevelManager;
         std::unique_ptr<GameStatsManager> m_pGameStats;
     };
 

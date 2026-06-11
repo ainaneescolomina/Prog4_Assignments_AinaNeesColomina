@@ -13,6 +13,8 @@ namespace dae
     public:
         virtual ~GalagaTractorBeamState() = default;
 
+        EnemyStateType GetType() const override { return EnemyStateType::Dive; }
+
         virtual void OnEnter(GameObject* owner);
         virtual void OnExit(GameObject* owner);
 

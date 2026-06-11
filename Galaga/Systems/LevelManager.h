@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include "LevelLoader.h"
 #include "Observer.h"
+#include "FormationManager.h"
 
 namespace dae
 {
@@ -11,10 +13,10 @@ namespace dae
     class BulletSpawner;
     class GameObject;
 
-    class WaveSpawner final : public Observer
+    class LevelManager final : public Observer
     {
     public:
-        explicit WaveSpawner(dae::Scene& scene) : m_pScene(&scene){}
+        explicit LevelManager(dae::Scene& scene) : m_pScene(&scene){}
         void SetPlayerScore(dae::ScoreComponent* score) { m_pPlayerScore = score; }
         void SetBulletSpawner(dae::BulletSpawner* spawner) { m_pBulletSpawner = spawner; }
         void SetGameStats(dae::GameStatsManager* stats) { m_pGameStats = stats; }
@@ -33,6 +35,8 @@ namespace dae
         dae::ScoreComponent* m_pPlayerScore = nullptr;
         dae::BulletSpawner* m_pBulletSpawner = nullptr;
         dae::GameStatsManager* m_pGameStats = nullptr;
+
+        std::unique_ptr<FormationManager> m_pFormationManager = nullptr;
 
         std::vector<EnemySpawnData> m_enemiesToSpawn;
         std::vector<dae::GameObject*> m_spawnedEnemies;

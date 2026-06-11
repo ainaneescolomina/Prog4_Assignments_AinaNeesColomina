@@ -13,6 +13,8 @@ namespace dae
         explicit EnemyFormationState(float speed, const glm::vec2& target) : m_speed{ speed }, m_targetPos{ target } {}
         virtual ~EnemyFormationState() = default;
 
+        EnemyStateType GetType() const override { return EnemyStateType::Formation; }
+
         virtual void OnEnter(GameObject* owner);
         virtual void OnExit(GameObject* owner);
 

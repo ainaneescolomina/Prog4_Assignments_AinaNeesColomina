@@ -48,6 +48,7 @@ public:
     void Update(float delta_time) override;
 
     void SetState(std::unique_ptr<dae::EnemyState> newState);
+    dae::EnemyState* GetCurrentState() const { return m_pCurrentState.get(); }
 
 private:
     std::unique_ptr<dae::EnemyState> m_pCurrentState;

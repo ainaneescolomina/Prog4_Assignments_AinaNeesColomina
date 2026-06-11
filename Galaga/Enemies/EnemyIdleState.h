@@ -11,13 +11,16 @@ namespace dae
     public:
         virtual ~EnemyIdleState() = default;
 
+        EnemyStateType GetType() const override { return EnemyStateType::Idle; }
+
         virtual void OnEnter(GameObject* owner);
         virtual void OnExit(GameObject* owner);
 
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time);
 
+        void SetFormationOffset(float x) { m_formationOffset = x; }
+
     private:
-        float m_timer = 0.f;
-        float m_waitAttack;
+        float m_formationOffset;
     };
 }

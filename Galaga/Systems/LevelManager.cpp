@@ -1,4 +1,4 @@
-#include "WaveSpawner.h"
+#include "LevelManager.h"
 #include "Scene.h"
 #include "GameComponents.h"
 #include "Factory.h"
@@ -8,7 +8,7 @@
 #include "GameStatsManager.h"
 #include "GameObject.h"
 
-void dae::WaveSpawner::Notify(Event event, void* sender)
+void dae::LevelManager::Notify(Event event, void* sender)
 {
     if (event.id == make_sdbm_hash("ActorDied"))
     {
@@ -29,7 +29,7 @@ void dae::WaveSpawner::Notify(Event event, void* sender)
     }
 }
 
-void dae::WaveSpawner::Update(float delta_time)
+void dae::LevelManager::Update(float delta_time)
 {
     for (auto& enemy :
         m_enemiesToSpawn)
@@ -42,16 +42,30 @@ void dae::WaveSpawner::Update(float delta_time)
         SpawnEnemy(m_enemiesToSpawn.front());
         m_enemiesToSpawn.erase(m_enemiesToSpawn.begin());
     }
+
+    if (m_pFormationManager)
+    {
+        m_pFormationManager->Update(delta_time);
+    }
 }
 
-void dae::WaveSpawner::SpawnWave()
+void dae::LevelManager::SpawnWave()
 {
     if (!m_pScene) return;
+
+    if (!m_pFormationManager)
+    {
+        m_pFormationManager = std::make_unique<FormationManager>();
+        m_pFormationManager->SetEnemies(&m_spawnedEnemies);
+    }
+    else
+        m_pFormationManager->SetActiveFormation(false);
+
     auto levelPath = "Data/Levels/level" + std::to_string(m_levelIdx) + ".txt";
     m_enemiesToSpawn = LevelLoader::LoadLevel(levelPath);
 }
 
-void dae::WaveSpawner::SkipLevel()
+void dae::LevelManager::SkipLevel()
 {
     for (auto* enemy : m_spawnedEnemies)
     {
@@ -69,7 +83,7 @@ void dae::WaveSpawner::SkipLevel()
     SpawnWave();
 }
 
-void dae::WaveSpawner::SpawnEnemy(const EnemySpawnData& enemyData)
+void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
 {
     auto enemy = ActorFactory::CreateEnemy(enemyData.type, enemyData.pos);
 

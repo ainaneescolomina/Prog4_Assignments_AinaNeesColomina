@@ -183,7 +183,7 @@ target_compile_features(minigin_engine PUBLIC cxx_std_20)
 add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Main.cpp
   Galaga/Systems/Factory.cpp
-  Galaga/Systems/WaveSpawner.cpp 
+  Galaga/Systems/LevelManager.cpp
   Galaga/Systems/LevelLoader.cpp
   Galaga/Systems/BulletSpawner.cpp
   Galaga/Systems/GameStatsManager.cpp
@@ -199,9 +199,10 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Enemies/ButterflyDiveState.cpp
   Galaga/Enemies/GalagaDiveState.cpp
   Galaga/Enemies/GalagaTractorBeamState.cpp
+  Galaga/Enemies/FormationManager.cpp
   Galaga/Commands/GameCommands.cpp
   Galaga/Components/EnemyComponents.cpp
-  Galaga/Components/GameComponents.cpp )
+  Galaga/Components/GameComponents.cpp)
 
 target_include_directories(${TARGET_NAME} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga

@@ -48,7 +48,7 @@ void dae::PlayState::OnEnter()
 
 	// --- MANAGERS ---
 	m_pBulletSpawner = std::make_unique<dae::BulletSpawner>(*m_pScene);
-	m_pWaveSpawner = std::make_unique<WaveSpawner>(*m_pScene);
+	m_pLevelManager = std::make_unique<LevelManager>(*m_pScene);
 	m_pGameStats = std::make_unique<GameStatsManager>();
 
 	// --- ACTORS ---
@@ -77,10 +77,10 @@ void dae::PlayState::OnEnter()
 	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
 
 	// --- GAMEPLAY ---
-	m_pWaveSpawner->SetPlayerScore(score);
-	m_pWaveSpawner->SetBulletSpawner(m_pBulletSpawner.get());
-	m_pWaveSpawner->SetGameStats(m_pGameStats.get());
-	m_pWaveSpawner->SpawnWave();
+	m_pLevelManager->SetPlayerScore(score);
+	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
+	m_pLevelManager->SetGameStats(m_pGameStats.get());
+	m_pLevelManager->SpawnWave();
 	lives->GetSubject().AddObserver(this);
 
 	// Add to scene
@@ -102,7 +102,7 @@ void dae::PlayState::OnExit()
 
 std::unique_ptr<dae::GameState> dae::PlayState::Update(float delta_time)
 {
-	m_pWaveSpawner->Update(delta_time);
+	m_pLevelManager->Update(delta_time);
 
     if (m_playerDied) 
 	{
@@ -133,7 +133,7 @@ void dae::PlayState::Notify(Event event, void* sender)
 
 void dae::PlayState::SkipLevel()
 {
-	m_pWaveSpawner->SkipLevel();
+	m_pLevelManager->SkipLevel();
 }
 
 void dae::SkipLevelCommand::Execute(float)
