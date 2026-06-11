@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "EnemyState.h"
+#include <glm/glm.hpp>
 
 namespace dae
 {
@@ -22,5 +23,6 @@ namespace dae
 
     private:
         float m_formationOffset;
+        glm::vec2 m_formationPosition{};
     };
 }

@@ -1,6 +1,7 @@
 #include "Components.h"
 #include "EnemyState.h"
 #include "EnemyType.h"
+#include <glm/glm.hpp>
 
 namespace dae
 {
@@ -23,6 +24,9 @@ namespace dae
 
         int GetScoreValue() const;
 
+        void SetFormationPosition(const glm::vec2& pos) { m_formationPosition = pos; }
+        const glm::vec2& GetFormationPosition() const { return m_formationPosition; }
+
         void SetBeamObject(GameObject* beam) { m_pBeamObject = beam; }
         GameObject* GetBeamObject() const { return m_pBeamObject; }
 
@@ -31,6 +35,7 @@ namespace dae
     private:
         EnemyType m_type;
         bool m_isDiving{};
+        glm::vec2 m_formationPosition{};
 
         // Boss Galaga Beam
         GameObject* m_pBeamObject{};

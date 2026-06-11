@@ -20,7 +20,6 @@ namespace dae
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time) override;
 
     private:
-        glm::vec2 m_startPos{};
         float m_speed{ 220.f };
         float m_segmentSpeed{ 0.f };
 

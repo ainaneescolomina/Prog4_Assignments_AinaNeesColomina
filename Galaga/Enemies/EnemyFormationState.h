@@ -10,7 +10,7 @@ namespace dae
     class EnemyFormationState final : public EnemyState
     {
     public:
-        explicit EnemyFormationState(float speed, const glm::vec2& target) : m_speed{ speed }, m_targetPos{ target } {}
+        explicit EnemyFormationState(float speed) : m_speed{ speed } {}
         virtual ~EnemyFormationState() = default;
 
         EnemyStateType GetType() const override { return EnemyStateType::Formation; }
@@ -21,6 +21,6 @@ namespace dae
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time) override;
     private:
         float m_speed;
-        glm::vec2 m_targetPos;
+        glm::vec2 m_targetPos{};
     };
 }

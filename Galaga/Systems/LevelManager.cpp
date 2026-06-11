@@ -121,7 +121,7 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
 
     auto stateComp = enemy->GetComponent<EnemyStateComponent>();
     enemy->SetPosition(spawnPos.x, spawnPos.y - 400.f);
-    stateComp->SetState(std::make_unique<EnemyFormationState>(215.f, enemyData.pos));
+    stateComp->SetState(std::make_unique<EnemyFormationState>(215.f));
     
     auto* enemyPtr = enemy.get();
     m_pScene->Add(std::move(enemy));

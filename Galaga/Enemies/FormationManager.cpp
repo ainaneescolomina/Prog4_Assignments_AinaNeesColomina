@@ -3,7 +3,6 @@
 #include "EnemyComponents.h"
 
 #include "EnemyIdleState.h"
-#include "EnemyFormationState.h"
 
 #include "BeeDiveState.h"
 #include "ButterflyDiveState.h"
@@ -38,7 +37,7 @@ void dae::FormationManager::Update(float deltaTime)
 
     // Idle formation movement
     m_idleMovementTimer += deltaTime;
-    float lateralOffset = std::sin(m_idleMovementTimer * 1.0f) * 0.5f;
+    float lateralOffset = std::sin(m_idleMovementTimer * 1.0f) * 20;
 
     for (auto* enemy : *m_pSpawnedEnemies)
     {

@@ -1,8 +1,16 @@
 #include "EnemyFormationState.h"
 #include "GameObject.h"
+#include "EnemyComponents.h"
 #include "EnemyIdleState.h"
 
-void dae::EnemyFormationState::OnEnter(dae::GameObject*){}
+void dae::EnemyFormationState::OnEnter(dae::GameObject* owner)
+{
+    if (!owner) return;
+    
+    auto* enemyComp = owner->GetComponent<EnemyComponent>();
+    auto pos = owner->GetTransform().GetPosition(); 
+    m_targetPos = enemyComp? enemyComp->GetFormationPosition() : glm::vec2(pos.x, pos.y);
+}
 
 void dae::EnemyFormationState::OnExit(dae::GameObject*){}
 

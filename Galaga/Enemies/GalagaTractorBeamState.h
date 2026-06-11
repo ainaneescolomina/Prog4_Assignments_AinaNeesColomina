@@ -28,7 +28,6 @@ namespace dae
         dae::EnemyComponent* m_enemyComp{};
         dae::ColliderComponent* m_colliderComp{};
 
-        glm::vec2 m_startPos{};
         float m_speed{ 220.f };
         float m_segmentSpeed{ 0.f };
 

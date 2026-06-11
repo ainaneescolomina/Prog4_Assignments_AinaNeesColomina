@@ -8,7 +8,6 @@
 void dae::BeeDiveState::OnEnter(dae::GameObject* owner)
 {
     auto pos = owner->GetTransform().GetPosition();
-    m_startPos = pos;
 
     auto* enemy = owner->GetComponent<EnemyComponent>();
     if (enemy) enemy->SetDiving(true);
@@ -32,7 +31,7 @@ void dae::BeeDiveState::OnEnter(dae::GameObject* owner)
     float widthScale = 0.6f + (height / 1200.f);
     width *= widthScale;
 
-    glm::vec2 base = m_startPos;
+    glm::vec2 base = glm::vec2{ pos.x, pos.y };
     float baseX = base.x + xOffset;
 
     // clamp inside screen
@@ -87,7 +86,7 @@ void dae::BeeDiveState::OnExit(dae::GameObject* owner)
 std::unique_ptr<dae::EnemyState> dae::BeeDiveState::Update(dae::GameObject* owner, float delta_time)
 {
     if (m_currentPoint >= static_cast<int>(m_points.size()))
-        return std::make_unique<EnemyFormationState>(250.f,m_startPos);
+        return std::make_unique<EnemyFormationState>(250.f);
 
     // Shooting mechanic
     if (m_amountBullets > 0)

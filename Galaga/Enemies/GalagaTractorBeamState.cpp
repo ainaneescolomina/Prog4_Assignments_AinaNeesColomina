@@ -8,7 +8,6 @@
 void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
 {
     auto pos = owner->GetTransform().GetPosition();
-    m_startPos = pos;
 
     m_enemyComp = owner->GetComponent<EnemyComponent>();
     if (m_enemyComp)
@@ -30,7 +29,7 @@ void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
     float loopWidth = 100.f;
     float beamY = 500.f;
 
-    glm::vec2 base = m_startPos;
+    glm::vec2 base = glm::vec2{ pos.x, pos.y };
     float baseX = base.x + xOffset;
 
     // clamp inside screen
@@ -71,7 +70,7 @@ std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameOb
     {
         if (m_enemyComp && m_enemyComp->GetBeamObject())
             m_enemyComp->GetBeamObject()->SetActive(false);
-        return std::make_unique<EnemyFormationState>(250.f, m_startPos);
+        return std::make_unique<EnemyFormationState>(250.f);
     }
 
     // beam phase
@@ -96,7 +95,7 @@ std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameOb
             {
                 m_enemyComp->GetBeamObject()->SetActive(false);
             }
-            return std::make_unique<EnemyFormationState>(250.f, m_startPos);
+            return std::make_unique<EnemyFormationState>(250.f);
         }
 
         return nullptr;
