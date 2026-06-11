@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EnemyFormationState.h"
 #include "EnemyComponents.h"
+#include "GameComponents.h"
 
 void dae::GalagaDiveState::OnEnter(dae::GameObject* owner)
 {
@@ -60,6 +61,9 @@ void dae::GalagaDiveState::OnEnter(dae::GameObject* owner)
 
     // leave screen before returning
     m_points.push_back({ baseX + xOffset * 0.2f, -100.f });
+
+    int bulletRoll = (rand() % 6) - 1;      // 0 - 4
+    m_amountBullets = (bulletRoll < 0) ? 0 : bulletRoll;
 }
 
 void dae::GalagaDiveState::OnExit(dae::GameObject* owner)
@@ -72,6 +76,26 @@ std::unique_ptr<dae::EnemyState> dae::GalagaDiveState::Update(dae::GameObject* o
 {
     if (m_currentPoint >= static_cast<int>(m_points.size()))
         return std::make_unique<EnemyFormationState>(250.f, m_startPos);
+
+    // Shooting mechanic
+    if (m_amountBullets > 0)
+    {
+        m_timer += delta_time;
+        if (m_timer >= m_shootingDelay)
+        {
+            auto* shootComp = owner->GetComponent<dae::ShootComponent>();
+
+            if (shootComp)
+            {
+                shootComp->Shoot();
+                m_amountBullets--;
+                m_timer = 0.f;
+                // time between bullets
+                m_shootingDelay = 0.1f;
+            }
+        }
+    }
+    // ---
 
     auto ownerPos = owner->GetTransform().GetPosition();
     glm::vec2 pos{ ownerPos.x, ownerPos.y };

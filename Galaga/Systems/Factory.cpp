@@ -45,6 +45,7 @@ namespace ActorFactory
         collider->GetSubject().AddObserver(damage);
         damage->GetSubject().AddObserver(lives);
         damage->AddThreat(dae::TagComponent::Tags::Enemy);
+        damage->AddThreat(dae::TagComponent::Tags::EnemyBullet);
         damage->AddThreat(dae::TagComponent::Tags::TractorBeam);
         lives->GetSubject().AddObserver(movement);
 
@@ -83,6 +84,7 @@ namespace ActorFactory
         auto* damage = enemy->AddComponent<dae::DamageManager>();
         auto* lives = enemy->AddComponent<dae::LivesComponent>(livesAmount, dae::LivesComponent::DeathAction::Destroy);
         enemy->AddComponent<EnemyStateComponent>();
+        enemy->AddComponent<dae::ShootComponent>(0.1f);
 
         // Observer / Subject
         collider->GetSubject().AddObserver(damage);

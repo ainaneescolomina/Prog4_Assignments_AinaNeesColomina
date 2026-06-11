@@ -10,7 +10,7 @@
 
 void dae::EnemyIdleState::OnEnter(dae::GameObject*)
 {
-	m_waitAttack = static_cast<float>(rand() % 15 + 1);
+	m_waitAttack = static_cast<float>(rand() % 35 + 1);
 }
 
 void dae::EnemyIdleState::OnExit(dae::GameObject*){}

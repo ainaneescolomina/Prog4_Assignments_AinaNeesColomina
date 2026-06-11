@@ -24,5 +24,10 @@ namespace dae
 
         std::vector<glm::vec2> m_points{};
         int m_currentPoint{ 0 };
+
+        // shooting
+        float m_timer{ };
+        float m_shootingDelay{ 0.5f };
+        int m_amountBullets{ 0 };
     };
 }

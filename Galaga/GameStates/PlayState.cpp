@@ -76,6 +76,7 @@ void dae::PlayState::OnEnter()
 
 	// --- GAMEPLAY ---
 	m_pWaveSpawner->SetPlayerScore(score);
+	m_pWaveSpawner->SetBulletSpawner(m_pBulletSpawner.get());
 	m_pWaveSpawner->SetGameStats(m_pGameStats.get());
 	m_pWaveSpawner->SpawnWave();
 	lives->GetSubject().AddObserver(this);

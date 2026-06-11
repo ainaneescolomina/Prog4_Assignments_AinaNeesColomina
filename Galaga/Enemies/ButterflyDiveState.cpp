@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EnemyFormationState.h"
 #include "EnemyComponents.h"
+#include "GameComponents.h"
 
 void dae::ButterflyDiveState::OnEnter(dae::GameObject* owner)
 {
@@ -58,6 +59,8 @@ void dae::ButterflyDiveState::OnEnter(dae::GameObject* owner)
     m_points.push_back({baseX + xOffset * 1.5f, base.y + 75.f});
 
     m_segmentSpeed = m_speed;
+    int bulletRoll = (rand() % 6) - 2;      // 0 - 3
+    m_amountBullets = (bulletRoll < 0) ? 0 : bulletRoll;
 }
 
 void dae::ButterflyDiveState::OnExit(dae::GameObject* owner)
@@ -71,8 +74,28 @@ std::unique_ptr<dae::EnemyState> dae::ButterflyDiveState::Update(dae::GameObject
     if (m_currentPoint >= static_cast<int>(m_points.size()))
         return std::make_unique<EnemyFormationState>(250.f, m_startPos);
 
-    auto pos3D = owner->GetTransform().GetPosition();
-    glm::vec2 pos{ pos3D.x, pos3D.y };
+    // Shooting mechanic
+    if (m_amountBullets > 0)
+    {
+        m_timer += delta_time;
+        if (m_timer >= m_shootingDelay)
+        {
+            auto* shootComp = owner->GetComponent<dae::ShootComponent>();
+
+            if (shootComp)
+            {
+                shootComp->Shoot();
+                m_amountBullets--;
+                m_timer = 0.f;
+                // time between bullets
+                m_shootingDelay = 0.1f;
+            }
+        }
+    }
+    // ---
+
+    auto ownerPos = owner->GetTransform().GetPosition();
+    glm::vec2 pos{ ownerPos.x, ownerPos.y };
 
     glm::vec2 target = m_points[m_currentPoint];
     glm::vec2 dir = target - pos;

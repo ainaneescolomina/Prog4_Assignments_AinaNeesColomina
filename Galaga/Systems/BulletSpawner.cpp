@@ -30,10 +30,10 @@ void dae::BulletSpawner::Notify(Event event, void* sender)
     if (event.id == make_sdbm_hash("TriggerSpawnBullet"))
     {
         auto* shooter = static_cast<GameObject*>(sender);
-        auto* otherTag = shooter->GetComponent<dae::TagComponent>();
+        auto* shooterTag = shooter->GetComponent<dae::TagComponent>();
         auto playerBullet = true;
         
-        if (otherTag && otherTag->GetTag() == dae::TagComponent::Tags::Enemy)
+        if (shooterTag && shooterTag->GetTag() == dae::TagComponent::Tags::Enemy)
             playerBullet = false;
 
         bool success = false;
@@ -61,7 +61,7 @@ bool dae::BulletSpawner::SpawnEnemyBullet(dae::GameObject* shooter)
         if (bullet->IsActive())continue;
 
         auto pos = shooter->GetTransform().GetWorldPosition();
-        bullet->SetPosition(pos.x, pos.y - 20.f);
+        bullet->SetPosition(pos.x, pos.y + 20.f);
 
         auto* velocity = bullet->GetComponent<dae::VelocityComponent>();
         velocity->SetVelocity(0.f,300.f);
@@ -99,7 +99,6 @@ std::unique_ptr<dae::GameObject> dae::BulletSpawner::CreateBullet(bool isPlayerB
     auto bullet = std::make_unique<dae::GameObject>();
 
     bullet->AddComponent<dae::RenderComponent>()->SetTexture("Images/bullet.png", true);
-    bullet->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Bullet);
 
     auto* collider = bullet->AddComponent<dae::ColliderComponent>(11.f, 25.f);
     auto* damage = bullet->AddComponent<dae::DamageManager>();
@@ -113,9 +112,15 @@ std::unique_ptr<dae::GameObject> dae::BulletSpawner::CreateBullet(bool isPlayerB
     damage->GetSubject().AddObserver(lives);
 
     if (isPlayerBullet)
+    {
+        bullet->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Bullet);
         damage->AddThreat(dae::TagComponent::Tags::Enemy);
+    }
     else
+    {
+        bullet->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::EnemyBullet);
         damage->AddThreat(dae::TagComponent::Tags::Player);
+    }
 
     // Deactivate Bullet
     bullet->SetActive(false);

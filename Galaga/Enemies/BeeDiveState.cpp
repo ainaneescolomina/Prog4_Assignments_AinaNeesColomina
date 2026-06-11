@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EnemyFormationState.h"
 #include "EnemyComponents.h"
+#include "GameComponents.h"
 #include <random>
 
 void dae::BeeDiveState::OnEnter(dae::GameObject* owner)
@@ -72,6 +73,9 @@ void dae::BeeDiveState::OnEnter(dae::GameObject* owner)
         });
 
     m_segmentSpeed = m_speed;
+
+    int bulletRoll = (rand() % 5) - 2;      // 0 - 2
+    m_amountBullets = (bulletRoll < 0) ? 0 : bulletRoll;
 }
 
 void dae::BeeDiveState::OnExit(dae::GameObject* owner)
@@ -84,6 +88,26 @@ std::unique_ptr<dae::EnemyState> dae::BeeDiveState::Update(dae::GameObject* owne
 {
     if (m_currentPoint >= static_cast<int>(m_points.size()))
         return std::make_unique<EnemyFormationState>(250.f,m_startPos);
+
+    // Shooting mechanic
+    if (m_amountBullets > 0)
+    {
+        m_timer += delta_time;
+        if (m_timer >= m_shootingDelay)
+        {
+            auto* shootComp = owner->GetComponent<dae::ShootComponent>();
+            
+            if (shootComp)
+            {
+                shootComp->Shoot();
+                m_amountBullets--;
+                m_timer = 0.f;
+                // time between bullets
+                m_shootingDelay = 0.1f;
+            }
+        }
+    }
+    // ---
 
     auto ownerPos = owner->GetTransform().GetPosition();
     glm::vec2 pos{ ownerPos.x, ownerPos.y };

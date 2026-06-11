@@ -89,6 +89,7 @@ namespace dae
 			Player,
 			Enemy,
 			Bullet,
+			EnemyBullet,
 			TractorBeam
 		};
 

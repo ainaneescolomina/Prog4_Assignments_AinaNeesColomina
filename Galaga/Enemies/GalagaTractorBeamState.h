@@ -28,7 +28,6 @@ namespace dae
         std::vector<glm::vec2> m_points{};
         int m_currentPoint{ 0 };
 
-
         bool m_beamActive{ false };
         float m_beamTimer{ 0.f };
         float m_beamDuration{ 3.f };

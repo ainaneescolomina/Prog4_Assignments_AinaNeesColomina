@@ -4,6 +4,7 @@
 #include "Factory.h"
 #include "EnemyComponents.h"
 #include "EnemyFormationState.h"
+#include "BulletSpawner.h"
 #include "GameStatsManager.h"
 #include "GameObject.h"
 
@@ -88,6 +89,12 @@ void dae::WaveSpawner::SpawnEnemy(const EnemySpawnData& enemyData)
 
         if (m_pGameStats)
             lives->GetSubject().AddObserver(m_pGameStats);
+    }
+
+    if (auto* shoot = enemy->GetComponent<dae::ShootComponent>())
+    {
+        if (m_pGameStats)
+            shoot->GetSubject().AddObserver(m_pBulletSpawner);
     }
 
     bool fromLeft = rand() % 2 == 0;
