@@ -10,6 +10,9 @@
 
 #include "Factory.h"
 
+#include "ServiceLocator.h"
+#include "SdlSoundSystem.h"
+
 void dae::MenuState::OnEnter()
 {
     auto& input = InputManager::GetInstance();
@@ -25,6 +28,13 @@ void dae::MenuState::OnEnter()
     input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmSelectionCommand>(this));
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
+
+    auto soundSystem = std::make_unique<dae::SdlSoundSystem>();
+    dae::servicelocator::register_sound_system(std::move(soundSystem));
+    auto& sound = dae::servicelocator::get_sound_system();
+
+    // preload sounds
+    sound.Load(0, "Data/Sounds/UIConfirm.mp3");
 
     auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
     auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 18);
@@ -133,4 +143,16 @@ void dae::MenuState::UpdateModeSelection()
         if (m_pMenuTexts[i])
             m_pMenuTexts[i]->SetColor(static_cast<int>(i) == m_selectedIdx ? red : white);
     }
+}
+
+void dae::NavigateMenuCommand::Execute(float)
+{
+    auto& sound = dae::servicelocator::get_sound_system();
+    sound.Play(0, 0.1f);
+    m_pMenu->MoveSelection(m_direction);
+}
+
+void dae::ConfirmSelectionCommand::Execute(float)
+{
+    m_pMenu->ConfirmSelection();
 }

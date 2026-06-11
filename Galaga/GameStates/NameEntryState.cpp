@@ -9,6 +9,9 @@
 #include "Components.h"
 #include "Factory.h"
 
+#include "ServiceLocator.h"
+#include "SdlSoundSystem.h"
+
 void dae::NameEntryState::OnEnter()
 {
     auto& input = dae::InputManager::GetInstance();
@@ -22,6 +25,13 @@ void dae::NameEntryState::OnEnter()
     input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmLetterCommand>(this));
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
+
+    auto soundSystem = std::make_unique<dae::SdlSoundSystem>();
+    dae::servicelocator::register_sound_system(std::move(soundSystem));
+    auto& sound = dae::servicelocator::get_sound_system();
+
+    // preload sounds
+    sound.Load(0, "Data/Sounds/UIConfirm.mp3");
 
     // 1. Background Visual Base
     auto background = std::make_unique<dae::GameObject>();
@@ -120,4 +130,16 @@ void dae::NameEntryState::UpdateNameEntryText()
     }
 
     m_pNameEntryText->SetText(nameTmp);
+}
+
+void dae::CycleLetterCommand::Execute(float)
+{
+    m_pState->CycleLetter(m_direction);
+}
+
+void dae::ConfirmLetterCommand::Execute(float)
+{
+    auto& sound = dae::servicelocator::get_sound_system();
+    sound.Play(0, 0.1f);
+    m_pState->ConfirmLetter();
 }

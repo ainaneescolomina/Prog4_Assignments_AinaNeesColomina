@@ -27,8 +27,12 @@ void dae::PlayState::OnEnter()
 	auto& sound = dae::servicelocator::get_sound_system();
 
 	// preload sounds
-	sound.Load(0, "Data/Sounds/PlayerShoot.mp3");
-	sound.Load(1, "Data/Sounds/GameStart.mp3");
+	sound.Load(0, "Data/Sounds/GameStart.mp3");
+	sound.Load(1, "Data/Sounds/PlayerShoot.mp3");
+	sound.Load(2, "Data/Sounds/PlayerDies.mp3");
+	sound.Load(3, "Data/Sounds/EnemyDies.mp3");
+	sound.Load(4, "Data/Sounds/BossDies.mp3");
+	sound.Load(5, "Data/Sounds/TractorBeam.mp3");
 
 	///////////////
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
@@ -73,13 +77,13 @@ void dae::PlayState::OnEnter()
 	score->GetSubject().AddObserver(m_pGameStats.get());
 	auto shoot = player->GetComponent<dae::ShootComponent>();
 	shoot->GetSubject().AddObserver(m_pBulletSpawner.get());
-	shoot->GetSubject().AddObserver(m_pGameStats.get());
 
 	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
 
 	// --- GAMEPLAY ---
 	m_pLevelManager->SetPlayerScore(score);
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
+	m_pLevelManager->SetGameStatsManager(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
 	lives->GetSubject().AddObserver(this);
 
@@ -89,7 +93,7 @@ void dae::PlayState::OnEnter()
 	m_pScene->Add(std::move(scoreUI));
 
 	// Start Game
-	sound.Play(1, 0.5f);
+	sound.Play(0, 0.15f);
 }
 
 void dae::PlayState::OnExit()
@@ -128,6 +132,11 @@ void dae::PlayState::Notify(Event event, void* sender)
 		{
 			m_playerDied = true;
 		}
+	}
+	else if (event.id == make_sdbm_hash("UpdateLives"))
+	{
+		auto& sound = dae::servicelocator::get_sound_system();
+		sound.Play(2, 0.5f);
 	}
 }
 

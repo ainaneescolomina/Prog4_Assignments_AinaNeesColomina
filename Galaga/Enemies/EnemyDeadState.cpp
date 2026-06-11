@@ -1,6 +1,7 @@
 #include "EnemyDeadState.h"
 #include "GameObject.h"
-#include "Components.h"
+#include "EnemyComponents.h"
+#include "ServiceLocator.h"
 
 void dae::EnemyDeadState::OnEnter(GameObject* owner)
 {
@@ -11,6 +12,15 @@ void dae::EnemyDeadState::OnEnter(GameObject* owner)
 
     if (auto* renderComp = owner->GetComponent<AnimatedRenderComponent>())
         renderComp->SetTexture("Images/enemy_explosion.png", 1, 5, 0.2f, true);
+
+    auto& sound = dae::servicelocator::get_sound_system();
+    sound_id soundId = 3;
+
+    if (auto* enemyComp = owner->GetComponent<dae::EnemyComponent>(); enemyComp
+        && enemyComp->GetType() == EnemyType::BossGalaga)
+        soundId = 4;
+
+    sound.Play(soundId, 0.5f);
 }
 
 std::unique_ptr<dae::EnemyState> dae::EnemyDeadState::Update(GameObject* owner, float delta_time)

@@ -3,6 +3,7 @@
 #include "EnemyFormationState.h"
 #include "EnemyComponents.h"
 #include "GameComponents.h"
+#include "ServiceLocator.h"
 
 void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
 {
@@ -58,6 +59,8 @@ void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
 
 void dae::GalagaTractorBeamState::OnExit(dae::GameObject*)
 {
+    auto& sound = dae::servicelocator::get_sound_system();
+    sound.Stop(5);
     if (m_enemyComp) m_enemyComp->SetDiving(false);
     if (m_colliderComp) m_colliderComp->GetSubject().RemoveObserver(this);
 }
@@ -76,8 +79,12 @@ std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameOb
     {
         if (m_beamTimer <= 0.1f)
         {
-            if (m_enemyComp)
+            if (m_enemyComp && !m_enemyComp->GetBeamObject()->IsActive())
+            {
+                auto& sound = dae::servicelocator::get_sound_system();
+                sound.Play(5, 0.5f);
                 m_enemyComp->GetBeamObject()->SetActive(true);
+            }
         }
 
         m_beamTimer += delta_time;

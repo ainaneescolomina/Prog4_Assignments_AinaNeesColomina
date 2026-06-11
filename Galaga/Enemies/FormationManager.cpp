@@ -42,7 +42,7 @@ void dae::FormationManager::Update(float deltaTime)
 
     for (auto* enemy : *m_pSpawnedEnemies)
     {
-        if (!enemy) continue;
+        if (!enemy || enemy->IsMarkedForDestroy()) continue;
         auto* stateComp = enemy->GetComponent<EnemyStateComponent>();
         if (!stateComp) continue;
 
@@ -111,7 +111,7 @@ void dae::FormationManager::TriggerDiveWave()
 
     TriggerDiveState(chosenEnemy);
 
-    if (currentDivers < 2 && (rand() % 100 < 35)) // 35% chance for a dual dive trigger
+    if (currentDivers < 2 && (rand() % 100 < 55)) // 55% chance for a dual dive trigger
     {
         GameObject* adjacentEnemy = nullptr;
 

@@ -11,9 +11,10 @@ dae::EnemyComponent::~EnemyComponent()
 
 void dae::EnemyComponent::Notify(Event event, void*)
 {
+    auto* myStateComp = GetOwner()->GetComponent<EnemyStateComponent>();
     if (event.id == make_sdbm_hash("TakeDamage"))
     {
-        if (m_type == EnemyType::BossGalaga )
+        if (m_type == EnemyType::BossGalaga && myStateComp->GetCurrentState()->GetType() != EnemyStateType::Dead)
         {
             auto* myRenderComp = GetOwner()->GetComponent<dae::AnimatedRenderComponent>();
             if (myRenderComp)
@@ -22,7 +23,6 @@ void dae::EnemyComponent::Notify(Event event, void*)
     }
     else if (event.id == make_sdbm_hash("ActorDied"))
     {
-        auto* myStateComp = GetOwner()->GetComponent<EnemyStateComponent>();
         if (myStateComp)
             myStateComp->SetState(std::make_unique<dae::EnemyDeadState>());
     }

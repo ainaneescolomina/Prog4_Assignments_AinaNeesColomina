@@ -43,11 +43,10 @@ void dae::BulletSpawner::Notify(Event event, void* sender)
         else
             success = SpawnEnemyBullet(shooter);
 
-        //sound here?
         auto& sound = dae::servicelocator::get_sound_system();
         if (success)
         {
-            sound.Play(0, 0.5f);
+            sound.Play(1, 0.5f);
             Event e(make_sdbm_hash("SpawnBullet"));
             m_subject.NotifyObservers(e, this);
         }

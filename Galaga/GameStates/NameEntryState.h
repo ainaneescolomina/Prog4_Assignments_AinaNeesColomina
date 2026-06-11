@@ -42,7 +42,7 @@ namespace dae {
         explicit CycleLetterCommand(NameEntryState* state, int direction)
             : m_pState{ state }, m_direction{ direction } {}
 
-        void Execute(float) override { m_pState->CycleLetter(m_direction); }
+        void Execute(float) override;
 
     private:
         NameEntryState* m_pState;
@@ -54,7 +54,7 @@ namespace dae {
     public:
         explicit ConfirmLetterCommand(NameEntryState* state) : m_pState{ state } {}
 
-        void Execute(float) override { m_pState->ConfirmLetter(); }
+        void Execute(float) override;
 
     private:
         NameEntryState* m_pState;

@@ -235,7 +235,7 @@ bool dae::ColliderComponent::CheckCollision(const ColliderComponent& other)
 	{
 		Event e(make_sdbm_hash("OnCollision"));
 		GameObject* otherOwner = other.GetOwner();
-		m_subject.NotifyObservers(e, (void*)otherOwner);
+		if(otherOwner) m_subject.NotifyObservers(e, (void*)otherOwner);
 	}
 
 	return isOverlapping;
