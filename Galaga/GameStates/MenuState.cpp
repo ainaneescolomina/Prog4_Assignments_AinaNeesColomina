@@ -20,9 +20,10 @@ void dae::MenuState::OnEnter()
     input.BindCommand(SDLK_SPACE, KeyState::Down, std::make_unique<ConfirmSelectionCommand>(this));
 
     // gamepad bindings
-    input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Pressed, std::make_unique<NavigateMenuCommand>(this, -1));
-    input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Pressed, std::make_unique<NavigateMenuCommand>(this, 1));
-    input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Pressed, std::make_unique<ConfirmSelectionCommand>(this));
+    input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Down, std::make_unique<NavigateMenuCommand>(this, -1));
+    input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Down, std::make_unique<NavigateMenuCommand>(this, 1));
+    input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmSelectionCommand>(this));
+
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
     auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
@@ -73,9 +74,9 @@ void dae::MenuState::OnExit()
     input.UnbindCommand(SDLK_W, KeyState::Down);
     input.UnbindCommand(SDLK_S, KeyState::Down);
     input.UnbindCommand(SDLK_SPACE, KeyState::Down);
-    input.UnbindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Pressed);
-    input.UnbindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Pressed);
-    input.UnbindGamepadCommand(dae::GAMEPAD_A, KeyState::Pressed);
+    input.UnbindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Down);
+    input.UnbindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Down);
+    input.UnbindGamepadCommand(dae::GAMEPAD_A, KeyState::Down);
 }
 
 std::unique_ptr<dae::GameState> dae::MenuState::Update(float)

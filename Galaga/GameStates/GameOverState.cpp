@@ -13,7 +13,8 @@
 void dae::GameOverState::OnEnter()
 {
     dae::InputManager::GetInstance().BindCommand(SDLK_SPACE, dae::KeyState::Down, std::make_unique<OpenHighscoreMenuCommand>(m_score));
-
+    dae::InputManager::GetInstance().BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Down, std::make_unique<OpenHighscoreMenuCommand>(m_score));
+    
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
     auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
@@ -59,6 +60,16 @@ void dae::GameOverState::OnEnter()
     ratioStat->SetPosition(675.f, 450.f);
     m_pScene->Add(std::move(ratioStat));
 
+    auto scoreTitle = std::make_unique<dae::GameObject>();
+    scoreTitle->AddComponent<dae::TextComponent>("Final Score:", font);
+    scoreTitle->SetPosition(250.f, 500.f);
+    m_pScene->Add(std::move(scoreTitle));
+
+    auto scoreStat = std::make_unique<dae::GameObject>();
+    scoreStat->AddComponent<dae::TextComponent>(std::to_string(m_score), font, SDL_Color{ 255, 255, 0, 255 });
+    scoreStat->SetPosition(675.f, 500.f);
+    m_pScene->Add(std::move(scoreStat));
+
     auto menuInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 850.f }, "Press Space or button A to open the Highscore Menu");
     m_pScene->Add(std::move(menuInstructions));
 }
@@ -67,6 +78,7 @@ void dae::GameOverState::OnExit()
 {
     m_pScene->RemoveAll();
     dae::InputManager::GetInstance().UnbindCommand(SDLK_SPACE, dae::KeyState::Down);
+    dae::InputManager::GetInstance().UnbindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Down);
 }
 
 std::unique_ptr<dae::GameState> dae::GameOverState::Update(float)

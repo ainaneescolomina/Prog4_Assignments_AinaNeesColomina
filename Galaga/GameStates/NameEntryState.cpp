@@ -12,9 +12,14 @@
 void dae::NameEntryState::OnEnter()
 {
     auto& input = dae::InputManager::GetInstance();
+    // keyborad bindings
     input.BindCommand(SDLK_A, dae::KeyState::Down, std::make_unique<CycleLetterCommand>(this, -1));
     input.BindCommand(SDLK_D, dae::KeyState::Down, std::make_unique<CycleLetterCommand>(this, 1));
     input.BindCommand(SDLK_SPACE, dae::KeyState::Down, std::make_unique<ConfirmLetterCommand>(this));
+    // gamepad bindings
+    input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Down, std::make_unique<CycleLetterCommand>(this, -1));
+    input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Down, std::make_unique<CycleLetterCommand>(this, 1));
+    input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmLetterCommand>(this));
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
@@ -48,6 +53,9 @@ void dae::NameEntryState::OnExit()
     input.UnbindCommand(SDLK_A, dae::KeyState::Down);
     input.UnbindCommand(SDLK_D, dae::KeyState::Down);
     input.UnbindCommand(SDLK_SPACE, dae::KeyState::Down);
+    input.UnbindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Down);
+    input.UnbindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Down);
+    input.UnbindGamepadCommand(dae::GAMEPAD_A, KeyState::Down);
 
     m_pScene->RemoveAll();
 }
