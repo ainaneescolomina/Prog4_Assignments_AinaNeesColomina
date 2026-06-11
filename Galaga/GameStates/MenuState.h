@@ -17,6 +17,7 @@ namespace dae
             SinglePlayer,
             CoOp,
             Versus,
+            Highscore,
             Quit
         };
 

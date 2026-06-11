@@ -1,10 +1,12 @@
 #include "MenuState.h"
-#include "PlayState.h"
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "GameStateManager.h"
 #include "Components.h"
+
+#include "PlayState.h"
+#include "HighscoreState.h"
 
 #include "Factory.h"
 
@@ -36,7 +38,7 @@ void dae::MenuState::OnEnter()
     logo->SetPosition(350.f, 217.f);
     m_pScene->Add(std::move(logo));
 
-    std::vector<std::string> gameModes = { "1 Player", "2 Players Co-op", "2 Players Versus", "Quit Game" };
+    std::vector<std::string> gameModes = { "1 Player", "2 Players Co-op", "2 Players Versus", "Highscores", "Quit Game" };
     float startY = 400.f;
     float spacing = 50.f;
 
@@ -84,7 +86,7 @@ std::unique_ptr<dae::GameState> dae::MenuState::Update(float)
 void dae::MenuState::MoveSelection(int direction)
 {
     m_selectedIdx += direction;
-    int maxCount = 4;
+    int maxCount = 5;
 
     if (m_selectedIdx >= maxCount) m_selectedIdx = 0;
     if (m_selectedIdx < 0) m_selectedIdx = maxCount - 1;
@@ -104,6 +106,10 @@ void dae::MenuState::ConfirmSelection()
     case GameMode::Versus:
     default:
         // Stubs for un-implemented multiplayer elements so they don't crash
+        break;
+
+    case GameMode::Highscore:
+        GameStateManager::GetInstance().ChangeState(std::make_unique<HighscoreState>());
         break;
 
     case GameMode::Quit:
