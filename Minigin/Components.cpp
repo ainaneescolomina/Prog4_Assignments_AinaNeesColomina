@@ -1,5 +1,6 @@
 #include "Components.h"
 #include "Components.h"
+#include "Components.h"
 
 #include <iostream>
 #include <sstream>
@@ -45,11 +46,11 @@ dae::AnimatedRenderComponent::AnimatedRenderComponent(GameObject* ownerRef, int 
 {
 }
 
-void dae::AnimatedRenderComponent::Update(float deltaTime)
+void dae::AnimatedRenderComponent::Update(float delta_time)
 {
 	if (m_totalFrames <= 1) return;
 
-	m_timer += deltaTime;
+	m_timer += delta_time;
 
 	if (m_timer >= m_frameTime)
 	{
@@ -92,12 +93,20 @@ void dae::AnimatedRenderComponent::Render() const
 	);
 }
 
-void dae::AnimatedRenderComponent::SetTexture(const std::string& filename, bool center)
+void dae::AnimatedRenderComponent::SetTexture(const std::string& filename, int rows, int cols, float frameTime, bool center)
 {
 	dae::RenderComponent::SetTexture(filename, center);
 
 	if (m_texture)
 	{
+		m_rows = rows;
+		m_cols = cols;
+		m_totalFrames = rows * cols;
+
+		m_frameTime = frameTime;
+		m_currentFrame = 0;
+		m_timer = 0.0f;
+
 		auto textureSize = m_texture->GetSize();
 		m_frameWidth = textureSize.x / m_cols;
 		m_frameHeight = textureSize.y / m_rows;
@@ -204,6 +213,20 @@ void dae::RotatorComponent::Update(float delta_time)
 
 #pragma region --- GAME ACTOR ---
 
+void dae::ColliderComponent::Render() const
+{
+	if (!m_debugg) return;
+	auto rect = GetWorldRect();
+
+	SDL_FRect sdlRect{ rect.x, rect.y, rect.w, rect.h };
+	auto* sdlRenderer = Renderer::GetInstance().GetSDLRenderer();
+	Uint8 r, g, b, a;
+	SDL_GetRenderDrawColor(sdlRenderer, &r, &g, &b, &a);
+	SDL_SetRenderDrawColor(sdlRenderer, 0, 255, 0, 255);
+	SDL_RenderRect(sdlRenderer, &sdlRect);
+	SDL_SetRenderDrawColor(sdlRenderer, r, g, b, a);
+}
+
 bool dae::ColliderComponent::CheckCollision(const ColliderComponent& other)
 {
 	bool isOverlapping = IsOverlapping(other);
@@ -221,7 +244,12 @@ bool dae::ColliderComponent::CheckCollision(const ColliderComponent& other)
 dae::ColliderComponent::Rect dae::ColliderComponent::GetWorldRect() const
 {
 	const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
-	return { pos.x, pos.y, m_width, m_height };
+
+	// center to point
+	float centerX = pos.x - (m_width / 2.f);
+	float centerY = pos.y - (m_height / 2.f);
+
+	return { centerX, centerY, m_width, m_height };
 }
 
 bool dae::ColliderComponent::IsOverlapping(const ColliderComponent& other) const

@@ -69,9 +69,12 @@ void dae::Scene::CheckCollisions()
 
 	for (auto& obj : m_objects)
 	{
-		if (!obj->IsActive())continue;
+		if (!obj->IsActive()) continue;
 		if (auto* col = obj->GetComponent<ColliderComponent>())
+		{
+			if(!col->IsActive()) continue;
 			colliders.push_back(col);
+		}
 	}
 
 	for (size_t i = 0; i < colliders.size(); ++i)

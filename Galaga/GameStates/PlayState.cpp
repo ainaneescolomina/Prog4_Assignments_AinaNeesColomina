@@ -70,6 +70,7 @@ void dae::PlayState::OnEnter()
 	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
 
 	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
+	score->GetSubject().AddObserver(m_pGameStats.get());
 	auto shoot = player->GetComponent<dae::ShootComponent>();
 	shoot->GetSubject().AddObserver(m_pBulletSpawner.get());
 	shoot->GetSubject().AddObserver(m_pGameStats.get());
@@ -79,7 +80,6 @@ void dae::PlayState::OnEnter()
 	// --- GAMEPLAY ---
 	m_pLevelManager->SetPlayerScore(score);
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
-	m_pLevelManager->SetGameStats(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
 	lives->GetSubject().AddObserver(this);
 

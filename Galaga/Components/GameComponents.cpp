@@ -8,16 +8,32 @@
 
 void dae::MovementComponent::Notify(Event event, void*)
 {
-	if (event.id == make_sdbm_hash("ResetPosition"))
+	if (event.id == make_sdbm_hash("TakeDamage"))
 	{
-		GetOwner()->SetPosition(m_resetPos.x, m_resetPos.y);
-		m_isFrozen = false;
+		m_isExploding = true;
+		m_explodingTimer = 0.8f;
+		m_isFrozen = true;
 
 		GetOwner()->RemoveComponent<TractorBeamTargetComponent>();
+		GetOwner()->GetComponent<dae::AnimatedRenderComponent>()->SetTexture("Images/player_explosion.png", 1, 4, 0.2f, true);
 	}
 	else if (event.id == make_sdbm_hash("FreezePosition"))
 	{
 		m_isFrozen = true;
+	}
+}
+
+void dae::MovementComponent::Update(float delta_time)
+{
+	if (!m_isExploding) return;
+	m_explodingTimer -= delta_time;
+
+	if (m_explodingTimer <= 0)
+	{
+		GetOwner()->SetPosition(m_resetPos.x, m_resetPos.y);
+		GetOwner()->GetComponent<dae::AnimatedRenderComponent>()->SetTexture("Images/player.png", 1, 1, 0.f, true);
+		m_isExploding = false;
+		m_isFrozen = false;
 	}
 }
 
@@ -26,15 +42,16 @@ void dae::LivesComponent::Notify(Event event, void*)
 {
 	if (event.id == make_sdbm_hash("TakeDamage"))
 	{
-		TakeDamage(1);
+		if (m_timer > 0.f) return;
+		m_timer = m_cooldown;
 
-		auto* myTagComp = GetOwner()->GetComponent<TagComponent>();
-		if (myTagComp && myTagComp->GetTag() == TagComponent::Tags::Player)
-		{
-			Event e(make_sdbm_hash("ResetPosition"));
-			m_subject.NotifyObservers(e, GetOwner());
-		}
+		TakeDamage(1);
 	}
+}
+
+void dae::LivesComponent::Update(float delta_time)
+{
+	m_timer -= delta_time;
 }
 
 void dae::LivesComponent::TakeDamage(int damage)
@@ -46,10 +63,18 @@ void dae::LivesComponent::TakeDamage(int damage)
 		Event e(make_sdbm_hash("ActorDied"));
 		m_subject.NotifyObservers(e, GetOwner());
 
-		if (m_deathAction == DeathAction::Destroy)
+		switch (m_deathAction)
+		{
+		case dae::LivesComponent::DeathAction::Destroy:
 			GetOwner()->MarkForDestroy();
-		else
+			break;
+		case dae::LivesComponent::DeathAction::Deactivate:
 			GetOwner()->SetActive(false);
+			break;
+		case dae::LivesComponent::DeathAction::None:
+		default:
+			break;
+		}			
 	}
 
 	Event e(make_sdbm_hash("UpdateLives"));
@@ -146,13 +171,10 @@ void dae::DamageManager::HandleTractorBeamCapture(GameObject* beamObject)
 		auto* beamTarget = GetOwner()->AddComponent<TractorBeamTargetComponent>(targetLocation.x, targetLocation.y - 20.f);
 
 		auto* livesComp = GetOwner()->GetComponent<LivesComponent>();
-		if (livesComp)
-		{
-			beamTarget->GetSubject().AddObserver(livesComp);
-		}
+		if (livesComp) beamTarget->GetSubject().AddObserver(livesComp);
+		beamTarget->GetSubject().AddObserver(moveComp);
 	}
 }
-
 
 void dae::ScreenBoundsComponent::Update(float)
 {
@@ -182,17 +204,17 @@ void dae::TractorBeamTargetComponent::Update(float delta_time)
 {
 	glm::vec2 playerPos = GetOwner()->GetTransform().GetPosition();
 
-	float pullSpeed = 150.f;
+	float pullSpeed = 120.f;
 
-	if (playerPos.y > m_targetPos.y)
+	if (playerPos.y > (m_targetPos.y - 100.f))
 	{
 		// move toward the top of the beam
 		float xDiff = m_targetPos.x - playerPos.x;
-		float driftSpeed = 2.0f;
+		float driftSpeed = 2.5f;
 
 		GetOwner()->SetPosition(
 			playerPos.x + (xDiff * delta_time * driftSpeed),
-			playerPos.y - (pullSpeed * delta_time)
+			playerPos.y - (delta_time * pullSpeed)
 		);
 	}
 	else
@@ -221,9 +243,9 @@ void dae::LivesDisplayComponent::Render() const
     const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
     const float spacing = 65.f;
 
-    for (int i = 0; i < m_lives; ++i)
+    for (int i = 1; i < m_lives; ++i)
     {
-        Renderer::GetInstance().RenderTexture(*m_texture, pos.x + i * spacing, pos.y);
+        Renderer::GetInstance().RenderTexture(*m_texture, pos.x + (i-1) * spacing, pos.y);
     }
 }
 

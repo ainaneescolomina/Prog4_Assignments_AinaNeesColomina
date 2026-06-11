@@ -1,5 +1,6 @@
 #include "GameStatsManager.h"
 #include "GameComponents.h"
+#include "GameObject.h"
 #include <cmath>
 
 void dae::GameStatsManager::Notify(Event event, void* sender)
@@ -15,7 +16,7 @@ void dae::GameStatsManager::Notify(Event event, void* sender)
     else if (event.id == make_sdbm_hash("UpdateScore"))
     {
         ScoreComponent* component = static_cast<ScoreComponent*>(sender);
-        if(component) m_score = component->GetScore();
+        m_score = component->GetScore();
     }
 }
 

@@ -62,11 +62,11 @@ namespace dae
 		AnimatedRenderComponent& operator=(const AnimatedRenderComponent& other) = delete;
 		AnimatedRenderComponent& operator=(AnimatedRenderComponent&& other) = delete;
 
-		virtual void Update(float deltaTime) override;
+		virtual void Update(float delta_time) override;
 		virtual void Render() const override;
 
-		virtual void SetTexture(const std::string& filename, bool center = false) override;
-
+		virtual void SetTexture(const std::string& filename, bool center = false) override { SetTexture(filename, m_rows, m_cols, m_frameTime, center); }
+		void SetTexture(const std::string& filename, int rows, int cols, float frameTime, bool center = false);
 
 	private:
 		int m_rows{ 1 };
@@ -164,6 +164,8 @@ namespace dae
 		ColliderComponent& operator=(const ColliderComponent& other) = delete;
 		ColliderComponent& operator=(ColliderComponent&& other) = delete;
 
+		virtual void Render() const override;
+
 		struct Rect
 		{
 			float x, y, w, h;
@@ -171,12 +173,17 @@ namespace dae
 
 		bool CheckCollision(const ColliderComponent& other);
 
+		bool IsActive() const { return m_active; }
+		void SetActive(bool active) { m_active = active; }
+
 		Subject& GetSubject() { return m_subject; };
 
 	private:
 		float m_width{};
 		float m_height{};
 		Subject m_subject;
+		bool m_active{ true };
+		bool m_debugg{ true };
 
 		Rect GetWorldRect() const;
 		bool IsOverlapping(const ColliderComponent& other) const;

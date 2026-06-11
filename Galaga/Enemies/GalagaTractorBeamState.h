@@ -1,14 +1,16 @@
 #pragma once
 #include <memory>
 #include "EnemyState.h"
+#include "Observer.h"
 #include <glm/glm.hpp>
 
 namespace dae
 {
     class GameObject;
     class EnemyComponent;
+    class ColliderComponent;
 
-    class GalagaTractorBeamState final : public EnemyState
+    class GalagaTractorBeamState final : public EnemyState, public Observer
     {
     public:
         virtual ~GalagaTractorBeamState() = default;
@@ -20,8 +22,11 @@ namespace dae
 
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time) override;
 
+        virtual void Notify(Event event, void* sender) override;
+
     private:
         dae::EnemyComponent* m_enemyComp{};
+        dae::ColliderComponent* m_colliderComp{};
 
         glm::vec2 m_startPos{};
         float m_speed{ 220.f };
@@ -33,5 +38,7 @@ namespace dae
         bool m_beamActive{ false };
         float m_beamTimer{ 0.f };
         float m_beamDuration{ 3.f };
+
+        bool m_beamSuccessful{ false };
     };
 }

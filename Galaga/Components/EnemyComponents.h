@@ -26,6 +26,8 @@ namespace dae
         void SetBeamObject(GameObject* beam) { m_pBeamObject = beam; }
         GameObject* GetBeamObject() const { return m_pBeamObject; }
 
+        dae::GameObject* GetEnemyOwner() const { return GetOwner(); }
+
     private:
         EnemyType m_type;
         bool m_isDiving{};

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "EnemyFormationState.h"
 #include "EnemyComponents.h"
+#include "GameComponents.h"
 
 void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
 {
@@ -9,7 +10,13 @@ void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
     m_startPos = pos;
 
     m_enemyComp = owner->GetComponent<EnemyComponent>();
-    if (m_enemyComp) m_enemyComp->SetDiving(true);
+    if (m_enemyComp)
+    {
+        m_enemyComp->SetDiving(true);
+        m_colliderComp = m_enemyComp->GetEnemyOwner()->GetComponent<dae::ColliderComponent>();
+    }
+
+    if(m_colliderComp) m_colliderComp->GetSubject().AddObserver(this);
 
     // screen bounds
     float screenMinX = 100.f;
@@ -52,22 +59,36 @@ void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
 void dae::GalagaTractorBeamState::OnExit(dae::GameObject*)
 {
     if (m_enemyComp) m_enemyComp->SetDiving(false);
+    if (m_colliderComp) m_colliderComp->GetSubject().RemoveObserver(this);
 }
 
 std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameObject* owner, float delta_time)
 {
+    if (m_beamSuccessful)
+    {
+        if (m_enemyComp && m_enemyComp->GetBeamObject())
+            m_enemyComp->GetBeamObject()->SetActive(false);
+        return std::make_unique<EnemyFormationState>(250.f, m_startPos);
+    }
+
     // beam phase
     if (m_beamActive)
     {
         if (m_beamTimer <= 0.1f)
-            if (m_enemyComp) m_enemyComp->GetBeamObject()->SetActive(true);
+        {
+            if (m_enemyComp)
+                m_enemyComp->GetBeamObject()->SetActive(true);
+        }
 
         m_beamTimer += delta_time;
 
         if (m_beamTimer >= m_beamDuration)
         {
             m_beamActive = false;
-            if (m_enemyComp) m_enemyComp->GetBeamObject()->SetActive(false);
+            if (m_enemyComp)
+            {
+                m_enemyComp->GetBeamObject()->SetActive(false);
+            }
             return std::make_unique<EnemyFormationState>(250.f, m_startPos);
         }
 
@@ -100,4 +121,20 @@ std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameOb
     owner->SetPosition(pos.x, pos.y);
 
     return nullptr;
+}
+
+void dae::GalagaTractorBeamState::Notify(Event event, void* sender)
+{
+    if (event.id == make_sdbm_hash("OnCollision"))
+    {
+        auto* otherObj = static_cast<GameObject*>(sender);
+        auto* otherTagComp = otherObj->GetComponent<dae::TagComponent>();
+
+        if (!otherTagComp) return;
+        auto otherTag = otherTagComp->GetTag();
+
+        // Check if Tractor Beam
+        if (otherTag == TagComponent::Tags::Player)
+            m_beamSuccessful = true;
+    }
 }

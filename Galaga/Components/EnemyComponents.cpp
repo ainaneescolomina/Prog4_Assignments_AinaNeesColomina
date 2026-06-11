@@ -1,5 +1,7 @@
 #include "EnemyComponents.h"
 #include "GameObject.h"
+#include "GameComponents.h"
+#include "EnemyDeadState.h"
 
 dae::EnemyComponent::~EnemyComponent()
 {
@@ -11,10 +13,18 @@ void dae::EnemyComponent::Notify(Event event, void*)
 {
     if (event.id == make_sdbm_hash("TakeDamage"))
     {
-        if (m_type != EnemyType::BossGalaga) return;
-        auto* myRenderComp = GetOwner()->GetComponent<dae::AnimatedRenderComponent>();
-        if (myRenderComp)
-            myRenderComp->SetTexture("Images/enemy_galaga_hurt.png", true);
+        if (m_type == EnemyType::BossGalaga )
+        {
+            auto* myRenderComp = GetOwner()->GetComponent<dae::AnimatedRenderComponent>();
+            if (myRenderComp)
+                myRenderComp->SetTexture("Images/enemy_galaga_hurt.png", true);
+        }
+    }
+    else if (event.id == make_sdbm_hash("ActorDied"))
+    {
+        auto* myStateComp = GetOwner()->GetComponent<EnemyStateComponent>();
+        if (myStateComp)
+            myStateComp->SetState(std::make_unique<dae::EnemyDeadState>());
     }
 }
 

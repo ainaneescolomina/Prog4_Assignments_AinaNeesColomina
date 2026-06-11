@@ -199,6 +199,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Enemies/ButterflyDiveState.cpp
   Galaga/Enemies/GalagaDiveState.cpp
   Galaga/Enemies/GalagaTractorBeamState.cpp
+  Galaga/Enemies/EnemyDeadState.cpp
   Galaga/Enemies/FormationManager.cpp
   Galaga/Commands/GameCommands.cpp
   Galaga/Components/EnemyComponents.cpp

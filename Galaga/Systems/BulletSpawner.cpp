@@ -66,6 +66,11 @@ bool dae::BulletSpawner::SpawnEnemyBullet(dae::GameObject* shooter)
         auto* velocity = bullet->GetComponent<dae::VelocityComponent>();
         velocity->SetVelocity(0.f,300.f);
 
+        if (auto* lives = bullet->GetComponent<dae::LivesComponent>())
+        {
+            lives->SetLives(1);
+        }
+
         bullet->SetActive(true);
 
         return true;
@@ -85,6 +90,11 @@ bool dae::BulletSpawner::SpawnPlayerBullet(dae::GameObject* shooter)
 
         auto* velocity = bullet->GetComponent<dae::VelocityComponent>();
         velocity->SetVelocity(0.f, -300.f);
+
+        if (auto* lives = bullet->GetComponent<dae::LivesComponent>())
+        {
+            lives->SetLives(1);
+        }
 
         bullet->SetActive(true);
 

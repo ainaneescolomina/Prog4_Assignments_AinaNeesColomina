@@ -5,7 +5,6 @@
 #include "EnemyComponents.h"
 #include "EnemyFormationState.h"
 #include "BulletSpawner.h"
-#include "GameStatsManager.h"
 #include "GameObject.h"
 
 void dae::LevelManager::Notify(Event event, void* sender)
@@ -100,14 +99,11 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
 
         if (m_pPlayerScore)
             lives->GetSubject().AddObserver(m_pPlayerScore);
-
-        if (m_pGameStats)
-            lives->GetSubject().AddObserver(m_pGameStats);
     }
 
     if (auto* shoot = enemy->GetComponent<dae::ShootComponent>())
     {
-        if (m_pGameStats)
+        if (m_pBulletSpawner)
             shoot->GetSubject().AddObserver(m_pBulletSpawner);
     }
 

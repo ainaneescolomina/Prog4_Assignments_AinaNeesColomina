@@ -9,7 +9,8 @@ namespace dae
     {
         Formation,
         Idle,
-        Dive
+        Dive,
+        Dead
     };
 
     class EnemyState 

@@ -20,12 +20,17 @@ namespace dae
 
 		virtual void Notify(Event event, void* sender) override;
 
+		virtual void Update(float delta_time) override;
+
 		void SetIsFrozen(bool frozen) { m_isFrozen = frozen; };
 		bool GetIsFrozen() const { return m_isFrozen; };
 
 	private:
 		glm::vec2 m_resetPos;
+		bool m_isExploding{false};
 		bool m_isFrozen{false};
+
+		float m_explodingTimer{ 0 };
 	};
 
 	class LivesComponent final : public Component, public Observer
@@ -34,12 +39,12 @@ namespace dae
 		enum class DeathAction
 		{
 			Destroy,
-			Deactivate
+			Deactivate,
+			None
 		};
 
-		explicit LivesComponent(GameObject* ownerRef, int lives, DeathAction action)
-			: Component(ownerRef), m_lives{ lives }, m_deathAction{ action }, m_subject(this) {
-		}
+		explicit LivesComponent(GameObject* ownerRef, int lives, DeathAction action, float cooldown = 0.f)
+			: Component(ownerRef), m_lives{ lives }, m_cooldown{ cooldown }, m_deathAction { action }, m_subject(this) {}
 		virtual ~LivesComponent() = default;
 		LivesComponent(const LivesComponent& other) = delete;
 		LivesComponent(LivesComponent&& other) = delete;
@@ -48,13 +53,18 @@ namespace dae
 
 		virtual void Notify(Event event, void* sender) override;
 
+		virtual void Update(float delta_time) override;
+
 		void TakeDamage(int damage);
+		void SetLives(int lives) { m_lives = lives; };
 		int GetLives() const { return m_lives; };
 
 		Subject& GetSubject() { return m_subject; };
 
 	private:
 		int m_lives;
+		float m_cooldown;
+		float m_timer{ 0.f };
 		DeathAction m_deathAction;
 		Subject m_subject;
 	};
