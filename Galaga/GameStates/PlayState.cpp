@@ -27,8 +27,8 @@ void dae::PlayState::OnEnter()
 	auto& sound = dae::servicelocator::get_sound_system();
 
 	// preload sounds
-	sound.load(0, "Data/Sounds/PlayerShoot.mp3");
-	sound.load(1, "Data/Sounds/GameStart.mp3");
+	sound.Load(0, "Data/Sounds/PlayerShoot.mp3");
+	sound.Load(1, "Data/Sounds/GameStart.mp3");
 
 	///////////////
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
@@ -89,7 +89,7 @@ void dae::PlayState::OnEnter()
 	m_pScene->Add(std::move(scoreUI));
 
 	// Start Game
-	sound.play(1, 0.5f);
+	sound.Play(1, 0.5f);
 }
 
 void dae::PlayState::OnExit()
