@@ -26,4 +26,10 @@ namespace dae
 	private:
 		GameObject* m_pObject;
 	};
+
+	class MuteToggleCommand final : public Command
+	{
+	public:
+		void Execute(float delta_time) override;
+	};
 }

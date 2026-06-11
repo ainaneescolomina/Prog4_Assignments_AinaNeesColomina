@@ -5,8 +5,11 @@
 namespace dae
 {
     class NullSoundSystem final : public ISoundSystem {
-        void play(const sound_id, const float) override {}
-        void load(sound_id, const std::string&) override {};
+        void Play(const sound_id, const float) override {}
+        void Stop(const sound_id) override {}
+        void Load(sound_id, const std::string&) override {};
+        void Mute(const sound_id) override {};
+        void GeneralMuteToggle() override {};
     };
 
     class servicelocator final {

@@ -5,7 +5,7 @@
 #include "Scene.h"
 
 #include "InputManager.h"
-//#include "Commands.h"
+#include "GameCommands.h"
 
 #include "ServiceLocator.h"
 #include "SdlSoundSystem.h"
@@ -18,6 +18,7 @@
 void dae::PlayState::OnEnter()
 {
 	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(this));
+	InputManager::GetInstance().BindCommand(SDLK_F2, KeyState::Down, std::make_unique<MuteToggleCommand>());
 
 	m_pScene = &SceneManager::GetInstance().CreateScene();
 
@@ -26,7 +27,8 @@ void dae::PlayState::OnEnter()
 	auto& sound = dae::servicelocator::get_sound_system();
 
 	// preload sounds
-	sound.load(0, "Data/Sounds/Fighter_Shot1.mp3");
+	sound.load(0, "Data/Sounds/PlayerShoot.mp3");
+	sound.load(1, "Data/Sounds/GameStart.mp3");
 
 	///////////////
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
@@ -85,11 +87,15 @@ void dae::PlayState::OnEnter()
 	m_pScene->Add(std::move(player));
 	m_pScene->Add(std::move(livesUI));
 	m_pScene->Add(std::move(scoreUI));
+
+	// Start Game
+	sound.play(1, 0.5f);
 }
 
 void dae::PlayState::OnExit()
 {
 	InputManager::GetInstance().UnbindCommand(SDLK_F1, KeyState::Down);
+	InputManager::GetInstance().UnbindCommand(SDLK_F2, KeyState::Down);
 	dae::InputManager::GetInstance().ClearAllBindings();
 	m_pScene->RemoveAll();
 }

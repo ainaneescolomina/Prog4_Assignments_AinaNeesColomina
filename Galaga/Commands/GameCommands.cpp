@@ -1,6 +1,7 @@
 #include"GameCommands.h"
 #include "GameObject.h"
 #include "GameComponents.h"
+#include "ServiceLocator.h"
 
 dae::MoveCommand::MoveCommand(GameObject* obj, float inputX, float inputY)
 	:m_pObject(obj),
@@ -25,4 +26,10 @@ void dae::MoveCommand::Execute(float delta_time)
 void dae::ShootCommand::Execute(float)
 {
 	m_pObject->GetComponent<ShootComponent>()->Shoot();
+}
+
+void dae::MuteToggleCommand::Execute(float)
+{
+	auto& sound = dae::servicelocator::get_sound_system();
+	sound.GeneralMuteToggle();
 }
