@@ -1,4 +1,5 @@
 #include "Components.h"
+#include "Components.h"
 
 #include <iostream>
 #include <sstream>
@@ -35,6 +36,72 @@ void dae::RenderComponent::SetTexture(const std::string& filename, bool center)
 {
 	m_texture = ResourceManager::GetInstance().LoadTexture(filename);
 	m_centerTexture = center;
+}
+
+dae::AnimatedRenderComponent::AnimatedRenderComponent(GameObject* ownerRef, int rows, int cols, float frameTime)
+	: RenderComponent(ownerRef)
+	, m_rows(rows), m_cols(cols)
+	, m_frameTime(frameTime), m_totalFrames(rows* cols)
+{
+}
+
+void dae::AnimatedRenderComponent::Update(float deltaTime)
+{
+	if (m_totalFrames <= 1) return;
+
+	m_timer += deltaTime;
+
+	if (m_timer >= m_frameTime)
+	{
+		m_timer -= m_frameTime;
+		m_currentFrame = (m_currentFrame + 1) % m_totalFrames;
+	}
+}
+
+void dae::AnimatedRenderComponent::Render() const
+{
+	if (m_texture == nullptr) return;
+
+	if (m_totalFrames <= 1)
+	{
+		dae::RenderComponent::Render();
+		return;
+	}
+
+	int col = m_currentFrame % m_cols;
+	int row = m_currentFrame / m_cols;
+
+	float srcX = static_cast<float>(col * m_frameWidth);
+	float srcY = static_cast<float>(row * m_frameHeight);
+
+	const auto& pos = GetOwner()->GetTransform().GetWorldPosition();
+	glm::vec2 texturePos{ pos.x, pos.y };
+
+	if (m_centerTexture)
+	{
+		texturePos.x = pos.x - (m_frameWidth / 2.f);
+		texturePos.y = pos.y - (m_frameHeight / 2.f);
+	}
+
+	dae::Renderer::GetInstance().RenderTexture(
+		*m_texture,
+		texturePos.x, texturePos.y,
+		static_cast<float>(m_frameWidth), static_cast<float>(m_frameHeight),
+		srcX, srcY,
+		static_cast<float>(m_frameWidth), static_cast<float>(m_frameHeight)
+	);
+}
+
+void dae::AnimatedRenderComponent::SetTexture(const std::string& filename, bool center)
+{
+	dae::RenderComponent::SetTexture(filename, center);
+
+	if (m_texture)
+	{
+		auto textureSize = m_texture->GetSize();
+		m_frameWidth = textureSize.x / m_cols;
+		m_frameHeight = textureSize.y / m_rows;
+	}
 }
 
 void dae::TextComponent::Update(float)

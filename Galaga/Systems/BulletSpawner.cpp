@@ -98,29 +98,31 @@ std::unique_ptr<dae::GameObject> dae::BulletSpawner::CreateBullet(bool isPlayerB
 {
     auto bullet = std::make_unique<dae::GameObject>();
 
-    bullet->AddComponent<dae::RenderComponent>()->SetTexture("Images/bullet.png", true);
+    glm::vec2 bounds = isPlayerBullet ? glm::vec2{11.f, 25.f} : glm::vec2{ 10.f, 20.f };
 
-    auto* collider = bullet->AddComponent<dae::ColliderComponent>(11.f, 25.f);
+    auto* collider = bullet->AddComponent<dae::ColliderComponent>(bounds.x, bounds.y);
     auto* damage = bullet->AddComponent<dae::DamageManager>();
     auto* lives = bullet->AddComponent<dae::LivesComponent>(1, dae::LivesComponent::DeathAction::Deactivate);
 
     bullet->AddComponent<dae::VelocityComponent>(0.f, 0.f);
     bullet->AddComponent<dae::OffscreenDeactivateComponent>(1024.f, 915.f);
 
-    // Observer / Subject
-    collider->GetSubject().AddObserver(damage);
-    damage->GetSubject().AddObserver(lives);
-
     if (isPlayerBullet)
     {
+        bullet->AddComponent<dae::RenderComponent>()->SetTexture("Images/bullet.png", true);
         bullet->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Bullet);
         damage->AddThreat(dae::TagComponent::Tags::Enemy);
     }
     else
     {
+        bullet->AddComponent<dae::RenderComponent>()->SetTexture("Images/enemy_bullet.png", true);
         bullet->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::EnemyBullet);
         damage->AddThreat(dae::TagComponent::Tags::Player);
     }
+
+    // Observer / Subject
+    collider->GetSubject().AddObserver(damage);
+    damage->GetSubject().AddObserver(lives);
 
     // Deactivate Bullet
     bullet->SetActive(false);

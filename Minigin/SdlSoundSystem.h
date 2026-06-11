@@ -36,6 +36,7 @@ namespace dae
         void Load(sound_id id, const std::string& path) override;
         void Stop(sound_id id) override;
         void Mute(sound_id id) override;
+        void GeneralMuteToggle() override;
 
     private:
         std::unique_ptr<ISoundSystem> _real_ss;

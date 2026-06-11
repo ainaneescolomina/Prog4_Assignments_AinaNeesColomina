@@ -4,7 +4,8 @@
 
 namespace dae
 {
-    class EnemyComponent final : public dae::Component {
+    class EnemyComponent final : public dae::Component, public Observer
+    {
     public:
         explicit EnemyComponent(dae::GameObject* owner, EnemyType type) : Component(owner), m_type(type) {}
         virtual ~EnemyComponent();
@@ -12,6 +13,8 @@ namespace dae
         EnemyComponent(EnemyComponent&& other) = delete;
         EnemyComponent& operator=(const EnemyComponent& other) = delete;
         EnemyComponent& operator=(EnemyComponent&& other) = delete;
+
+        virtual void Notify(Event event, void* sender) override;
 
         EnemyType GetType() const { return m_type; }
 
@@ -32,7 +35,8 @@ namespace dae
     };
 }
 
-class EnemyStateComponent final : public dae::Component {
+class EnemyStateComponent final : public dae::Component 
+{
 public:
     explicit EnemyStateComponent(dae::GameObject* owner) : Component(owner) {}
     virtual ~EnemyStateComponent();

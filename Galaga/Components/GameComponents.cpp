@@ -28,8 +28,8 @@ void dae::LivesComponent::Notify(Event event, void*)
 	{
 		TakeDamage(1);
 
-		if (auto* myTagComp = GetOwner()->GetComponent<TagComponent>(); myTagComp
-			&& myTagComp->GetTag() == TagComponent::Tags::Player)
+		auto* myTagComp = GetOwner()->GetComponent<TagComponent>();
+		if (myTagComp && myTagComp->GetTag() == TagComponent::Tags::Player)
 		{
 			Event e(make_sdbm_hash("ResetPosition"));
 			m_subject.NotifyObservers(e, GetOwner());

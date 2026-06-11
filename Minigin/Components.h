@@ -45,11 +45,41 @@ namespace dae
 
 		virtual void Render() const override;
 
-		void SetTexture(const std::string& filename, bool center = false);
+		virtual void SetTexture(const std::string& filename, bool center = false);
 
 	protected:
 		std::shared_ptr<Texture2D> m_texture{};
 		bool m_centerTexture{ false };
+	};
+
+	class AnimatedRenderComponent final : public RenderComponent
+	{
+	public:
+		AnimatedRenderComponent(GameObject* ownerRef, int rows, int cols, float frameTime);
+		virtual ~AnimatedRenderComponent() = default;
+		AnimatedRenderComponent(const AnimatedRenderComponent& other) = delete;
+		AnimatedRenderComponent(AnimatedRenderComponent&& other) = delete;
+		AnimatedRenderComponent& operator=(const AnimatedRenderComponent& other) = delete;
+		AnimatedRenderComponent& operator=(AnimatedRenderComponent&& other) = delete;
+
+		virtual void Update(float deltaTime) override;
+		virtual void Render() const override;
+
+		virtual void SetTexture(const std::string& filename, bool center = false) override;
+
+
+	private:
+		int m_rows{ 1 };
+		int m_cols{ 1 };
+
+		int m_frameWidth{ 0 };
+		int m_frameHeight{ 0 };
+
+		float m_frameTime{ 0.1f };
+		float m_timer{ 0.0f };
+
+		int m_currentFrame{ 0 };
+		int m_totalFrames{ 0 };
 	};
 
 	class Font;

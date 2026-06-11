@@ -7,6 +7,17 @@ dae::EnemyComponent::~EnemyComponent()
         m_pBeamObject->MarkForDestroy();
 }
 
+void dae::EnemyComponent::Notify(Event event, void*)
+{
+    if (event.id == make_sdbm_hash("TakeDamage"))
+    {
+        if (m_type != EnemyType::BossGalaga) return;
+        auto* myRenderComp = GetOwner()->GetComponent<dae::AnimatedRenderComponent>();
+        if (myRenderComp)
+            myRenderComp->SetTexture("Images/enemy_galaga_hurt.png", true);
+    }
+}
+
 int dae::EnemyComponent::GetScoreValue() const
 {
     switch (m_type)

@@ -11,13 +11,13 @@ namespace ActorFactory
     std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput, bool gamepadInput)
     {
         auto player = std::make_unique<dae::GameObject>();
-        player->AddComponent<dae::RenderComponent>()->SetTexture("Images/player.png", true);
+        player->AddComponent<dae::AnimatedRenderComponent>(1, 1, 0.f)->SetTexture("Images/player.png", true);
         player->SetPosition(pos.x, pos.y);
         player->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Player);
 
         auto* collider = player->AddComponent<dae::ColliderComponent>(45.f, 45.f);
         auto* damage = player->AddComponent<dae::DamageManager>();
-        auto* lives = player->AddComponent<dae::LivesComponent>(3, dae::LivesComponent::DeathAction::Destroy);
+        auto* lives = player->AddComponent<dae::LivesComponent>(4, dae::LivesComponent::DeathAction::Destroy);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
         //player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
@@ -57,25 +57,25 @@ namespace ActorFactory
         auto enemy = std::make_unique<dae::GameObject>();
         enemy->SetPosition(pos.x, pos.y);
         enemy->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Enemy);
-        enemy->AddComponent<dae::EnemyComponent>(enemyType);
+        auto* enemyComp = enemy->AddComponent<dae::EnemyComponent>(enemyType);
 
-        auto* render = enemy->AddComponent<dae::RenderComponent>();
+        auto* render = enemy->AddComponent<dae::AnimatedRenderComponent>(1, 2, 1.f);
         int livesAmount{ 1 };
 
         switch (enemyType)
         {
         case EnemyType::Bee:
-            render->SetTexture("Images/enemy_bees_1.png", true);
+            render->SetTexture("Images/enemy_bee.png", true);
             livesAmount = 1;
             break;
 
         case EnemyType::Butterfly:
-            render->SetTexture("Images/enemy_butterfly_1.png", true);
+            render->SetTexture("Images/enemy_butterfly.png", true);
             livesAmount = 1;
             break;
 
             case EnemyType::BossGalaga:
-            render->SetTexture("Images/enemy_galaga_1.png", true);
+            render->SetTexture("Images/enemy_galaga.png", true);
             livesAmount = 2;
             break;
         }
@@ -89,6 +89,7 @@ namespace ActorFactory
         // Observer / Subject
         collider->GetSubject().AddObserver(damage);
         damage->GetSubject().AddObserver(lives);
+        damage->GetSubject().AddObserver(enemyComp);
         damage->AddThreat(dae::TagComponent::Tags::Bullet);
         return enemy;
     }
@@ -97,7 +98,7 @@ namespace ActorFactory
     {
         // Create the Beam GameObject
         auto beam = std::make_unique<dae::GameObject>();
-        beam->AddComponent<dae::RenderComponent>()->SetTexture("Images/tractor_beam_1.png", true);
+        beam->AddComponent<dae::AnimatedRenderComponent>(1, 3, 0.5f)->SetTexture("Images/tractor_beam.png", true);
 
         // Position it directly underneath the Boss
         beam->SetPosition(0.f, 120.f);

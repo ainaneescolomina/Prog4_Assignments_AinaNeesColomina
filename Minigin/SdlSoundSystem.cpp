@@ -1,4 +1,5 @@
 #include "SdlSoundSystem.h"
+#include "SdlSoundSystem.h"
 
 #include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
@@ -278,5 +279,11 @@ namespace dae {
     {
         _real_ss->Mute(id);
         std::cout << "Mute sound " << id << "\n";
+    }
+
+    void LoggingSoundSystem::GeneralMuteToggle()
+    {
+        _real_ss->GeneralMuteToggle();
+        std::cout << "General mute toggle" << "\n";
     }
 }

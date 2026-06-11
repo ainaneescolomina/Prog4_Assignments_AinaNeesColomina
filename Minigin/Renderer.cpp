@@ -1,7 +1,7 @@
-﻿#include <stdexcept>
+﻿#include "Renderer.h"
+#include <stdexcept>
 #include <cstring>
 #include <iostream>
-#include "Renderer.h"
 #include "SceneManager.h"
 #include "Texture2D.h"
 
@@ -83,6 +83,27 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	dst.w = width;
 	dst.h = height;
 	SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
+}
+
+void dae::Renderer::RenderTexture(const Texture2D& texture,
+	float dstX, float dstY, float dstWidth, float dstHeight,
+	float srcX, float srcY, float srcWidth, float srcHeight) const
+{
+	// cut the frame from inside the spritesheet image asset
+	SDL_FRect src{};
+	src.x = srcX;
+	src.y = srcY;
+	src.w = srcWidth;
+	src.h = srcHeight;
+
+	// position and scale the cropped frame
+	SDL_FRect dst{};
+	dst.x = dstX;
+	dst.y = dstY;
+	dst.w = dstWidth;
+	dst.h = dstHeight;
+
+	SDL_RenderTexture(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }
 
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }
