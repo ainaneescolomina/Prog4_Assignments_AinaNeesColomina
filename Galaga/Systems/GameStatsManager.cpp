@@ -1,5 +1,6 @@
 #include "GameStatsManager.h"
 #include "GameComponents.h"
+#include <cmath>
 
 void dae::GameStatsManager::Notify(Event event, void* sender)
 {

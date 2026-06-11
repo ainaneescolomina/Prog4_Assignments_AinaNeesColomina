@@ -1,6 +1,5 @@
 #pragma once
 #include "Observer.h"
-#include <cmath>
 
 namespace dae
 {

@@ -20,7 +20,7 @@ namespace ActorFactory
         auto* lives = player->AddComponent<dae::LivesComponent>(3, dae::LivesComponent::DeathAction::Destroy);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
-        player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
+        //player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
 
         auto* movement = player->AddComponent<dae::MovementComponent>(pos.x, pos.y);
 
@@ -74,7 +74,7 @@ namespace ActorFactory
             break;
 
             case EnemyType::BossGalaga:
-            render->SetTexture("Images/enemy_butterfly_1.png", true);
+            render->SetTexture("Images/enemy_galaga_1.png", true);
             livesAmount = 2;
             break;
         }
@@ -95,13 +95,13 @@ namespace ActorFactory
     {
         // Create the Beam GameObject
         auto beam = std::make_unique<dae::GameObject>();
-        beam->AddComponent<dae::RenderComponent>()->SetTexture("Images/player_explosion_2.png", true);
+        beam->AddComponent<dae::RenderComponent>()->SetTexture("Images/tractor_beam_1.png", true);
 
         // Position it directly underneath the Boss
-        beam->SetPosition(0.f, 50.f);
+        beam->SetPosition(0.f, 120.f);
         beam->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::TractorBeam);
 
-        beam->AddComponent<dae::ColliderComponent>(60.f, 400.f);
+        beam->AddComponent<dae::ColliderComponent>(144.f, 240.f);
 
         // deactivated initially
         beam->SetActive(false);
