@@ -23,7 +23,6 @@ namespace dae
     private:
         float m_speed;
         int m_currentPoint{ 0 };
-        glm::vec2 m_currentDirection{};
         std::vector<glm::vec2> m_entrancePath;
     };
 }
