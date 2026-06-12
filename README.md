@@ -3,13 +3,11 @@
 This project is a recreation of the classic arcade game **Galaga** using a custom-built 2D C++ game engine expanded from the [Minigin](https://github.com/avadae/minigin) template.
 
 ## Repository Details
-* **Source Control Depot:** [INSERT YOUR GITHUB REPOSITORY LINK HERE]
-* **Minigin Engine:** [github/avadae/minigin](https://github.com/avadae/minigin)
-* **Live Web Target Demo:** `https://<your-username>.github.io/<your-repository-name>/`
+* **Source Control Depot:** [https://github.com/ainaneescolomina/Prog4_Assignments_AinaNeesColomina]
+* **Minigin Engine:** [https://github.com/avadae/minigin]
 
-[![Build Status](https://github.com/avadae/minigin/actions/workflows/cmake.yml/badge.svg)](https://github.com/avadae/cmake/actions)
-[![Build Status](https://github.com/avadae/minigin/actions/workflows/emscripten.yml/badge.svg)](https://github.com/avadae/emscripten/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/avadae/minigin?logo=github&sort=semver)](https://github.com/avadae/minigin/releases/latest)
+[![Build Status](https://github.com/ainaneescolomina/Prog4_Assignments_AinaNeesColomina/actions/workflows/cmake.yml/badge.svg)](https://github.com/avadae/cmake/actions)
+[![Build Status](https://github.com/ainaneescolomina/Prog4_Assignments_AinaNeesColomina/actions/workflows/emscripten.yml/badge.svg)](https://github.com/avadae/emscripten/actions)
 
 ---
 
