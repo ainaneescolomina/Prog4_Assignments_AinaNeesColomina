@@ -55,3 +55,11 @@ void dae::HighscoreManager::SaveNewHighscore(const std::string& filepath, const 
 
     outFile.close();
 }
+
+int dae::HighscoreManager::GetBestHighscore(const std::string& filepath)
+{
+    std::vector<dae::HighscoreData> scores = LoadHighscores(filepath);
+    
+    if (scores.empty()) return 0;
+    return scores[0].score;
+}

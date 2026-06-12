@@ -14,10 +14,10 @@
 
 #include "Factory.h"
 #include "GameComponents.h"
+#include "HighscoreManager.h"
 
 void dae::SinglePlayerState::OnEnter()
 {
-	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(m_pLevelManager.get()));
 	InputManager::GetInstance().BindCommand(SDLK_F2, KeyState::Down, std::make_unique<MuteToggleCommand>());
 
 	m_pScene = &SceneManager::GetInstance().CreateScene();
@@ -38,6 +38,7 @@ void dae::SinglePlayerState::OnEnter()
 	auto font = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 36);
 	auto fontSmall = dae::ResourceManager::GetInstance().LoadFont("Fonts/Silkscreen-Regular.ttf", 18);
 	auto& input = dae::InputManager::GetInstance();
+	auto highscoreManager = std::make_unique<HighscoreManager>();
 
 	// --- UI ---
 	auto background = std::make_unique<dae::GameObject>();
@@ -47,7 +48,7 @@ void dae::SinglePlayerState::OnEnter()
 	auto highscoreTitle = UIFactory::CreateUI_Text(font, { 750, 200 }, "High Score", { 255, 0, 0, 255 });
 	m_pScene->Add(std::move(highscoreTitle));
 
-	auto highscoreScore = UIFactory::CreateUI_Text(font, { 850, 250 }, "00000");
+	auto highscoreScore = UIFactory::CreateUI_Text(font, { 850, 250 }, std::to_string(highscoreManager->GetBestHighscore("Data/highscores.txt")));
 	m_pScene->Add(std::move(highscoreScore));
 
 	// --- MANAGERS ---
@@ -92,6 +93,7 @@ void dae::SinglePlayerState::OnEnter()
 	m_pScene->Add(std::move(scoreUI));
 
 	// Start Game
+	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(m_pLevelManager.get()));
 	sound.Play(0, 0.15f);
 }
 

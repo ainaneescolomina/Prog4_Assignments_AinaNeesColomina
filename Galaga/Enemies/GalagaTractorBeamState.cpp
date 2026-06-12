@@ -70,7 +70,7 @@ std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameOb
     {
         if (m_enemyComp && m_enemyComp->GetBeamObject())
             m_enemyComp->GetBeamObject()->SetActive(false);
-        return std::make_unique<EnemyFormationState>(250.f);
+        return std::make_unique<EnemyFormationState>(275.f);
     }
 
     // beam phase

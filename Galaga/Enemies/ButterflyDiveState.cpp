@@ -71,7 +71,7 @@ void dae::ButterflyDiveState::OnExit(dae::GameObject* owner)
 std::unique_ptr<dae::EnemyState> dae::ButterflyDiveState::Update(dae::GameObject* owner, float delta_time)
 {
     if (m_currentPoint >= static_cast<int>(m_points.size()))
-        return std::make_unique<EnemyFormationState>(250.f);
+        return std::make_unique<EnemyFormationState>(325.f);
 
     // Shooting mechanic
     if (m_amountBullets > 0)

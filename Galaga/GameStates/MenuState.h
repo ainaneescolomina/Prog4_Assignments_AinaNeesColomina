@@ -36,6 +36,9 @@ namespace dae
         Scene* m_pScene = nullptr;
         int m_selectedIdx{ 0 };
         std::vector<TextComponent*> m_pMenuTexts{};
+        TextComponent* m_pDescriptionText{ nullptr };
+        TextComponent* m_pInstructionTopText{ nullptr };
+        TextComponent* m_pInstructionBotText{ nullptr };
     };
 
     class NavigateMenuCommand final : public Command 

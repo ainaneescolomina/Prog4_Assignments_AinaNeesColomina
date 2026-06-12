@@ -65,16 +65,22 @@ void dae::MenuState::OnEnter()
         m_pScene->Add(std::move(textObj));
     }
 
-    UpdateModeSelection();
-
-    auto liveInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 750.f }, "Select: W/S or D-Pad  |  Confirm: Space/Button A");
+    auto liveInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 750.f }, "Select: W/S / D-Pad  |  Confirm: Space / Button A");
     m_pScene->Add(std::move(liveInstructions));
 
-    auto scoreInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 800.f }, "Move: WASD/Arrows/D-Pad  |  Shoot: Space/Button A ");
+    auto scoreInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 800.f }, "", { 0, 255, 255, 255 });
+    m_pDescriptionText = scoreInstructions->GetComponent<dae::TextComponent>();
     m_pScene->Add(std::move(scoreInstructions));
 
-    auto menuInstructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 850.f }, "Gameplay: Lose lives on collision, gain points by shooting threats.");
-    m_pScene->Add(std::move(menuInstructions));
+    auto instructionTopObj = UIFactory::CreateUI_Text(fontSmall, { 15.f, 825.f }, "", { 0, 255, 255, 255 });
+    m_pInstructionTopText = instructionTopObj->GetComponent<dae::TextComponent>();
+    m_pScene->Add(std::move(instructionTopObj));
+
+    auto instructionBotObj = UIFactory::CreateUI_Text(fontSmall, { 15.f, 850.f }, "", { 0, 255, 255, 255 });
+    m_pInstructionBotText = instructionBotObj->GetComponent<dae::TextComponent>();
+    m_pScene->Add(std::move(instructionBotObj));
+
+    UpdateModeSelection();
 }
 
 void dae::MenuState::OnExit()
@@ -148,6 +154,59 @@ void dae::MenuState::UpdateModeSelection()
     {
         if (m_pMenuTexts[i])
             m_pMenuTexts[i]->SetColor(static_cast<int>(i) == m_selectedIdx ? red : white);
+    }
+
+    if (m_pDescriptionText)
+    {
+        switch (static_cast<GameMode>(m_selectedIdx))
+        {
+        case GameMode::SinglePlayer:
+            m_pDescriptionText->SetText("Single player against enemy waves");
+            break;
+        case GameMode::CoOp:
+            m_pDescriptionText->SetText("Two-player cooperative mode");
+            break;
+        case GameMode::Versus:
+            m_pDescriptionText->SetText("P1 flies the Starfighter, P2 plays as the Boss Galaga.");
+            break;
+        case GameMode::Highscore:
+            m_pDescriptionText->SetText(" ");
+            break;
+        case GameMode::Quit:
+            m_pDescriptionText->SetText(" ");
+            break;
+        }
+    }
+
+    if (m_pInstructionTopText && m_pInstructionBotText)
+    {
+        switch (static_cast<GameMode>(m_selectedIdx))
+        {
+        case GameMode::SinglePlayer:
+            m_pInstructionTopText->SetText("Move: WASD / D-Pad / Joystick  |  Shoot: Space / Button A");
+            m_pInstructionBotText->SetText(" ");
+            break;
+
+        case GameMode::CoOp:
+            m_pInstructionTopText->SetText("P1 (Fighter) Move: D-Pad / Joystick  |  Shoot: Button A");
+            m_pInstructionBotText->SetText("P2 (Fighter) Move: WASD / D-Pad / Joystick  |  Shoot: Space / Button A");
+            break;
+
+        case GameMode::Versus:
+            m_pInstructionTopText->SetText("P1 (Fighter) Move: D-Pad / Joystick  |  Shoot: Button A");
+            m_pInstructionBotText->SetText("P2 (Boss)    Dive: D-Pad Left  |  Tractor Beam: D-Pad Right  |  Shoot: Button A");
+            break;
+
+        case GameMode::Highscore:
+            m_pInstructionTopText->SetText(" ");
+            m_pInstructionBotText->SetText(" ");
+            break;
+
+        case GameMode::Quit:
+            m_pInstructionTopText->SetText(" ");
+            m_pInstructionBotText->SetText(" ");
+            break;
+        }
     }
 }
 

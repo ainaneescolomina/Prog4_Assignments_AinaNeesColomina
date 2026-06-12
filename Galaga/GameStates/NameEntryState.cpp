@@ -44,13 +44,13 @@ void dae::NameEntryState::OnEnter()
     // 2. Heading Prompts
     auto titleObj = std::make_unique<dae::GameObject>();
     titleObj->AddComponent<dae::TextComponent>("-- Enter Initials --", fontTitle, SDL_Color{ 255, 0, 0, 255 });
-    titleObj->SetPosition(300.f, 275.f);
+    titleObj->SetPosition(275.f, 275.f);
     m_pScene->Add(std::move(titleObj));
 
     // 3. Spawning the Interactive Letter Container Object
     auto lettersObj = std::make_unique<dae::GameObject>();
     m_pNameEntryText = lettersObj->AddComponent<dae::TextComponent>("[A] A  A", fontTitle, SDL_Color{ 255, 255, 0, 255 });
-    lettersObj->SetPosition(425.f, 325.f);
+    lettersObj->SetPosition(400.f, 325.f);
     m_pScene->Add(std::move(lettersObj));
 
     auto instructions = UIFactory::CreateUI_Text(fontSmall, { 15.f, 850.f }, "A/D to Cycle Letters - Space to Confirm");

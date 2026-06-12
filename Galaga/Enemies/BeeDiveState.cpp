@@ -86,7 +86,7 @@ void dae::BeeDiveState::OnExit(dae::GameObject* owner)
 std::unique_ptr<dae::EnemyState> dae::BeeDiveState::Update(dae::GameObject* owner, float delta_time)
 {
     if (m_currentPoint >= static_cast<int>(m_points.size()))
-        return std::make_unique<EnemyFormationState>(250.f);
+        return std::make_unique<EnemyFormationState>(300.f);
 
     // Shooting mechanic
     if (m_amountBullets > 0)

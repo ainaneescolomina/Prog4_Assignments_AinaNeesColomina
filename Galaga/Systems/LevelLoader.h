@@ -10,6 +10,7 @@ struct EnemySpawnData
 {
     EnemyType type;
     glm::vec2 pos;
+    int row;
     float spawnDelay{};
 };
 

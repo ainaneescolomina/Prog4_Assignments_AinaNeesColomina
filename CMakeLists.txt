@@ -196,6 +196,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/GameStates/GameOverState.cpp
   Galaga/GameStates/NameEntryState.cpp
   Galaga/Enemies/EnemyFormationState.cpp
+  Galaga/Enemies/EnemyEntranceState.cpp
   Galaga/Enemies/EnemyIdleState.cpp
   Galaga/Enemies/BeeDiveState.cpp
   Galaga/Enemies/ButterflyDiveState.cpp

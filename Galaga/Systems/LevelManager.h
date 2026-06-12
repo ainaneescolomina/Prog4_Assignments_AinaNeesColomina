@@ -30,6 +30,7 @@ namespace dae
 
     private:
         void SpawnEnemy(const EnemySpawnData& enemyData);
+        std::vector<glm::vec2> GetEntrancePath(int row, const glm::vec2& targetGridPos);
 
         dae::Scene* m_pScene = nullptr;
         dae::ScoreComponent* m_pPlayerScore = nullptr;

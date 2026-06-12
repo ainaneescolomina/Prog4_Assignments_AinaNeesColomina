@@ -17,7 +17,6 @@
 
 void dae::CoOpPlayState::OnEnter()
 {
-	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(m_pLevelManager.get()));
 	InputManager::GetInstance().BindCommand(SDLK_F2, KeyState::Down, std::make_unique<MuteToggleCommand>());
 
 	m_pScene = &SceneManager::GetInstance().CreateScene();
@@ -44,11 +43,10 @@ void dae::CoOpPlayState::OnEnter()
 	background->AddComponent<dae::RenderComponent>()->SetTexture("Images/background.png");
 	m_pScene->Add(std::move(background));
 
-	auto highscoreTitle = UIFactory::CreateUI_Text(font, { 750, 200 }, "High Score", { 255, 0, 0, 255 });
-	m_pScene->Add(std::move(highscoreTitle));
-
-	auto highscoreScore = UIFactory::CreateUI_Text(font, { 850, 250 }, "00000");
-	m_pScene->Add(std::move(highscoreScore));
+	//auto highscoreTitle = UIFactory::CreateUI_Text(font, { 750, 200 }, "High Score", { 255, 0, 0, 255 });
+	//m_pScene->Add(std::move(highscoreTitle));
+	//auto highscoreScore = UIFactory::CreateUI_Text(font, { 850, 250 }, "00000");
+	//m_pScene->Add(std::move(highscoreScore));
 
 	// --- MANAGERS ---
 	m_pBulletSpawner = std::make_unique<dae::BulletSpawner>(*m_pScene);
@@ -104,6 +102,7 @@ void dae::CoOpPlayState::OnEnter()
 	m_pScene->Add(std::move(scoreUI));
 
 	// Start Game
+	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(m_pLevelManager.get()));
 	sound.Play(0, 0.15f);
 }
 

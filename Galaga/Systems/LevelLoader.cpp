@@ -62,12 +62,12 @@ std::vector<EnemySpawnData>LevelLoader::LoadLevel(const std::string& filepath)
                 startY - row * marginY
             };
 
-            enemies.push_back({type, pos, delay});
+            enemies.push_back({type, pos, row, delay});
 
-            delay += 0.08f;
+            delay += 0.2f;
         }
 
-        delay += 0.35f;
+        delay += 4.f;
         ++row;
     }
 

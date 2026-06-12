@@ -18,5 +18,6 @@ namespace dae
 
         std::vector<HighscoreData> LoadHighscores(const std::string& filepath);
         void SaveNewHighscore(const std::string& filepath, const std::string& name, int score);
+        int GetBestHighscore(const std::string& filepath);
     };
 }

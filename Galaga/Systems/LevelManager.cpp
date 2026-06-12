@@ -4,6 +4,7 @@
 #include "Factory.h"
 #include "EnemyComponents.h"
 #include "EnemyFormationState.h"
+#include "EnemyEntranceState.h"
 #include "BulletSpawner.h"
 #include "GameStatsManager.h"
 #include "GameObject.h"
@@ -43,7 +44,7 @@ void dae::LevelManager::Update(float delta_time)
         m_enemiesToSpawn.erase(m_enemiesToSpawn.begin());
     }
 
-    if (m_pFormationManager)
+    if (m_pFormationManager && m_enemiesToSpawn.empty())
     {
         m_pFormationManager->Update(delta_time);
     }
@@ -120,13 +121,81 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
     else
         spawnPos = {1300.f, enemyData.pos.y - 200.f};
 
+    //auto stateComp = enemy->GetComponent<EnemyStateComponent>();
+    //enemy->SetPosition(spawnPos.x, spawnPos.y - 400.f);
+    //stateComp->SetState(std::make_unique<EnemyFormationState>(215.f));
+
+    std::vector<glm::vec2> customPath = GetEntrancePath(enemyData.row, enemyData.pos);
+    enemy->SetPosition(customPath[0].x, customPath[0].y);
+
     auto stateComp = enemy->GetComponent<EnemyStateComponent>();
-    enemy->SetPosition(spawnPos.x, spawnPos.y - 400.f);
-    stateComp->SetState(std::make_unique<EnemyFormationState>(215.f));
+    stateComp->SetState(std::make_unique<EnemyEntranceState>(550.f, customPath));
     
     auto* enemyPtr = enemy.get();
     m_pScene->Add(std::move(enemy));
 
     ++m_aliveEnemies;
     m_spawnedEnemies.push_back(enemyPtr);
+}
+
+std::vector<glm::vec2> dae::LevelManager::GetEntrancePath(int row, const glm::vec2& targetGridPos)
+{
+    std::vector<glm::vec2> entrancePath{};
+    int pathChoice = row % 3;
+
+    switch (pathChoice)
+    {
+    case 0: // Left side loop
+        entrancePath = {
+            { -50.f, 950.f },
+            { 150.f, 500.f },
+            { 200.f, 400.f },
+            { 275.f, 375.f },
+            { 350.f, 400.f },
+            { 375.f, 475.f },
+            { 350.f, 550.f },
+            { 275.f, 575.f },
+            { 200.f, 550.f },
+            { 175.f, 475.f },
+            { 250.f, 350.f },
+            targetGridPos
+        };
+        break;
+
+    case 1: // Right side loop
+        entrancePath = {
+            { 1050.f, 950.f },
+            { 850.f, 500.f },
+            { 800.f, 400.f },
+            { 725.f, 375.f },
+            { 650.f, 400.f },
+            { 625.f, 475.f },
+            { 650.f, 550.f },
+            { 725.f, 575.f },
+            { 800.f, 550.f },
+            { 825.f, 475.f },
+            { 750.f, 350.f },
+            targetGridPos
+        };
+        break;
+
+    case 2: // Top left to center loop
+    default:
+        entrancePath = {
+            { -50.f, -50.f },
+            { 250.f, 250.f },
+            { 450.f, 350.f },
+            { 550.f, 350.f },
+            { 600.f, 400.f },
+            { 600.f, 500.f },
+            { 550.f, 550.f },
+            { 450.f, 550.f },
+            { 400.f, 475.f },
+            { 500.f, 300.f },
+            targetGridPos
+        };
+        break;
+    }
+
+    return entrancePath;
 }
