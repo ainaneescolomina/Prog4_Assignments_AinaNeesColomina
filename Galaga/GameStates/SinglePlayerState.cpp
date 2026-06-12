@@ -71,21 +71,23 @@ void dae::SinglePlayerState::OnEnter()
 	//score->GetSubject().AddObserver(&m_pWinAchievement);
 
 	auto lives = player->GetComponent<dae::LivesComponent>();
-	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	auto* livesUIComp = livesUI->GetComponent<dae::LivesDisplayComponent>();
+	livesUIComp->AddSubscription(lives->GetSubject().AddObserver(livesUIComp));
 
-	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
-	score->GetSubject().AddObserver(m_pGameStats.get());
+	auto* scoreUIComp = scoreUI->GetComponent<dae::ScoreDisplayComponent>();
+	scoreUIComp->AddSubscription(score->GetSubject().AddObserver(scoreUIComp));
+	m_pGameStats->AddSubscription(score->GetSubject().AddObserver(m_pGameStats.get()));
 	auto shoot = player->GetComponent<dae::ShootComponent>();
-	shoot->GetSubject().AddObserver(m_pBulletSpawner.get());
+	m_pBulletSpawner->AddSubscription(shoot->GetSubject().AddObserver(m_pBulletSpawner.get()));
 
-	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
+	m_pGameStats->AddSubscription(m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get()));
 
 	// --- GAMEPLAY ---
 	m_pLevelManager->SetPlayerScore(score);
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
 	m_pLevelManager->SetGameStatsManager(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
-	lives->GetSubject().AddObserver(this);
+	this->AddSubscription(lives->GetSubject().AddObserver(this));
 
 	// Add to scene
 	m_pScene->Add(std::move(player));

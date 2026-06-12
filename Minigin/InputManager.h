@@ -31,7 +31,7 @@ namespace dae
 		std::unique_ptr<Command> command;
 	};
 
-	struct AxisBinding
+	struct StickBinding
 	{
 		unsigned int controllerIdx;
 		std::unique_ptr<Command> command;
@@ -46,7 +46,7 @@ namespace dae
 
 		void BindCommand(SDL_Keycode key, KeyState state, std::unique_ptr<Command> command);
 		void BindGamepadCommand(unsigned int controllerIndex, unsigned int button, KeyState state, std::unique_ptr<Command> command);
-		void BindAxisCommand(unsigned int controllerIndex, std::unique_ptr<Command> command);
+		void BindStickCommand(unsigned int controllerIndex, std::unique_ptr<Command> command);
 
 		void UnbindCommand(SDL_Keycode key, KeyState state);
 		void UnbindGamepadCommand(unsigned int button, KeyState state);
@@ -58,7 +58,7 @@ namespace dae
 
 		std::vector<std::unique_ptr<InputBinding>> m_pBindings;
 		std::vector<std::unique_ptr<GamepadBinding>> m_pGamepadBindings;
-		std::vector<std::unique_ptr<AxisBinding>> m_pAxisBindings;
+		std::vector<std::unique_ptr<StickBinding>> m_pStickBindings;
 
 		std::unordered_map<SDL_Keycode, bool> m_keysDown;
 	};

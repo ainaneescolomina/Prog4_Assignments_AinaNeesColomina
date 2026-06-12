@@ -73,26 +73,30 @@ void dae::CoOpPlayState::OnEnter()
 	//score->GetSubject().AddObserver(&m_pWinAchievement);
 
 	auto* lives1 = player1->GetComponent<dae::LivesComponent>();
-	lives1->GetSubject().AddObserver(livesUI1->GetComponent<dae::LivesDisplayComponent>());
+	auto* livesUIComp1 = livesUI1->GetComponent<dae::LivesDisplayComponent>();
+	livesUIComp1->AddSubscription(lives1->GetSubject().AddObserver(livesUIComp1));
 	auto* lives2 = player2->GetComponent<dae::LivesComponent>();
-	lives2->GetSubject().AddObserver(livesUI2->GetComponent<dae::LivesDisplayComponent>());
+	auto* livesUIComp2 = livesUI2->GetComponent<dae::LivesDisplayComponent>();
+	livesUIComp2->AddSubscription(lives2->GetSubject().AddObserver(livesUIComp2));
 
-	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
+	auto* scoreUIComp = scoreUI->GetComponent<dae::ScoreDisplayComponent>();
+	scoreUIComp->AddSubscription(score->GetSubject().AddObserver(scoreUIComp));
 
 	auto* shoot1 = player1->GetComponent<dae::ShootComponent>();
-	shoot1->GetSubject().AddObserver(m_pBulletSpawner.get());
+	m_pBulletSpawner->AddSubscription(shoot1->GetSubject().AddObserver(m_pBulletSpawner.get()));
 	auto* shoot2 = player2->GetComponent<dae::ShootComponent>();
-	shoot2->GetSubject().AddObserver(m_pBulletSpawner.get());
+	m_pBulletSpawner->AddSubscription(shoot2->GetSubject().AddObserver(m_pBulletSpawner.get()));
 
-	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
+	m_pGameStats->AddSubscription(m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get()));
 
 	// --- GAMEPLAY ---
 	m_pLevelManager->SetPlayerScore(score);
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
 	m_pLevelManager->SetGameStatsManager(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
-	lives1->GetSubject().AddObserver(this);
-	lives2->GetSubject().AddObserver(this);
+	this->AddSubscription(lives1->GetSubject().AddObserver(this));
+	this->AddSubscription(lives2->GetSubject().AddObserver(this));
+
 
 	// Add to scene
 	m_pScene->Add(std::move(player1));

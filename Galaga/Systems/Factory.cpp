@@ -18,10 +18,10 @@ namespace ActorFactory
 
         auto* collider = player->AddComponent<dae::ColliderComponent>(45.f, 45.f);
         auto* damage = player->AddComponent<dae::DamageManager>();
-        auto* lives = player->AddComponent<dae::LivesComponent>(4, dae::LivesComponent::DeathAction::Deactivate, 1.f);
+        auto* lives = player->AddComponent<dae::LivesComponent>(4, dae::LivesComponent::DeathAction::Destroy, 1.f);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
-        player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
+        //player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
 
         auto* movement = player->AddComponent<dae::MovementComponent>(pos.x, pos.y);
 
@@ -41,13 +41,13 @@ namespace ActorFactory
             input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
             input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
         
-            input.BindAxisCommand(gamepadIdx, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
+            input.BindStickCommand(gamepadIdx, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
         }
 
         // Observer / Subject
-        collider->GetSubject().AddObserver(damage);
-        damage->GetSubject().AddObserver(lives);
-        damage->GetSubject().AddObserver(movement);
+        damage->AddSubscription(collider->GetSubject().AddObserver(damage));
+        lives->AddSubscription(damage->GetSubject().AddObserver(lives));
+        movement->AddSubscription(damage->GetSubject().AddObserver(movement));
         damage->AddThreat(dae::TagComponent::Tags::Enemy);
         damage->AddThreat(dae::TagComponent::Tags::EnemyBullet);
         damage->AddThreat(dae::TagComponent::Tags::TractorBeam);
@@ -91,10 +91,10 @@ namespace ActorFactory
         }
 
         // Observer / Subject
-        collider->GetSubject().AddObserver(damage);
-        damage->GetSubject().AddObserver(lives);
-        damage->GetSubject().AddObserver(enemyComp);
-        lives->GetSubject().AddObserver(enemyComp);
+        damage->AddSubscription(collider->GetSubject().AddObserver(damage));
+        lives->AddSubscription(damage->GetSubject().AddObserver(lives));
+        enemyComp->AddSubscription(damage->GetSubject().AddObserver(enemyComp));
+        enemyComp->AddSubscription(lives->GetSubject().AddObserver(enemyComp));
         damage->AddThreat(dae::TagComponent::Tags::Bullet);
 
         return player;
@@ -138,10 +138,10 @@ namespace ActorFactory
         enemy->AddComponent<dae::ShootComponent>(0.1f);
 
         // Observer / Subject
-        collider->GetSubject().AddObserver(damage);
-        damage->GetSubject().AddObserver(lives);
-        damage->GetSubject().AddObserver(enemyComp);
-        lives->GetSubject().AddObserver(enemyComp);
+        damage->AddSubscription(collider->GetSubject().AddObserver(damage));
+        lives->AddSubscription(damage->GetSubject().AddObserver(lives));
+        enemyComp->AddSubscription(damage->GetSubject().AddObserver(enemyComp));
+        enemyComp->AddSubscription(lives->GetSubject().AddObserver(enemyComp));
         damage->AddThreat(dae::TagComponent::Tags::Bullet);
         return enemy;
     }

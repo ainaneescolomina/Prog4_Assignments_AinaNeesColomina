@@ -133,7 +133,9 @@ void dae::Minigin::RunOneFrame(float delta_time)
 
 	m_quit = !InputManager::GetInstance().ProcessInput(delta_time);
 
+	// All games use state cycles (Menus, Playing, GameOver), so this manager sits in the engine for reusability
 	GameStateManager::GetInstance().Update(delta_time);
+
 	SceneManager::GetInstance().Update(delta_time);
 	Renderer::GetInstance().Render();
 }

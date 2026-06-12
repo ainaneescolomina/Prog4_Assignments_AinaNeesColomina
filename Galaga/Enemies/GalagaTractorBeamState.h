@@ -23,8 +23,14 @@ namespace dae
         virtual std::unique_ptr<EnemyState> Update(GameObject* owner, float delta_time) override;
 
         virtual void Notify(Event event, void* sender) override;
+        void AddSubscription(dae::Subscription subscription)
+        {
+            m_subscriptions.emplace_back(std::move(subscription));
+        }
 
     private:
+        std::vector<dae::Subscription> m_subscriptions;
+
         dae::EnemyComponent* m_enemyComp{};
         dae::ColliderComponent* m_colliderComp{};
 

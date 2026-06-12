@@ -1,6 +1,4 @@
 #include "InputManager.h"
-#include "InputManager.h"
-#include "InputManager.h"
 #include <backends/imgui_impl_sdl3.h>
 #include <algorithm>
 
@@ -45,7 +43,7 @@ bool dae::InputManager::ProcessInput(float delta_time)
 			binding->command->Execute(delta_time);
 	}
 
-	for (auto& binding : m_pAxisBindings)
+	for (auto& binding : m_pStickBindings)
 	{
 		unsigned int idx = binding->controllerIdx;
 		if (idx >= m_pGamepads.size()) continue;
@@ -119,10 +117,10 @@ void dae::InputManager::BindGamepadCommand(unsigned int controllerIndex, unsigne
 	m_pGamepadBindings.push_back(std::move(newGamepadBinding));
 }
 
-void dae::InputManager::BindAxisCommand(unsigned int controllerIndex, std::unique_ptr<Command> command)
+void dae::InputManager::BindStickCommand(unsigned int controllerIndex, std::unique_ptr<Command> command)
 {
-	auto newAxisBinding = std::make_unique<AxisBinding>(controllerIndex, std::move(command));
-	m_pAxisBindings.push_back(std::move(newAxisBinding));
+	auto newAxisBinding = std::make_unique<StickBinding>(controllerIndex, std::move(command));
+	m_pStickBindings.push_back(std::move(newAxisBinding));
 }
 
 void dae::InputManager::UnbindCommand(SDL_Keycode key, KeyState state)
@@ -159,7 +157,7 @@ void dae::InputManager::ClearAllBindings()
 {
 	m_pBindings.clear();
 	m_pGamepadBindings.clear();
-	m_pAxisBindings.clear();
+	m_pStickBindings.clear();
 }
 
 

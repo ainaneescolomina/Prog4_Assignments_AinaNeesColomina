@@ -5,14 +5,22 @@
 
 namespace dae
 {
-    class Subject
+    class Subject final
     {
     public:
-        explicit Subject(void* owner) : m_pOwner(owner) {}
 
-        void AddObserver(Observer* observer) {
-            // code to add an observer
+        explicit Subject(void* owner) : m_pOwner(owner) {}
+        ~Subject() = default;
+
+        Subject(const Subject&) = delete;
+        Subject(Subject&&) = delete;
+        Subject& operator=(const Subject&) = delete;
+        Subject& operator=(Subject&&) = delete;
+
+        Subscription AddObserver(Observer* observer)
+        {
             m_observers.emplace_back(observer);
+            return Subscription(this, observer );
         }
 
         void RemoveObserver(Observer* observer) {
@@ -40,6 +48,6 @@ namespace dae
 
     private:
         std::vector<Observer*> m_observers;
-        void* m_pOwner;
+        void* m_pOwner{};
     };
 }

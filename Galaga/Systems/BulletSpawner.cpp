@@ -130,8 +130,8 @@ std::unique_ptr<dae::GameObject> dae::BulletSpawner::CreateBullet(bool isPlayerB
     }
 
     // Observer / Subject
-    collider->GetSubject().AddObserver(damage);
-    damage->GetSubject().AddObserver(lives);
+    damage->AddSubscription(collider->GetSubject().AddObserver(damage));
+    lives->AddSubscription(damage->GetSubject().AddObserver(lives));
 
     // Deactivate Bullet
     bullet->SetActive(false);

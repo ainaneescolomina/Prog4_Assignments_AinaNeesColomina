@@ -16,10 +16,15 @@ namespace dae
 
         void Notify(Event event, void* sender) override;
         Subject& GetSubject() { return m_subject; };
+        void AddSubscription(dae::Subscription subscription)
+        {
+            m_subscriptions.emplace_back(std::move(subscription));
+        }
 
     private:
         Scene& m_scene;
         Subject m_subject;
+        std::vector<dae::Subscription> m_subscriptions;
 
         std::vector<GameObject*> m_playerBulletPool;
         std::vector<GameObject*> m_enemyBulletPool;

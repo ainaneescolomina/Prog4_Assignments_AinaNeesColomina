@@ -1,5 +1,6 @@
 #pragma once
 #include "Observer.h"
+#include <vector>
 
 namespace dae
 {
@@ -15,6 +16,7 @@ namespace dae
         GameStatsManager& operator=(GameStatsManager&& other) = delete;
 
         void Notify(Event event, void* sender) override;
+        void AddSubscription(Subscription subscription);
 
         void AddShot() { ++m_shotsFired; }
         void AddHit() { ++m_hitsScored; }
@@ -31,5 +33,7 @@ namespace dae
         int m_shotsFired{ 0 };
         int m_hitsScored{ 0 };
         int m_score{ 0 };
+
+        std::vector<Subscription> m_subscriptions;
     };
 }

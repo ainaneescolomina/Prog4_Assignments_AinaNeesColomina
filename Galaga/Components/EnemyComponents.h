@@ -16,6 +16,10 @@ namespace dae
         EnemyComponent& operator=(EnemyComponent&& other) = delete;
 
         virtual void Notify(Event event, void* sender) override;
+        void AddSubscription(dae::Subscription subscription)
+        {
+            m_subscriptions.emplace_back(std::move(subscription));
+        }
 
         EnemyType GetType() const { return m_type; }
 
@@ -39,6 +43,8 @@ namespace dae
 
         // Boss Galaga Beam
         GameObject* m_pBeamObject{};
+
+        std::vector<dae::Subscription> m_subscriptions;
     };
 }
 

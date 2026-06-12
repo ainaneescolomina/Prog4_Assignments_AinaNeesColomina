@@ -73,27 +73,29 @@ void dae::VersusPlayState::OnEnter()
 	auto score = player1->GetComponent<dae::ScoreComponent>();
 	//score->GetSubject().AddObserver(&m_pWinAchievement);
 
-	auto lives1 = player1->GetComponent<dae::LivesComponent>();
-	lives1->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	auto* lives1 = player1->GetComponent<dae::LivesComponent>();
+	auto* livesUIComp1 = livesUI->GetComponent<dae::LivesDisplayComponent>();
+	livesUIComp1->AddSubscription(lives1->GetSubject().AddObserver(livesUIComp1));
 	auto lives2 = player2->GetComponent<dae::LivesComponent>();
 
-	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
-	score->GetSubject().AddObserver(m_pGameStats.get());
+	auto* scoreUIComp = scoreUI->GetComponent<dae::ScoreDisplayComponent>();
+	scoreUIComp->AddSubscription(score->GetSubject().AddObserver(scoreUIComp));
+	//score->GetSubject().AddObserver(m_pGameStats.get());
 	
 	auto* shoot1 = player1->GetComponent<dae::ShootComponent>();
-	shoot1->GetSubject().AddObserver(m_pBulletSpawner.get());
+	m_pBulletSpawner->AddSubscription(shoot1->GetSubject().AddObserver(m_pBulletSpawner.get()));
 	auto* shoot2 = player2->GetComponent<dae::ShootComponent>();
-	shoot2->GetSubject().AddObserver(m_pBulletSpawner.get());
+	m_pBulletSpawner->AddSubscription(shoot2->GetSubject().AddObserver(m_pBulletSpawner.get()));
 
-	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
+	//m_pGameStats->AddSubscription(m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get()));
 
 	// --- GAMEPLAY ---
 	m_pLevelManager->SetPlayerScore(score);
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
 	m_pLevelManager->SetGameStatsManager(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
-	lives1->GetSubject().AddObserver(this);
-	lives2->GetSubject().AddObserver(this);
+	this->AddSubscription(lives1->GetSubject().AddObserver(this));
+	this->AddSubscription(lives2->GetSubject().AddObserver(this));
 
 	// Add to scene
 	m_pScene->Add(std::move(player1));

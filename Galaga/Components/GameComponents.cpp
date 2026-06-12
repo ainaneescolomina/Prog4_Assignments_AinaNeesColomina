@@ -171,8 +171,10 @@ void dae::DamageManager::HandleTractorBeamCapture(GameObject* beamObject)
 		auto* beamTarget = GetOwner()->AddComponent<TractorBeamTargetComponent>(targetLocation.x, targetLocation.y - 20.f);
 
 		auto* livesComp = GetOwner()->GetComponent<LivesComponent>();
-		if (livesComp) beamTarget->GetSubject().AddObserver(livesComp);
-		beamTarget->GetSubject().AddObserver(moveComp);
+
+		if (livesComp) livesComp->AddSubscription(beamTarget->GetSubject().AddObserver(livesComp));
+		moveComp->AddSubscription(beamTarget->GetSubject().AddObserver(moveComp));
+
 	}
 }
 

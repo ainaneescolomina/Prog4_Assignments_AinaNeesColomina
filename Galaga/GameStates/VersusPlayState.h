@@ -19,9 +19,14 @@ namespace dae
 
         // Observer Functions
         virtual void Notify(Event event, void* sender) override;
+        void AddSubscription(dae::Subscription subscription)
+        {
+            m_subscriptions.emplace_back(std::move(subscription));
+        }
 
     private:
         Scene* m_pScene = nullptr;
+        std::vector<dae::Subscription> m_subscriptions;
 
         bool m_playerDied{};
 

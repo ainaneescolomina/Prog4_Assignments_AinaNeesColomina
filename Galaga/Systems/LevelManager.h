@@ -22,6 +22,7 @@ namespace dae
         void SetGameStatsManager(dae::GameStatsManager* stats) { m_pGameStatsManager = stats; }
 
         virtual void Notify(Event event, void* sender) override;
+        void AddSubscription(Subscription subscription);
 
         void Update(float delta_time);
         void SpawnWave();
@@ -46,5 +47,7 @@ namespace dae
         int m_aliveEnemies{};
 
         bool m_isVersusMode;
+
+        std::vector<Subscription> m_subscriptions;
     };
 }

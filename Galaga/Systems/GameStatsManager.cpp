@@ -2,6 +2,7 @@
 #include "GameComponents.h"
 #include "GameObject.h"
 #include <cmath>
+#include <utility>
 
 void dae::GameStatsManager::Notify(Event event, void* sender)
 {
@@ -18,6 +19,11 @@ void dae::GameStatsManager::Notify(Event event, void* sender)
         ScoreComponent* component = static_cast<ScoreComponent*>(sender);
         m_score = component->GetScore();
     }
+}
+
+void dae::GameStatsManager::AddSubscription(dae::Subscription subscription)
+{
+    m_subscriptions.emplace_back(std::move(subscription));
 }
 
 int dae::GameStatsManager::GetHitMissRatio() const

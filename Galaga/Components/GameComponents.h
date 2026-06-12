@@ -19,6 +19,10 @@ namespace dae
 		MovementComponent& operator=(MovementComponent&& other) = delete;
 
 		virtual void Notify(Event event, void* sender) override;
+		void AddSubscription(dae::Subscription subscription)
+		{
+			m_subscriptions.emplace_back(std::move(subscription));
+		}
 
 		virtual void Update(float delta_time) override;
 
@@ -31,6 +35,8 @@ namespace dae
 		bool m_isFrozen{false};
 
 		float m_explodingTimer{ 0 };
+
+		std::vector<dae::Subscription> m_subscriptions;
 	};
 
 	class LivesComponent final : public Component, public Observer
@@ -60,13 +66,19 @@ namespace dae
 		int GetLives() const { return m_lives; };
 
 		Subject& GetSubject() { return m_subject; };
+		void AddSubscription(dae::Subscription subscription)
+		{
+			m_subscriptions.emplace_back(std::move(subscription));
+		}
 
 	private:
 		int m_lives;
 		float m_cooldown;
 		float m_timer{ 0.f };
 		DeathAction m_deathAction;
+
 		Subject m_subject;
+		std::vector<dae::Subscription> m_subscriptions;
 	};
 
 	class ScoreComponent final : public Component, public Observer
@@ -85,10 +97,16 @@ namespace dae
 		int GetScore() const { return m_score; };
 
 		Subject& GetSubject() { return m_subject; };
+		void AddSubscription(dae::Subscription subscription)
+		{
+			m_subscriptions.emplace_back(std::move(subscription));
+		}
 
 	private:
 		int m_score{};
+
 		Subject m_subject;
+		std::vector<dae::Subscription> m_subscriptions;
 	};
 
 	class TagComponent final : public Component
@@ -158,10 +176,16 @@ namespace dae
 		void HandleTractorBeamCapture(GameObject* beamObject);
 
 		Subject& GetSubject() { return m_subject; }
+		void AddSubscription(dae::Subscription subscription)
+		{
+			m_subscriptions.emplace_back(std::move(subscription));
+		}
 
 	private:
 		std::vector<TagComponent::Tags> m_threats;
+
 		Subject m_subject;
+		std::vector<dae::Subscription> m_subscriptions;
 	};
 
 	class ScreenBoundsComponent final : public Component
@@ -231,8 +255,15 @@ namespace dae
 
 		virtual void Render() const override;
 
+		void AddSubscription(dae::Subscription subscription)
+		{
+			m_subscriptions.emplace_back(std::move(subscription));
+		}
+
 	private:
 		int m_lives;
+
+		std::vector<dae::Subscription> m_subscriptions;
 	};
 
 	class ScoreDisplayComponent : public TextComponent, public Observer
@@ -247,9 +278,16 @@ namespace dae
 
 		virtual void Notify(Event event, void* sender) override;
 
+		void AddSubscription(dae::Subscription subscription)
+		{
+			m_subscriptions.emplace_back(std::move(subscription));
+		}
+
 	private:
 		void UpdateText();
 
 		int m_score{ 0 };
+
+		std::vector<dae::Subscription> m_subscriptions;
 	};
 }

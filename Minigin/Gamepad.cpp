@@ -30,32 +30,29 @@ public:
 #endif
     }
 
-    bool IsDown(unsigned int button) const
+    bool IsDown([[maybe_unused]] unsigned int button) const
     {
 #ifndef __EMSCRIPTEN__
         return m_buttonsPressedThisFrame & button;
 #else
-        (void)button;
         return false;
 #endif
     }
 
-    bool IsPressed(unsigned int button) const
+    bool IsPressed([[maybe_unused]] unsigned int button) const
     {
 #ifndef __EMSCRIPTEN__
         return m_currentState.Gamepad.wButtons & button;
 #else
-        (void)button;
         return false;
 #endif
     }
 
-    bool IsUp(unsigned int button) const
+    bool IsUp([[maybe_unused]] unsigned int button) const
     {
 #ifndef __EMSCRIPTEN__
         return m_buttonsReleasedThisFrame & button;
 #else
-        (void)button;
         return false;
 #endif
     }

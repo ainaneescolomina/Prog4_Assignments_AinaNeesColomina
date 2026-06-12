@@ -6,10 +6,10 @@ if(EMSCRIPTEN)
 endif()
 
 if(EMSCRIPTEN)
-  set(TARGET_NAME minigin_web)
+  set(TARGET_NAME Galaga_web)
   set(TARGET_PARAM )
 else()
-  set(TARGET_NAME minigin)
+  set(TARGET_NAME Galaga)
   set(TARGET_PARAM WIN32)
 endif()
 
@@ -155,7 +155,8 @@ add_library(minigin_engine STATIC
   Minigin/Gamepad.cpp
   Minigin/SdlSoundSystem.cpp 
   Minigin/ServiceLocator.cpp 
-  Minigin/GameStateManager.cpp)
+  Minigin/GameStateManager.cpp
+  Minigin/Subscription.cpp)
 
 target_include_directories(minigin_engine PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/Minigin

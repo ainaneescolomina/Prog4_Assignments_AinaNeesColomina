@@ -16,7 +16,7 @@ void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
         m_colliderComp = m_enemyComp->GetEnemyOwner()->GetComponent<dae::ColliderComponent>();
     }
 
-    if(m_colliderComp) m_colliderComp->GetSubject().AddObserver(this);
+    if(m_colliderComp) this->AddSubscription(m_colliderComp->GetSubject().AddObserver(this));
 
     // screen bounds
     float screenMinX = 100.f;

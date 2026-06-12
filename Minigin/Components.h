@@ -183,7 +183,7 @@ namespace dae
 		float m_height{};
 		Subject m_subject;
 		bool m_active{ true };
-		bool m_debugg{ true };
+		bool m_debugg{ false };
 
 		Rect GetWorldRect() const;
 		bool IsOverlapping(const ColliderComponent& other) const;

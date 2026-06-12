@@ -30,6 +30,11 @@ void dae::LevelManager::Notify(Event event, void* sender)
     }
 }
 
+void dae::LevelManager::AddSubscription(dae::Subscription subscription)
+{
+    m_subscriptions.emplace_back(std::move(subscription));
+}
+
 void dae::LevelManager::Update(float delta_time)
 {
     for (auto& enemy :
@@ -98,19 +103,20 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
 
     if (auto* lives = enemy->GetComponent<dae::LivesComponent>())
     {
-        lives->GetSubject().AddObserver(this);
+        this->AddSubscription(lives->GetSubject().AddObserver(this));
+        
 
         if (m_pPlayerScore)
-            lives->GetSubject().AddObserver(m_pPlayerScore);
+            m_pPlayerScore->AddSubscription(lives->GetSubject().AddObserver(m_pPlayerScore));
 
         if(m_pGameStatsManager)
-            lives->GetSubject().AddObserver(m_pGameStatsManager);
+            m_pGameStatsManager->AddSubscription(lives->GetSubject().AddObserver(m_pGameStatsManager));
     }
 
     if (auto* shoot = enemy->GetComponent<dae::ShootComponent>())
     {
         if (m_pBulletSpawner)
-            shoot->GetSubject().AddObserver(m_pBulletSpawner);
+            m_pBulletSpawner->AddSubscription(shoot->GetSubject().AddObserver(m_pBulletSpawner));
     }
 
     bool fromLeft = rand() % 2 == 0;
