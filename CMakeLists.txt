@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.26)
 project(Galaga)
 
+# Force C++20 globally for all targets
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Force Warning Level 4 and Treat Warnings as Errors globally for MSVC
+if(MSVC)
+    add_compile_options(/W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -Werror)
+endif()
+
 if(EMSCRIPTEN)
   message("Using Emscripten!")
 endif()
@@ -23,6 +35,10 @@ if(NOT glm_FOUND)
     DOWNLOAD_NO_PROGRESS ON
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
   )
+  
+  # Prevent GLM from creating installation and extra testing targets
+  set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
+  
   FetchContent_MakeAvailable(glm)
 endif()
 
