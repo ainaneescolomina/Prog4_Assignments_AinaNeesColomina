@@ -6,13 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Force Warning Level 4 and Treat Warnings as Errors globally for MSVC
-if(MSVC)
-    add_compile_options(/W4 /WX)
-else()
-    add_compile_options(-Wall -Wextra -Werror)
-endif()
-
 if(EMSCRIPTEN)
   message("Using Emscripten!")
 endif()
@@ -36,7 +29,6 @@ if(NOT glm_FOUND)
     DOWNLOAD_DIR ${CMAKE_BINARY_DIR}/downloads
   )
   
-  # Prevent GLM from creating installation and extra testing targets
   set(GLM_TEST_ENABLE OFF CACHE BOOL "" FORCE)
   
   FetchContent_MakeAvailable(glm)
@@ -187,6 +179,12 @@ target_link_libraries(minigin_engine PUBLIC
   imgui
   ${VLD_LIBRARIES}
 )
+
+if(MSVC)
+  target_compile_options(minigin_engine PRIVATE /W4 /WX)
+else()
+  target_compile_options(minigin_engine PRIVATE -Wall -Wextra -Werror)
+endif()
 
 # enable c++20 features
 if(WIN32)
