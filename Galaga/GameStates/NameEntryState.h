@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-// https://forum.gamemaker.io/index.php?threads/solved-arcade-style-highscore-table.45963/
+// REFERENCE: https://forum.gamemaker.io/index.php?threads/solved-arcade-style-highscore-table.45963/
 
 namespace dae {
     class Scene;

@@ -9,7 +9,7 @@ dae::BulletSpawner::BulletSpawner(dae::Scene& scene)
     m_subject(this)
 {
     // PLAYER BULLETS
-    for (int i{}; i < maxPlayerBullets; ++i)
+    for (int i{}; i < m_maxPlayerBullets; ++i)
     {
         auto bullet = CreateBullet(true);
         m_playerBulletPool.push_back(bullet.get());
@@ -17,7 +17,7 @@ dae::BulletSpawner::BulletSpawner(dae::Scene& scene)
     }
 
     // ENEMY BULLETS
-    for (int i{}; i < maxEnemyBullets; ++i)
+    for (int i{}; i < m_maxEnemyBullets; ++i)
     {
         auto bullet = CreateBullet(false);
         m_enemyBulletPool.push_back(bullet.get());
@@ -25,6 +25,7 @@ dae::BulletSpawner::BulletSpawner(dae::Scene& scene)
     }
 }
 
+// Listens for "TriggerSpawnBullet" signals to fetch a bullet from the correct pool
 void dae::BulletSpawner::Notify(Event event, void* sender)
 {
     if (event.id == make_sdbm_hash("TriggerSpawnBullet"))
@@ -44,7 +45,7 @@ void dae::BulletSpawner::Notify(Event event, void* sender)
             success = SpawnEnemyBullet(shooter);
 
         auto& sound = dae::servicelocator::get_sound_system();
-        if (success)
+        if (success) // Notifies external stat trackers whenever a pool activation succeeds
         {
             sound.Play(1, 0.5f);
             Event e(make_sdbm_hash("SpawnBullet"));

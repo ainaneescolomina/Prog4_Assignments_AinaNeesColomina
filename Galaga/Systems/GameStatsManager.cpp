@@ -4,6 +4,7 @@
 #include <cmath>
 #include <utility>
 
+// Listens for bullet generation, enemy deaths, and score updates
 void dae::GameStatsManager::Notify(Event event, void* sender)
 {
     if (event.id == make_sdbm_hash("SpawnBullet"))
@@ -31,5 +32,5 @@ int dae::GameStatsManager::GetHitMissRatio() const
     if (m_shotsFired == 0) return 0;
 
     float ratio = (static_cast<float>(m_hitsScored) / static_cast<float>(m_shotsFired)) * 100.f;
-    return static_cast<int>(std::round(ratio));
+    return static_cast<int>(std::round(ratio)); // Rounds to the nearest whole integer block
 }

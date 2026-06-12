@@ -4,6 +4,8 @@
 
 namespace dae
 {
+    // PATTERN: Observer Pattern
+    // DESCRIPTION: Tracks gameplay metrics (shots, hits, final score)
     class GameStatsManager final : public Observer
     {
     public:

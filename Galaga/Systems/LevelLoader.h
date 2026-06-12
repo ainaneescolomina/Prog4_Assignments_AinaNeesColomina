@@ -5,7 +5,7 @@
 #include "EnemyType.h"
 #include <glm/glm.hpp>
 
-// Data structures for the enemy data
+// Data structure for storing raw configuration layouts parsed from file
 struct EnemySpawnData
 {
     EnemyType type;
@@ -14,6 +14,8 @@ struct EnemySpawnData
     float spawnDelay{};
 };
 
+// DESCRIPTION: Reads local level layout configuration text matrices line-by-line, calculating 
+// starting coordinate grid offsets and staggered deployment timings for wave generation
 class LevelLoader
 {
 public:

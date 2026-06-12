@@ -13,10 +13,16 @@ namespace dae
     class GameStatsManager;
     class GameObject;
 
+    // PATTERN: Observer Pattern.
+    // DESCRIPTION: Manages the game level cycle,
+    // and coordinates the spawn timing of enemies and their entrance paths.
+
     class LevelManager final : public Observer
     {
     public:
         explicit LevelManager(dae::Scene& scene, bool vsMode = false) : m_pScene(&scene), m_isVersusMode(vsMode) {}
+        
+        // Dependencies need for enemy subscriptions
         void SetPlayerScore(dae::ScoreComponent* score) { m_pPlayerScore = score; }
         void SetBulletSpawner(dae::BulletSpawner* spawner) { m_pBulletSpawner = spawner; }
         void SetGameStatsManager(dae::GameStatsManager* stats) { m_pGameStatsManager = stats; }

@@ -9,6 +9,9 @@ namespace dae
     class GameObject;
     class Scene;
 
+    // PATTERN: Object Pool & Observer Pattern
+    // DESCRIPTION: Acts as an observer listening for fire bullet requests, then processes them by recycling 
+    // a fixed pool of bullet instead of constantly allocating memory
     class BulletSpawner final : public Observer
     {
     public:
@@ -26,11 +29,12 @@ namespace dae
         Subject m_subject;
         std::vector<dae::Subscription> m_subscriptions;
 
+        // DESIGN CHOICE: Pre-allocated object pools storing references to objects owned by the scene
         std::vector<GameObject*> m_playerBulletPool;
         std::vector<GameObject*> m_enemyBulletPool;
 
-        const int maxPlayerBullets = 2;
-        const int maxEnemyBullets = 15;
+        const int m_maxPlayerBullets = 2;
+        const int m_maxEnemyBullets = 15;
 
         bool SpawnPlayerBullet(GameObject* shooter);
         bool SpawnEnemyBullet(GameObject* shooter);

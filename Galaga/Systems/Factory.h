@@ -12,6 +12,9 @@ namespace dae {
     class Font;
 }
 
+// PATTERN: Component Pattern & Command Pattern
+// DESCRIPTION: Helper functions for the configuration and construction of gameplay actors
+
 namespace ActorFactory
 {
     std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput = true, bool gamepadInput = true, int gamepadIdx = 0);

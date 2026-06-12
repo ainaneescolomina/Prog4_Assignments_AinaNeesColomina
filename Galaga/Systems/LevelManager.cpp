@@ -3,12 +3,12 @@
 #include "GameComponents.h"
 #include "Factory.h"
 #include "EnemyComponents.h"
-#include "EnemyFormationState.h"
 #include "EnemyEntranceState.h"
 #include "BulletSpawner.h"
 #include "GameStatsManager.h"
 #include "GameObject.h"
 
+// Listens for enemy deaths to check if the next level needs to be spawned
 void dae::LevelManager::Notify(Event event, void* sender)
 {
     if (event.id == make_sdbm_hash("ActorDied"))
@@ -35,6 +35,7 @@ void dae::LevelManager::AddSubscription(dae::Subscription subscription)
     m_subscriptions.emplace_back(std::move(subscription));
 }
 
+// Spawns enemies keeping their delay on account
 void dae::LevelManager::Update(float delta_time)
 {
     for (auto& enemy :
@@ -71,6 +72,7 @@ void dae::LevelManager::SpawnWave()
     m_enemiesToSpawn = LevelLoader::LoadLevel(levelPath);
 }
 
+// Empties the current level to trigger an instant level-skip
 void dae::LevelManager::SkipLevel()
 {
     for (auto* enemy : m_spawnedEnemies)
@@ -91,6 +93,7 @@ void dae::LevelManager::SkipLevel()
 
 void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
 {
+    // Skip creating a Boss if a live player controls them inside Versus mode
     if (enemyData.type == EnemyType::BossGalaga && m_isVersusMode) return;
     auto enemy = ActorFactory::CreateEnemy(enemyData.type, enemyData.pos);
 
@@ -127,10 +130,7 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
     else
         spawnPos = {1300.f, enemyData.pos.y - 200.f};
 
-    //auto stateComp = enemy->GetComponent<EnemyStateComponent>();
-    //enemy->SetPosition(spawnPos.x, spawnPos.y - 400.f);
-    //stateComp->SetState(std::make_unique<EnemyFormationState>(215.f));
-
+    // Passes fixed loop coordinate coordinates to steer entrance animations
     std::vector<glm::vec2> customPath = GetEntrancePath(enemyData.row, enemyData.pos);
     enemy->SetPosition(customPath[0].x, customPath[0].y);
 
@@ -144,61 +144,37 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
     m_spawnedEnemies.push_back(enemyPtr);
 }
 
+// DESIGN CHOICE: Hardcoded structural waypoint paths
 std::vector<glm::vec2> dae::LevelManager::GetEntrancePath(int row, const glm::vec2& targetGridPos)
 {
     std::vector<glm::vec2> entrancePath{};
+    // Different entrance path based on the row
     int pathChoice = row % 3;
 
     switch (pathChoice)
     {
     case 0: // Left side loop
         entrancePath = {
-            { -50.f, 950.f },
-            { 150.f, 500.f },
-            { 200.f, 400.f },
-            { 275.f, 375.f },
-            { 350.f, 400.f },
-            { 375.f, 475.f },
-            { 350.f, 550.f },
-            { 275.f, 575.f },
-            { 200.f, 550.f },
-            { 175.f, 475.f },
-            { 250.f, 350.f },
-            targetGridPos
+                    { -50.f, 950.f }, { 150.f, 500.f }, { 200.f, 400.f }, { 275.f, 375.f },
+                    { 350.f, 400.f }, { 375.f, 475.f }, { 350.f, 550.f }, { 275.f, 575.f },
+                    { 200.f, 550.f }, { 175.f, 475.f }, { 250.f, 350.f }, targetGridPos
         };
         break;
 
     case 1: // Right side loop
         entrancePath = {
-            { 1050.f, 950.f },
-            { 850.f, 500.f },
-            { 800.f, 400.f },
-            { 725.f, 375.f },
-            { 650.f, 400.f },
-            { 625.f, 475.f },
-            { 650.f, 550.f },
-            { 725.f, 575.f },
-            { 800.f, 550.f },
-            { 825.f, 475.f },
-            { 750.f, 350.f },
-            targetGridPos
+                    { 1050.f, 950.f }, { 850.f, 500.f }, { 800.f, 400.f }, { 725.f, 375.f },
+                    { 650.f, 400.f }, { 625.f, 475.f }, { 650.f, 550.f }, { 725.f, 575.f },
+                    { 800.f, 550.f }, { 825.f, 475.f }, { 750.f, 350.f }, targetGridPos
         };
         break;
 
     case 2: // Top left to center loop
     default:
         entrancePath = {
-            { -50.f, -50.f },
-            { 250.f, 250.f },
-            { 450.f, 350.f },
-            { 550.f, 350.f },
-            { 600.f, 400.f },
-            { 600.f, 500.f },
-            { 550.f, 550.f },
-            { 450.f, 550.f },
-            { 400.f, 475.f },
-            { 500.f, 300.f },
-            targetGridPos
+                    { -50.f, -50.f }, { 250.f, 250.f }, { 450.f, 350.f }, { 550.f, 350.f },
+                    { 600.f, 400.f }, { 600.f, 500.f }, { 550.f, 550.f }, { 450.f, 550.f },
+                    { 400.f, 475.f }, { 500.f, 300.f }, targetGridPos
         };
         break;
     }

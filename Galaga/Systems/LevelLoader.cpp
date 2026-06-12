@@ -3,10 +3,11 @@
 #include <string>
 #include <iostream>
 
-// Z = Bee
-// G = Butterfly
+// Mapping Legend:
+// Z = Bee (Zako)
+// G = Butterfly (Goei)
 // B = Boss Galaga
-// . = Empty
+// . = Empty space cell
 
 std::vector<EnemySpawnData>LevelLoader::LoadLevel(const std::string& filepath)
 {
@@ -28,8 +29,9 @@ std::vector<EnemySpawnData>LevelLoader::LoadLevel(const std::string& filepath)
 
     std::string line{};
     int row{};
-    float delay = 0.f;
+    float delay = 0.f; // Aggregates delay for each enemy to achive a delayed start
 
+    // Process file line-by-line where each string represents an independent horizontal grid row
     while (std::getline(inputFile, line))
     {
         if (line.empty()) continue;
@@ -67,7 +69,7 @@ std::vector<EnemySpawnData>LevelLoader::LoadLevel(const std::string& filepath)
             delay += 0.2f;
         }
 
-        delay += 4.f;
+        delay += 3.f;
         ++row;
     }
 

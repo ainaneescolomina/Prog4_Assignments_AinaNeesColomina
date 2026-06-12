@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
+// Streams lines parsing the saved data into a struct
 std::vector<dae::HighscoreData> dae::HighscoreManager::LoadHighscores(const std::string& filepath)
 {
     std::vector<dae::HighscoreData> scores{};
@@ -17,6 +18,7 @@ std::vector<dae::HighscoreData> dae::HighscoreManager::LoadHighscores(const std:
     std::string name{};
     int score{};
 
+    // Read word-by-word sequentially until reaching file endings
     while (file >> name >> score)
     {
         scores.push_back({ name, score });
@@ -32,7 +34,7 @@ void dae::HighscoreManager::SaveNewHighscore(const std::string& filepath, const 
     std::vector<dae::HighscoreData> currentScores = LoadHighscores(filepath);
     currentScores.push_back({ name, score });
 
-    // sort by score amount using lambda
+    //Inline descending predicate lambda used to organize scores by their amount
     std::sort(currentScores.begin(), currentScores.end(), [](const dae::HighscoreData& a, const dae::HighscoreData& b) {
         return a.score > b.score; // Higher score comes first
         });
@@ -41,6 +43,7 @@ void dae::HighscoreManager::SaveNewHighscore(const std::string& filepath, const 
     if (currentScores.size() > 5)
         currentScores.resize(5);
 
+    // Completely wipes current file to overwrite updated top-5
     std::ofstream outFile(filepath, std::ios::trunc);
     if (!outFile.is_open())
     {

@@ -14,6 +14,8 @@
 void dae::FormationManager::Update(float deltaTime)
 {
     if (!m_pSpawnedEnemies || m_pSpawnedEnemies->empty()) return;
+
+    // Halts dive cycles until all enemies finish their entrance
     if (!m_activeFormation)
     {
         bool allEnemiesIdle = true;
@@ -69,6 +71,7 @@ void dae::FormationManager::TriggerDiveWave()
     int currentDivers = 0;
     std::vector<GameObject*> readyEnemies;
 
+    // Filters and counts current diving behavior statuses across the list
     for (auto* enemy : *m_pSpawnedEnemies)
     {
         if (!enemy) continue;
@@ -102,6 +105,7 @@ void dae::FormationManager::TriggerDiveWave()
         }
     }
 
+    // Fallback logic: Select a random enemy if the Boss pass fails or is unavailable
     if (!chosenEnemy)
     {
         chosenIndex = rand() % static_cast<int>(readyEnemies.size());
@@ -110,7 +114,8 @@ void dae::FormationManager::TriggerDiveWave()
 
     TriggerDiveState(chosenEnemy);
 
-    if (currentDivers < 2 && (rand() % 100 < 55)) // 55% chance for a dual dive trigger
+    // CO-OP DIVE: 55% chance to trigger an adjacent enemy unit for a dual-dive wave
+    if (currentDivers < 2 && (rand() % 100 < 55))
     {
         GameObject* adjacentEnemy = nullptr;
 

@@ -5,6 +5,8 @@ namespace dae
 {
     class GameObject;
 
+    // DESCRIPTION: Coordinates the layout logic for the enemies. 
+    // Manages idle offsets and uses dynamic cooldown intervals to trigger "smart" dive attacks
     class FormationManager final
     {
     public:
@@ -15,6 +17,7 @@ namespace dae
 
         bool GetActiveFormation() const { return m_activeFormation; }
 
+        // Stores a refereence to the active enemy list maintained by the Level Manager
         void SetEnemies(const std::vector<GameObject*>* enemies) { m_pSpawnedEnemies = enemies; }
         void SetActiveFormation(bool active) { m_activeFormation = active; }
 

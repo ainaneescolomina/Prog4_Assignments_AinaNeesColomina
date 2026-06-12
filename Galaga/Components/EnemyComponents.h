@@ -48,6 +48,8 @@ namespace dae
     };
 }
 
+// PATTERN: State Pattern
+// DESCRIPTION: Controller for the enemy behavior state machine
 class EnemyStateComponent final : public dae::Component 
 {
 public:

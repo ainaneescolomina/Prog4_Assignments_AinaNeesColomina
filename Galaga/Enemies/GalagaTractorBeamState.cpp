@@ -16,6 +16,7 @@ void dae::GalagaTractorBeamState::OnEnter(dae::GameObject* owner)
         m_colliderComp = m_enemyComp->GetEnemyOwner()->GetComponent<dae::ColliderComponent>();
     }
 
+    // Subscribes to the internal bounding box stream to check if the player has been captures succefully
     if(m_colliderComp) this->AddSubscription(m_colliderComp->GetSubject().AddObserver(this));
 
     // screen bounds
@@ -66,6 +67,7 @@ void dae::GalagaTractorBeamState::OnExit(dae::GameObject*)
 
 std::unique_ptr<dae::EnemyState> dae::GalagaTractorBeamState::Update(dae::GameObject* owner, float delta_time)
 {
+    // If a collision registers a player capture, the boss instantly breaks out of the diving state
     if (m_beamSuccessful)
     {
         if (m_enemyComp && m_enemyComp->GetBeamObject())

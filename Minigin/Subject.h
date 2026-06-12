@@ -24,6 +24,7 @@ namespace dae
         }
 
         void RemoveObserver(Observer* observer) {
+            if (m_observers.empty()) return;
             // code to remove an observer
             m_observers.erase(
                 std::remove_if(m_observers.begin(), m_observers.end(),

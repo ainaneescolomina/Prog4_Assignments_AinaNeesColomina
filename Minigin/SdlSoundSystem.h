@@ -4,6 +4,7 @@
 
 namespace dae
 {
+    // Hides SDL3 and SDL3_mixer header dependencies from the public header.
     class SdlSoundSystem final : public ISoundSystem {
     public:
         SdlSoundSystem();
@@ -27,7 +28,7 @@ namespace dae
         std::unique_ptr<SdlSoundSystemImpl> pImpl;
     };
 
-    // Decorator Pattern -- Logging Methods
+    // PATTERN: Decorator Pattern -- Logging Methods
     class LoggingSoundSystem final : public ISoundSystem {
     public:
         LoggingSoundSystem(std::unique_ptr<ISoundSystem>&& ss) : _real_ss(std::move(ss)) {}
