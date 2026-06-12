@@ -11,7 +11,7 @@
 void dae::HighscoreState::OnEnter()
 {
     dae::InputManager::GetInstance().BindCommand(SDLK_SPACE, dae::KeyState::Down, std::make_unique<OpenMenuCommand>());
-    dae::InputManager::GetInstance().BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Down, std::make_unique<OpenMenuCommand>());
+    dae::InputManager::GetInstance().BindGamepadCommand(0, dae::GAMEPAD_A, dae::KeyState::Down, std::make_unique<OpenMenuCommand>());
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
@@ -62,7 +62,7 @@ std::unique_ptr<dae::GameState> dae::HighscoreState::Update(float)
 	return nullptr;
 }
 
-void dae::OpenMenuCommand::Execute(float)
+void dae::OpenMenuCommand::Execute(float, float)
 {
     dae::GameStateManager::GetInstance().ChangeState(std::make_unique<dae::MenuState>());
 }

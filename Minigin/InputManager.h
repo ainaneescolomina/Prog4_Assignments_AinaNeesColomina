@@ -27,6 +27,13 @@ namespace dae
 	{
 		unsigned int button;
 		KeyState state;
+		unsigned int controllerIdx;
+		std::unique_ptr<Command> command;
+	};
+
+	struct AxisBinding
+	{
+		unsigned int controllerIdx;
 		std::unique_ptr<Command> command;
 	};
 
@@ -38,7 +45,8 @@ namespace dae
 		bool ProcessInput(float delta_time);
 
 		void BindCommand(SDL_Keycode key, KeyState state, std::unique_ptr<Command> command);
-		void BindGamepadCommand(unsigned int button, KeyState state, std::unique_ptr<Command> command);
+		void BindGamepadCommand(unsigned int controllerIndex, unsigned int button, KeyState state, std::unique_ptr<Command> command);
+		void BindAxisCommand(unsigned int controllerIndex, std::unique_ptr<Command> command);
 
 		void UnbindCommand(SDL_Keycode key, KeyState state);
 		void UnbindGamepadCommand(unsigned int button, KeyState state);
@@ -46,10 +54,11 @@ namespace dae
 		void ClearAllBindings();
 
 	private:
-		std::unique_ptr<dae::Gamepad> m_pGamepad;
+		std::vector<std::unique_ptr<dae::Gamepad>> m_pGamepads;
 
 		std::vector<std::unique_ptr<InputBinding>> m_pBindings;
 		std::vector<std::unique_ptr<GamepadBinding>> m_pGamepadBindings;
+		std::vector<std::unique_ptr<AxisBinding>> m_pAxisBindings;
 
 		std::unordered_map<SDL_Keycode, bool> m_keysDown;
 	};

@@ -39,7 +39,7 @@ namespace dae
     class SkipLevelCommand final : public Command {
     public:
         SkipLevelCommand(PlayState* obj) : m_pPlayState(obj) {}
-        void Execute(float) override;
+        void Execute(float, float) override;
 
     private:
         PlayState* m_pPlayState;

@@ -36,9 +36,11 @@ namespace ActorFactory
         // Gamepad bindings
         if (gamepadInput)
         {
-            input.BindGamepadCommand(dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
-            input.BindGamepadCommand(dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
-            input.BindGamepadCommand(dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
+            input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
+            input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
+            input.BindGamepadCommand(0, dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
+        
+            input.BindAxisCommand(0, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f)); // Thumbstick tracking!
         }
 
         // Observer / Subject

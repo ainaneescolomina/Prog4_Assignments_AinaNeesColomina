@@ -6,6 +6,6 @@ namespace dae
 	{
 	public:
 		virtual ~Command() {}
-		virtual void Execute(float delta_time) = 0;
+		virtual void Execute(float delta_time, float value_modifier = 1.0f) = 0;
 	};
 }

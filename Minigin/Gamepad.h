@@ -32,6 +32,7 @@ namespace dae
         bool IsDown(unsigned int button) const;
         bool IsPressed(unsigned int button) const;
         bool IsUp(unsigned int button) const;
+        float GetLeftStickX() const;
 
     private:
         class Impl;

@@ -23,9 +23,9 @@ void dae::MenuState::OnEnter()
     input.BindCommand(SDLK_SPACE, KeyState::Down, std::make_unique<ConfirmSelectionCommand>(this));
 
     // gamepad bindings
-    input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Down, std::make_unique<NavigateMenuCommand>(this, -1));
-    input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Down, std::make_unique<NavigateMenuCommand>(this, 1));
-    input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmSelectionCommand>(this));
+    input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_UP, KeyState::Down, std::make_unique<NavigateMenuCommand>(this, -1));
+    input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_DOWN, KeyState::Down, std::make_unique<NavigateMenuCommand>(this, 1));
+    input.BindGamepadCommand(0, dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmSelectionCommand>(this));
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
@@ -124,9 +124,10 @@ void dae::MenuState::ConfirmSelection()
         break;
 
     case GameMode::Quit:
-        //SDL_Event quitEvent;
-        //quitEvent.type = SDL_QUIT;
-        //SDL_PushEvent(&quitEvent);
+        // Quit game
+        SDL_Event quitEvent;
+        quitEvent.type = SDL_EVENT_QUIT;
+        SDL_PushEvent(&quitEvent);
         break;
     }
 }
@@ -145,14 +146,14 @@ void dae::MenuState::UpdateModeSelection()
     }
 }
 
-void dae::NavigateMenuCommand::Execute(float)
+void dae::NavigateMenuCommand::Execute(float, float)
 {
     auto& sound = dae::servicelocator::get_sound_system();
     sound.Play(0, 0.1f);
     m_pMenu->MoveSelection(m_direction);
 }
 
-void dae::ConfirmSelectionCommand::Execute(float)
+void dae::ConfirmSelectionCommand::Execute(float, float)
 {
     m_pMenu->ConfirmSelection();
 }

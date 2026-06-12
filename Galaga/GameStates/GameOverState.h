@@ -27,7 +27,7 @@ namespace dae {
     class OpenHighscoreMenuCommand final : public dae::Command {
     public:
         explicit OpenHighscoreMenuCommand(int score) : m_score{ score } {}
-        void Execute(float) override;
+        void Execute(float, float) override;
 
     private:
         int m_score;

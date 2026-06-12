@@ -1,40 +1,60 @@
 #include "InputManager.h"
-#include <backends/imgui_impl_sdl3.h>
 #include "InputManager.h"
+#include "InputManager.h"
+#include <backends/imgui_impl_sdl3.h>
 #include <algorithm>
 
 dae::InputManager::InputManager()
 {
-	m_pGamepad = std::make_unique<dae::Gamepad>(0);
+	for (int i = 0; i < 4; ++i)
+	{
+		m_pGamepads.push_back(std::make_unique<dae::Gamepad>(i));
+	}
 }
 
 bool dae::InputManager::ProcessInput(float delta_time)
 {
-	m_pGamepad->Update();
+	for (auto& gamepad : m_pGamepads)
+	{
+		gamepad->Update();
+	}
 
 	// Controller input
 	for (auto& binding : m_pGamepadBindings)
 	{
-		bool trigger = false;
+		unsigned int idx = binding->controllerIdx;
+		if (idx >= m_pGamepads.size()) continue;
 
+		bool trigger = false;
 		switch (binding->state)
 		{
-		case KeyState::Down:
-			trigger = m_pGamepad->IsDown(binding->button);
+		case KeyState::Down:   
+			trigger = m_pGamepads[idx]->IsDown(binding->button); 
 			break;
 
-		case KeyState::Pressed:
-			trigger = m_pGamepad->IsPressed(binding->button);
+		case KeyState::Pressed: 
+			trigger = m_pGamepads[idx]->IsPressed(binding->button); 
 			break;
 
-		case KeyState::Up:
-			trigger = m_pGamepad->IsUp(binding->button);
+		case KeyState::Up:      
+			trigger = m_pGamepads[idx]->IsUp(binding->button); 
 			break;
 		}
 
-		if (trigger)
-		{
+		if (trigger) 
 			binding->command->Execute(delta_time);
+	}
+
+	for (auto& binding : m_pAxisBindings)
+	{
+		unsigned int idx = binding->controllerIdx;
+		if (idx >= m_pGamepads.size()) continue;
+
+		float stickX = m_pGamepads[idx]->GetLeftStickX();
+		if (std::abs(stickX) > 0.1f)
+		{
+			// Pass the live stickX value (-1.0f to 1.0f)
+			binding->command->Execute(delta_time, stickX);
 		}
 	}
 
@@ -93,10 +113,16 @@ void dae::InputManager::BindCommand(SDL_Keycode key, KeyState state, std::unique
 	m_pBindings.push_back(std::move(newInputBinding));
 }
 
-void dae::InputManager::BindGamepadCommand(unsigned int button, KeyState state, std::unique_ptr<Command> command)
+void dae::InputManager::BindGamepadCommand(unsigned int controllerIndex, unsigned int button, KeyState state, std::unique_ptr<Command> command)
 {
-	auto newGamepadBinding = std::make_unique<GamepadBinding>(button, state, std::move(command));
+	auto newGamepadBinding = std::make_unique<GamepadBinding>(button, state, controllerIndex, std::move(command));
 	m_pGamepadBindings.push_back(std::move(newGamepadBinding));
+}
+
+void dae::InputManager::BindAxisCommand(unsigned int controllerIndex, std::unique_ptr<Command> command)
+{
+	auto newAxisBinding = std::make_unique<AxisBinding>(controllerIndex, std::move(command));
+	m_pAxisBindings.push_back(std::move(newAxisBinding));
 }
 
 void dae::InputManager::UnbindCommand(SDL_Keycode key, KeyState state)
@@ -133,6 +159,7 @@ void dae::InputManager::ClearAllBindings()
 {
 	m_pBindings.clear();
 	m_pGamepadBindings.clear();
+	m_pAxisBindings.clear();
 }
 
 

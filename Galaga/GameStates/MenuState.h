@@ -42,7 +42,7 @@ namespace dae
     {
     public:
         explicit NavigateMenuCommand(MenuState* menu, int direction) : m_pMenu{ menu }, m_direction{ direction } {}
-        void Execute(float) override;
+        void Execute(float, float) override;
     
     private:
         MenuState* m_pMenu;
@@ -53,7 +53,7 @@ namespace dae
     {
     public:
         explicit ConfirmSelectionCommand(MenuState* menu) : m_pMenu{ menu } {}
-        void Execute(float) override;
+        void Execute(float, float) override;
     
     private:
         MenuState* m_pMenu;

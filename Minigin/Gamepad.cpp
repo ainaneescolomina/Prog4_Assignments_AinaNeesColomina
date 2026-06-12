@@ -60,6 +60,20 @@ public:
 #endif
     }
 
+    // Left Joystick value
+    float GetLeftStickX() const
+    {
+        // get the raw x short value (-32768 to 32768) from the XInput state
+        auto rawX = m_currentState.Gamepad.sThumbLX;
+
+        // check for the deadzone values
+        if (std::abs(rawX) < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) return 0.f;
+        
+        // normalize the value to a range between -1.0f and 1.0f.
+        // XInput negative values max out at -32768, while positive values max out at 32767.
+        return rawX < 0 ? static_cast<float>(rawX) / 32768.f : static_cast<float>(rawX) / 32767.f;
+    }
+
 private:
 #ifndef __EMSCRIPTEN__
     int m_index{};
@@ -100,4 +114,9 @@ bool dae::Gamepad::IsPressed(unsigned int button) const
 bool dae::Gamepad::IsUp(unsigned int button) const
 {
     return m_pImpl->IsUp(button);
+}
+
+float dae::Gamepad::GetLeftStickX() const 
+{ 
+    return m_pImpl->GetLeftStickX(); 
 }

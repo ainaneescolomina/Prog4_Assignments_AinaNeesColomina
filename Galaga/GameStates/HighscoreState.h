@@ -18,6 +18,6 @@ namespace dae {
 
     class OpenMenuCommand final : public dae::Command {
     public:
-        void Execute(float) override;
+        void Execute(float, float) override;
     };
 }

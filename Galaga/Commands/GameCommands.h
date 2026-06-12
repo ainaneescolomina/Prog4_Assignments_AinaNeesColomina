@@ -8,7 +8,7 @@ namespace dae
 	public:
 		MoveCommand(GameObject* obj, float inputX, float inputY);
 
-		void Execute(float delta_time) override;
+		void Execute(float delta_time, float value_modifier = 1.0f) override;
 
 	private:
 		GameObject* m_pObject;
@@ -21,7 +21,7 @@ namespace dae
 	public:
 		ShootCommand(GameObject* obj) : m_pObject(obj) {}
 
-		void Execute(float delta_time) override;
+		void Execute(float delta_time, float value_modifier = 1.0f) override;
 
 	private:
 		GameObject* m_pObject;
@@ -30,6 +30,6 @@ namespace dae
 	class MuteToggleCommand final : public Command
 	{
 	public:
-		void Execute(float delta_time) override;
+		void Execute(float delta_time, float value_modifier = 1.0f) override;
 	};
 }

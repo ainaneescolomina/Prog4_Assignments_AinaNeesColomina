@@ -20,9 +20,9 @@ void dae::NameEntryState::OnEnter()
     input.BindCommand(SDLK_D, dae::KeyState::Down, std::make_unique<CycleLetterCommand>(this, 1));
     input.BindCommand(SDLK_SPACE, dae::KeyState::Down, std::make_unique<ConfirmLetterCommand>(this));
     // gamepad bindings
-    input.BindGamepadCommand(dae::GAMEPAD_DPAD_UP, KeyState::Down, std::make_unique<CycleLetterCommand>(this, -1));
-    input.BindGamepadCommand(dae::GAMEPAD_DPAD_DOWN, KeyState::Down, std::make_unique<CycleLetterCommand>(this, 1));
-    input.BindGamepadCommand(dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmLetterCommand>(this));
+    input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_UP, KeyState::Down, std::make_unique<CycleLetterCommand>(this, -1));
+    input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_DOWN, KeyState::Down, std::make_unique<CycleLetterCommand>(this, 1));
+    input.BindGamepadCommand(0, dae::GAMEPAD_A, KeyState::Down, std::make_unique<ConfirmLetterCommand>(this));
 
     m_pScene = &dae::SceneManager::GetInstance().CreateScene();
 
@@ -132,12 +132,12 @@ void dae::NameEntryState::UpdateNameEntryText()
     m_pNameEntryText->SetText(nameTmp);
 }
 
-void dae::CycleLetterCommand::Execute(float)
+void dae::CycleLetterCommand::Execute(float, float)
 {
     m_pState->CycleLetter(m_direction);
 }
 
-void dae::ConfirmLetterCommand::Execute(float)
+void dae::ConfirmLetterCommand::Execute(float, float)
 {
     auto& sound = dae::servicelocator::get_sound_system();
     sound.Play(0, 0.1f);

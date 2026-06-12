@@ -145,7 +145,7 @@ void dae::PlayState::SkipLevel()
 	m_pLevelManager->SkipLevel();
 }
 
-void dae::SkipLevelCommand::Execute(float)
+void dae::SkipLevelCommand::Execute(float, float)
 {
 	m_pPlayState->SkipLevel();
 }
