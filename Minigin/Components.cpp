@@ -108,8 +108,8 @@ void dae::AnimatedRenderComponent::SetTexture(const std::string& filename, int r
 		m_timer = 0.0f;
 
 		auto textureSize = m_texture->GetSize();
-		m_frameWidth = textureSize.x / m_cols;
-		m_frameHeight = textureSize.y / m_rows;
+		m_frameWidth = static_cast<int>(textureSize.x / m_cols);
+		m_frameHeight = static_cast<int>(textureSize.y / m_rows);
 	}
 }
 
