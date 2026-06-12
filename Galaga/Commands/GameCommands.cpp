@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "GameComponents.h"
 #include "ServiceLocator.h"
+#include "LevelManager.h"
 
 dae::MoveCommand::MoveCommand(GameObject* obj, float inputX, float inputY)
 	:m_pObject(obj),
@@ -33,4 +34,9 @@ void dae::MuteToggleCommand::Execute(float, float)
 {
 	auto& sound = dae::servicelocator::get_sound_system();
 	sound.GeneralMuteToggle();
+}
+
+void dae::SkipLevelCommand::Execute(float, float)
+{
+	if (m_pLevelManager) m_pLevelManager->SkipLevel();
 }

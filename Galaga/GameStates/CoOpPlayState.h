@@ -10,7 +10,7 @@
 namespace dae
 {
     class Scene;
-    class PlayState final : public dae::GameState, public Observer
+    class CoOpPlayState final : public dae::GameState, public Observer
     {
     public:
         // GameState Functions
@@ -28,20 +28,11 @@ namespace dae
     private:
         Scene* m_pScene = nullptr;
 
-        bool m_playerDied{};
-
         //dae::WinOneGameAchievement m_pWinAchievement;
         std::unique_ptr<dae::BulletSpawner> m_pBulletSpawner;
         std::unique_ptr<LevelManager> m_pLevelManager;
         std::unique_ptr<GameStatsManager> m_pGameStats;
-    };
 
-    class SkipLevelCommand final : public Command {
-    public:
-        SkipLevelCommand(PlayState* obj) : m_pPlayState(obj) {}
-        void Execute(float, float) override;
-
-    private:
-        PlayState* m_pPlayState;
+        int m_playerDied{ 0 };
     };
 }

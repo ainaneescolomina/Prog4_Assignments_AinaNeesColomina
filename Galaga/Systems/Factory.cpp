@@ -8,7 +8,7 @@
 
 namespace ActorFactory
 {
-    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput, bool gamepadInput)
+    std::unique_ptr<dae::GameObject> CreatePlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput, bool gamepadInput, int gamepadIdx)
     {
         auto player = std::make_unique<dae::GameObject>();
         player->AddComponent<dae::AnimatedRenderComponent>(1, 1, 0.f)->SetTexture("Images/player.png", true);
@@ -20,7 +20,7 @@ namespace ActorFactory
         auto* lives = player->AddComponent<dae::LivesComponent>(4, dae::LivesComponent::DeathAction::Destroy, 1.f);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
-        //player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
+        player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);
 
         auto* movement = player->AddComponent<dae::MovementComponent>(pos.x, pos.y);
 
@@ -36,11 +36,11 @@ namespace ActorFactory
         // Gamepad bindings
         if (gamepadInput)
         {
-            input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
-            input.BindGamepadCommand(0, dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
-            input.BindGamepadCommand(0, dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
+            input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
+            input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
+            input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
         
-            input.BindAxisCommand(0, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f)); // Thumbstick tracking!
+            input.BindAxisCommand(gamepadIdx, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
         }
 
         // Observer / Subject

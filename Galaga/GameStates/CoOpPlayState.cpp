@@ -1,5 +1,5 @@
-#include "PlayState.h"
-#include "GameOverState.h"
+#include "CoOpPlayState.h"
+#include "HighscoreState.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -15,9 +15,9 @@
 #include "Factory.h"
 #include "GameComponents.h"
 
-void dae::PlayState::OnEnter()
+void dae::CoOpPlayState::OnEnter()
 {
-	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(this));
+	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(m_pLevelManager.get()));
 	InputManager::GetInstance().BindCommand(SDLK_F2, KeyState::Down, std::make_unique<MuteToggleCommand>());
 
 	m_pScene = &SceneManager::GetInstance().CreateScene();
@@ -56,27 +56,35 @@ void dae::PlayState::OnEnter()
 	m_pGameStats = std::make_unique<GameStatsManager>();
 
 	// --- ACTORS ---
-	// Player
-	auto player = ActorFactory::CreatePlayer(input, { 450, 650 });
+	// Player 1
+	auto player1 = ActorFactory::CreatePlayer(input, { 450, 650 }, false, true, 0);
 
-	// UI
-	auto scoreTitle = UIFactory::CreateUI_Text(font, { 850, 400 }, "1 Up", { 255, 0, 0, 255 });
+	// Player 2
+	auto player2 = ActorFactory::CreatePlayer(input, { 450, 650 }, true, true, 1);
+
+	// UI - REVISAR
+	auto scoreTitle = UIFactory::CreateUI_Text(font, { 850, 400 }, "2 Up", { 255, 0, 0, 255 });
 	m_pScene->Add(std::move(scoreTitle));
 	auto scoreUI = UIFactory::CreateUI_Score(font, { 850, 450 });
-	auto livesUI = UIFactory::CreateUI_Lives({ 800, 600 }, "Images/player.png");
+
+	auto livesUI1 = UIFactory::CreateUI_Lives({ 800, 600 }, "Images/player.png");
+	auto livesUI2 = UIFactory::CreateUI_Lives({ 800, 650 }, "Images/player.png");
 
 	// Observer / Subject
-	auto score = player->GetComponent<dae::ScoreComponent>();
+	auto* score = player1->GetComponent<dae::ScoreComponent>();
 	//score->GetSubject().AddObserver(&m_pWinAchievement);
 
-	auto lives = player->GetComponent<dae::LivesComponent>();
-	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
-	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	auto* lives1 = player1->GetComponent<dae::LivesComponent>();
+	lives1->GetSubject().AddObserver(livesUI1->GetComponent<dae::LivesDisplayComponent>());
+	auto* lives2 = player2->GetComponent<dae::LivesComponent>();
+	lives2->GetSubject().AddObserver(livesUI2->GetComponent<dae::LivesDisplayComponent>());
 
 	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
-	score->GetSubject().AddObserver(m_pGameStats.get());
-	auto shoot = player->GetComponent<dae::ShootComponent>();
-	shoot->GetSubject().AddObserver(m_pBulletSpawner.get());
+
+	auto* shoot1 = player1->GetComponent<dae::ShootComponent>();
+	shoot1->GetSubject().AddObserver(m_pBulletSpawner.get());
+	auto* shoot2 = player2->GetComponent<dae::ShootComponent>();
+	shoot2->GetSubject().AddObserver(m_pBulletSpawner.get());
 
 	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
 
@@ -85,18 +93,21 @@ void dae::PlayState::OnEnter()
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
 	m_pLevelManager->SetGameStatsManager(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
-	lives->GetSubject().AddObserver(this);
+	lives1->GetSubject().AddObserver(this);
+	lives2->GetSubject().AddObserver(this);
 
 	// Add to scene
-	m_pScene->Add(std::move(player));
-	m_pScene->Add(std::move(livesUI));
+	m_pScene->Add(std::move(player1));
+	m_pScene->Add(std::move(player2));
+	m_pScene->Add(std::move(livesUI1));
+	m_pScene->Add(std::move(livesUI2));
 	m_pScene->Add(std::move(scoreUI));
 
 	// Start Game
 	sound.Play(0, 0.15f);
 }
 
-void dae::PlayState::OnExit()
+void dae::CoOpPlayState::OnExit()
 {
 	InputManager::GetInstance().UnbindCommand(SDLK_F1, KeyState::Down);
 	InputManager::GetInstance().UnbindCommand(SDLK_F2, KeyState::Down);
@@ -104,23 +115,19 @@ void dae::PlayState::OnExit()
 	m_pScene->RemoveAll();
 }
 
-std::unique_ptr<dae::GameState> dae::PlayState::Update(float delta_time)
+std::unique_ptr<dae::GameState> dae::CoOpPlayState::Update(float delta_time)
 {
 	m_pLevelManager->Update(delta_time);
 
-    if (m_playerDied) 
+	if (m_playerDied >= 2)
 	{
-        return std::make_unique<GameOverState>(
-			m_pGameStats->GetShotsFired(), 
-			m_pGameStats->GetHitsScored(), 
-			m_pGameStats->GetHitMissRatio(), 
-			m_pGameStats->GetFinalScore());
-    }
+		return std::make_unique<HighscoreState>();
+	}
 
-    return nullptr;
+	return nullptr;
 }
 
-void dae::PlayState::Notify(Event event, void* sender)
+void dae::CoOpPlayState::Notify(Event event, void* sender)
 {
 	if (event.id == make_sdbm_hash("ActorDied"))
 	{
@@ -130,7 +137,7 @@ void dae::PlayState::Notify(Event event, void* sender)
 		if (!otherTag) return;
 		if (otherTag->GetTag() == TagComponent::Tags::Player)
 		{
-			m_playerDied = true;
+			++m_playerDied;
 		}
 	}
 	else if (event.id == make_sdbm_hash("UpdateLives"))
@@ -140,12 +147,7 @@ void dae::PlayState::Notify(Event event, void* sender)
 	}
 }
 
-void dae::PlayState::SkipLevel()
+void dae::CoOpPlayState::SkipLevel()
 {
 	m_pLevelManager->SkipLevel();
-}
-
-void dae::SkipLevelCommand::Execute(float, float)
-{
-	m_pPlayState->SkipLevel();
 }

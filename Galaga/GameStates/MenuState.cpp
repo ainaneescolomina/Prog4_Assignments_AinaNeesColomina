@@ -5,7 +5,8 @@
 #include "GameStateManager.h"
 #include "Components.h"
 
-#include "PlayState.h"
+#include "SinglePlayerState.h"
+#include "CoOpPlayState.h"
 #include "HighscoreState.h"
 
 #include "Factory.h"
@@ -110,10 +111,13 @@ void dae::MenuState::ConfirmSelection()
     switch (static_cast<GameMode>(m_selectedIdx))
     {
     case GameMode::SinglePlayer:
-        GameStateManager::GetInstance().ChangeState(std::make_unique<PlayState>());
+        GameStateManager::GetInstance().ChangeState(std::make_unique<SinglePlayerState>());
         break;
 
     case GameMode::CoOp:
+        GameStateManager::GetInstance().ChangeState(std::make_unique<CoOpPlayState>());
+        break;
+
     case GameMode::Versus:
     default:
         // Stubs for un-implemented multiplayer elements so they don't crash

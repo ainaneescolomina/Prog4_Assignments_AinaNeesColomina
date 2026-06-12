@@ -32,4 +32,16 @@ namespace dae
 	public:
 		void Execute(float delta_time, float value_modifier = 1.0f) override;
 	};
+
+	class LevelManager;
+	class SkipLevelCommand final : public Command
+	{
+	public:
+		explicit SkipLevelCommand(LevelManager* levelManager) : m_pLevelManager(levelManager) {}
+
+		void Execute(float delta_time, float valueModifier = 1.0f) override;
+
+	private:
+		LevelManager* m_pLevelManager;
+	};
 }
