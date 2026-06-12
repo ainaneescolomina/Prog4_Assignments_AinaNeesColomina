@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 namespace dae
 {
@@ -8,7 +9,8 @@ namespace dae
     class Subscription final
     {
     public:
-        Subscription(Subject* subject, Observer* observer)
+        // Accept a shared_ptr instead of a raw pointer to establish weak tracking safety bounds
+        Subscription(std::shared_ptr<Subject> subject, Observer* observer)
             : m_subject(subject), m_observer(observer) {
         };
 
@@ -23,7 +25,9 @@ namespace dae
 
 
     private:
-        Subject* m_subject{};
+        // REASONING: Uses a weak_ptr so that if the underlying Subject component is destroyed first, 
+        // the subscription can safely detect that the memory is dead and prevent an access violation crash.
+        std::weak_ptr<Subject> m_subject;
         Observer* m_observer{};
 
         void Unsubscribe();
