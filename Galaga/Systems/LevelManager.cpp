@@ -21,6 +21,11 @@ void dae::LevelManager::Notify(Event event, void* sender)
         {
             --m_aliveEnemies;
 
+            m_spawnedEnemies.erase(
+                std::remove(m_spawnedEnemies.begin(), m_spawnedEnemies.end(), otherObj),
+                m_spawnedEnemies.end()
+            );
+
             if (m_aliveEnemies <= 0)
             {
                 m_levelIdx = (m_levelIdx % 3) + 1;
@@ -59,6 +64,8 @@ void dae::LevelManager::Update(float delta_time)
 void dae::LevelManager::SpawnWave()
 {
     if (!m_pScene) return;
+
+    m_spawnedEnemies.clear();
 
     if (!m_pFormationManager)
     {

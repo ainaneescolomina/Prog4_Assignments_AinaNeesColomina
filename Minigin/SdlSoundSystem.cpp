@@ -41,6 +41,7 @@ namespace dae {
             }
 
 #ifndef __EMSCRIPTEN__
+            // MULTITHREADING: Spawns background worker loop thread
             m_Thread = std::thread(&SdlSoundSystemImpl::ProcessQueue, this);
 #endif
         }
@@ -66,14 +67,15 @@ namespace dae {
             //SDL_QuitSubSystem(SDL_INIT_AUDIO);
         }
 
+        // Pushes messages safely onto data buffers to keep the calling thread completely unblocked
         void AddToQueue(sound_id id, float volume) {
 #ifdef __EMSCRIPTEN__
             Play(id, volume);
 #else
-            // locks the mutex instantly and unlocks automatically when it goes out of scope
+            // Locks the mutex instantly and unlocks automatically when it goes out of scope
             std::lock_guard<std::mutex> lock(m_Mutex);
             m_Queue.push({ id, volume });
-            m_Condition.notify_one();
+            m_Condition.notify_one(); // Signifies the worker thread that new entries are ready
 #endif
         }
 
@@ -81,7 +83,7 @@ namespace dae {
         {
             if (!m_pMixer) return;
 
-            // we lock here because asset loading can modify m_AudioMap (audio thread might be reading during Play lookups)
+            // Thread synchronization check preventing simultaneous modification errors with lookups (audio thread might be reading during Play lookups)
             std::lock_guard<std::mutex> lock(m_Mutex);
             if (m_AudioMap.contains(id)) return;
 
@@ -106,8 +108,8 @@ namespace dae {
                 if (it->id == id)
                 {
                     MIX_StopTrack(it->track, 0);    // Stop track with no delay
-                    MIX_DestroyTrack(it->track);  // Free the track instance reference 
-                    it = m_ActiveSounds.erase(it); // Erase from saved list
+                    MIX_DestroyTrack(it->track);    // Free the track instance reference 
+                    it = m_ActiveSounds.erase(it);  // Erase from saved list
                 }
                 else
                 {
@@ -124,7 +126,7 @@ namespace dae {
             {
                 if (sound.id == id)
                 {
-                    sound.mute = !sound.mute; // Toggle individual mute state flag
+                    sound.mute = !sound.mute; // Toggle individual mute state
 
                     // If global mute is active, force volume to 0. Otherwise apply individual mute rule
                     float targetVolume = (m_GlobalMute || sound.mute) ? 0.0f : sound.volume;
@@ -148,16 +150,20 @@ namespace dae {
         }
 
     private:
+        // Background thread looping mechanism that processes asynchronous sound requests
         void ProcessQueue() {
             while (!m_Exit) {
                 PlayMessage message;
                 {
                     std::unique_lock<std::mutex> lock(m_Mutex);
+
+                    // Puts thread into a stop until items enter the queue container
                     m_Condition.wait(lock, [this] { return !m_Queue.empty() || m_Exit; });
                     if (m_Exit && m_Queue.empty()) return;
+
                     message = m_Queue.front();
                     m_Queue.pop();
-                    lock.unlock();
+                    lock.unlock(); // Explicit unlock prior to rendering playback pipelines
                 }
                 Play(message.id, message.volume);
             }
@@ -202,12 +208,14 @@ namespace dae {
             m_ActiveSounds.push_back(newSound);
         }
 
+        // Thread Control Variables
         std::queue<PlayMessage> m_Queue;
         std::thread m_Thread;
         std::mutex m_Mutex;
         std::condition_variable m_Condition;
         bool m_Exit = false;
 
+        // SDL Asset Mapping Containers
         MIX_Mixer* m_pMixer = nullptr;
         std::unordered_map<sound_id, MIX_Audio*> m_AudioMap;
 
@@ -223,7 +231,7 @@ namespace dae {
         bool m_GlobalMute = false;
     };
 
-    // SdlSoundSystem Methods
+    // SdlSoundSystem Public Interface Layer Implementation
     SdlSoundSystem::SdlSoundSystem() : pImpl(std::make_unique<SdlSoundSystemImpl>()) {}
     SdlSoundSystem::~SdlSoundSystem() = default;
 

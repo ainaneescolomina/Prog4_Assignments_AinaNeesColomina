@@ -21,7 +21,7 @@ void dae::FormationManager::Update(float deltaTime)
         bool allEnemiesIdle = true;
         for (auto* enemy : *m_pSpawnedEnemies)
         {
-            if (!enemy) continue;
+            if (!enemy || enemy->IsMarkedForDestroy()) continue;
             auto* stateComp = enemy->GetComponent<EnemyStateComponent>();
             if (!stateComp) continue;
 
