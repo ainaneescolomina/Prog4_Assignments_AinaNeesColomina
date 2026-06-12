@@ -18,7 +18,7 @@ namespace ActorFactory
 
         auto* collider = player->AddComponent<dae::ColliderComponent>(45.f, 45.f);
         auto* damage = player->AddComponent<dae::DamageManager>();
-        auto* lives = player->AddComponent<dae::LivesComponent>(4, dae::LivesComponent::DeathAction::Destroy, 1.f);
+        auto* lives = player->AddComponent<dae::LivesComponent>(4, dae::LivesComponent::DeathAction::Deactivate, 1.f);
         player->AddComponent<dae::ScoreComponent>();
         player->AddComponent<dae::ShootComponent>(0.1f);
         player->AddComponent<dae::ScreenBoundsComponent>(25.f, 775.f, 0.f, 915.f);

@@ -11,8 +11,7 @@ namespace dae
     public:
         // Get the raw subject and its safety bool
         Subscription(Subject* subject, std::weak_ptr<bool> aliveToken, Observer* observer)
-            : m_subject(subject), m_isSubjectAlive(aliveToken), m_observer(observer) {
-        };
+            : m_subject(subject), m_observer(observer), m_isSubjectAlive(aliveToken) {};
 
         ~Subscription();
 

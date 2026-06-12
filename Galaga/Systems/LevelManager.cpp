@@ -115,7 +115,6 @@ void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
     {
         this->AddSubscription(lives->GetSubject().AddObserver(this));
         
-
         if (m_pPlayerScore)
             m_pPlayerScore->AddSubscription(lives->GetSubject().AddObserver(m_pPlayerScore));
 
