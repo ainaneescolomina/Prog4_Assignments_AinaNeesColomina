@@ -9,9 +9,9 @@ namespace dae
     class Subscription final
     {
     public:
-        // Accept a shared_ptr instead of a raw pointer to establish weak tracking safety bounds
-        Subscription(std::shared_ptr<Subject> subject, Observer* observer)
-            : m_subject(subject), m_observer(observer) {
+        // Get the raw subject and its safety bool
+        Subscription(Subject* subject, std::weak_ptr<bool> aliveToken, Observer* observer)
+            : m_subject(subject), m_isSubjectAlive(aliveToken), m_observer(observer) {
         };
 
         ~Subscription();
@@ -25,10 +25,12 @@ namespace dae
 
 
     private:
-        // REASONING: Uses a weak_ptr so that if the underlying Subject component is destroyed first, 
-        // the subscription can safely detect that the memory is dead and prevent an access violation crash.
-        std::weak_ptr<Subject> m_subject;
+        Subject* m_subject{};
         Observer* m_observer{};
+
+        // REASONING: Holds a weak token to check if the raw Subject memory is still alive
+        // before executing RAII unbinding operations in Unsubscribe().
+        std::weak_ptr<bool> m_isSubjectAlive;
 
         void Unsubscribe();
     };

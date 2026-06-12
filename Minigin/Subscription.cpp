@@ -10,9 +10,11 @@ namespace dae
     }
 
     Subscription::Subscription(Subscription&& other) noexcept
-        : m_subject(std::move(other.m_subject)) // Properly move the weak pointer container
+        : m_subject(other.m_subject)
         , m_observer(other.m_observer)
+        , m_isSubjectAlive(std::move(other.m_isSubjectAlive)) // Move token container
     {
+        other.m_subject = nullptr;
         other.m_observer = nullptr;
     }
 
@@ -22,9 +24,11 @@ namespace dae
         {
             Unsubscribe();
 
-            m_subject = std::move(other.m_subject);
+            m_subject = other.m_subject;
             m_observer = other.m_observer;
+            m_isSubjectAlive = std::move(other.m_isSubjectAlive); // Move token container
 
+            other.m_subject = nullptr;
             other.m_observer = nullptr;
         }
 
@@ -33,14 +37,17 @@ namespace dae
 
     void Subscription::Unsubscribe()
     {
-        // Tries to elevate the weak reference to a temporary shared reference
-        // If the subject is dead, lock() safely returns nullptr instead of throwing a read exception
-        if (auto sharedSubject = m_subject.lock())
+        // 1. Try to lock the weak pointer. If the shared_ptr tracking block is gone, it returns nullptr.
+        if (auto aliveToken = m_isSubjectAlive.lock())
         {
-            if (m_observer)
-                sharedSubject->RemoveObserver(m_observer);
+            // 2. If the block exists, verify that the Subject hasn't flipped it to false inside its destructor.
+            if (*aliveToken && m_subject && m_observer)
+            {
+                m_subject->RemoveObserver(m_observer);
+            }
         }
 
+        m_subject = nullptr;
         m_observer = nullptr;
     }
 }

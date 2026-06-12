@@ -2,6 +2,7 @@
 #include "Observer.h"
 #include <algorithm>
 #include <vector>
+#include <memory>
 
 namespace dae
 {
@@ -9,8 +10,20 @@ namespace dae
     {
     public:
 
-        explicit Subject(void* owner) : m_pOwner(owner) {}
-        ~Subject() = default;
+        explicit Subject(void* owner)
+            : m_pOwner(owner)
+            , m_isAlive(std::make_shared<bool>(true))
+        {
+        }
+        
+        ~Subject()
+        {
+            // Inform all active subscriptions that this subject is dead!
+            if (m_isAlive)
+            {
+                *m_isAlive = false;
+            }
+        }
 
         Subject(const Subject&) = delete;
         Subject(Subject&&) = delete;
@@ -20,7 +33,8 @@ namespace dae
         Subscription AddObserver(Observer* observer)
         {
             m_observers.emplace_back(observer);
-            return Subscription(this, observer );
+            // Pass 'this' AND our state bool to the subscription
+            return Subscription(this, m_isAlive, observer);
         }
 
         void RemoveObserver(Observer* observer) {
@@ -50,5 +64,7 @@ namespace dae
     private:
         std::vector<Observer*> m_observers;
         void* m_pOwner{};
+
+        std::shared_ptr<bool> m_isAlive; // Shared reference of subject state
     };
 }
