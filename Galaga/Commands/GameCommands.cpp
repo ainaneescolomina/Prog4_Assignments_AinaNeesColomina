@@ -1,8 +1,12 @@
 #include"GameCommands.h"
 #include "GameObject.h"
 #include "GameComponents.h"
+#include "EnemyComponents.h"
 #include "ServiceLocator.h"
 #include "LevelManager.h"
+
+#include "GalagaDiveState.h"
+#include "GalagaTractorBeamState.h"
 
 dae::MoveCommand::MoveCommand(GameObject* obj, float inputX, float inputY)
 	:m_pObject(obj),
@@ -39,4 +43,28 @@ void dae::MuteToggleCommand::Execute(float, float)
 void dae::SkipLevelCommand::Execute(float, float)
 {
 	if (m_pLevelManager) m_pLevelManager->SkipLevel();
+}
+
+void dae::VersusBossDiveCommand::Execute(float, float)
+{
+	if (!m_pObject) return;
+	if (m_pObject->IsMarkedForDestroy()) return;
+
+	auto stateComp = m_pObject->GetComponent<EnemyStateComponent>();
+	if (stateComp && stateComp->GetCurrentState()->GetType() == dae::EnemyStateType::Idle)
+	{
+		stateComp->SetState(std::make_unique<GalagaDiveState>());
+	}
+}
+
+void dae::VersusBossTractBeamCommand::Execute(float, float)
+{
+	if (!m_pObject) return;
+	if (m_pObject->IsMarkedForDestroy()) return;
+
+	auto stateComp = m_pObject->GetComponent<EnemyStateComponent>();
+	if (stateComp && stateComp->GetCurrentState()->GetType() == dae::EnemyStateType::Idle)
+	{
+		stateComp->SetState(std::make_unique<GalagaTractorBeamState>());
+	}
 }

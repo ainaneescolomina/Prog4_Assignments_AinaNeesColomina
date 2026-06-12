@@ -44,4 +44,23 @@ namespace dae
 	private:
 		LevelManager* m_pLevelManager;
 	};
+
+	// VERSUS MODE
+	class VersusBossDiveCommand final : public Command
+	{
+	public:
+		explicit VersusBossDiveCommand(GameObject* obj) : m_pObject(obj) {}
+		void Execute(float delta_time, float valueModifier = 1.0f) override;
+	private:
+		GameObject* m_pObject;
+	};
+
+	class VersusBossTractBeamCommand final : public Command
+	{
+	public:
+		explicit VersusBossTractBeamCommand(GameObject* obj) : m_pObject(obj) {}
+		void Execute(float delta_time, float valueModifier = 1.0f) override;
+	private:
+		GameObject* m_pObject;
+	};
 }

@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include "GameState.h"
-#include "Commands.h"
 //#include "Achievements.h"
 #include "BulletSpawner.h"
 #include "LevelManager.h"
@@ -21,9 +20,6 @@ namespace dae
 
         // Observer Functions
         virtual void Notify(Event event, void* sender) override;
-
-        // Class Functions
-        void SkipLevel();
 
     private:
         Scene* m_pScene = nullptr;

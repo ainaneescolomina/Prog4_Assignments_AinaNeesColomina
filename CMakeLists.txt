@@ -191,6 +191,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/GameStates/MenuState.cpp
   Galaga/GameStates/SinglePlayerState.cpp
   Galaga/GameStates/CoOpPlayState.cpp
+  Galaga/GameStates/VersusPlayState.cpp
   Galaga/GameStates/HighscoreState.cpp 
   Galaga/GameStates/GameOverState.cpp
   Galaga/GameStates/NameEntryState.cpp
@@ -204,7 +205,7 @@ add_executable(${TARGET_NAME} ${TARGET_PARAM}
   Galaga/Enemies/FormationManager.cpp
   Galaga/Commands/GameCommands.cpp
   Galaga/Components/EnemyComponents.cpp
-  Galaga/Components/GameComponents.cpp )
+  Galaga/Components/GameComponents.cpp)
 
 target_include_directories(${TARGET_NAME} PRIVATE 
     ${CMAKE_CURRENT_SOURCE_DIR}/Galaga

@@ -4,6 +4,7 @@
 #include "GameCommands.h"
 #include "GameComponents.h"
 #include "EnemyComponents.h"
+#include "EnemyIdleState.h"
 #include <SDL3/SDL_keycode.h>
 
 namespace ActorFactory
@@ -30,7 +31,7 @@ namespace ActorFactory
         {
             input.BindCommand(SDLK_A, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), -speed, 0.f));
             input.BindCommand(SDLK_D, dae::KeyState::Pressed, std::make_unique<dae::MoveCommand>(player.get(), speed, 0.f));
-            input.BindCommand(SDLK_E, dae::KeyState::Up, std::make_unique<dae::ShootCommand>(player.get()));
+            input.BindCommand(SDLK_SPACE, dae::KeyState::Up, std::make_unique<dae::ShootCommand>(player.get()));
         }
 
         // Gamepad bindings
@@ -50,6 +51,51 @@ namespace ActorFactory
         damage->AddThreat(dae::TagComponent::Tags::Enemy);
         damage->AddThreat(dae::TagComponent::Tags::EnemyBullet);
         damage->AddThreat(dae::TagComponent::Tags::TractorBeam);
+
+        return player;
+    }
+
+    std::unique_ptr<dae::GameObject> CreateGalagaPlayer(dae::InputManager& input, const glm::vec2& pos, bool keyboardInput, bool gamepadInput, int gamepadIdx)
+    {
+        auto player = std::make_unique<dae::GameObject>();
+        player->AddComponent<dae::AnimatedRenderComponent>(1, 2, 1.f)->SetTexture("Images/enemy_galaga.png", true);
+        player->SetPosition(pos.x, pos.y);
+        player->AddComponent<dae::TagComponent>(dae::TagComponent::Tags::Enemy);
+
+        auto* enemyComp = player->AddComponent<dae::EnemyComponent>(EnemyType::BossGalaga);
+        glm::vec2 formationPos{ pos.x, pos.y };
+        enemyComp->SetFormationPosition(formationPos);
+
+        auto* collider = player->AddComponent<dae::ColliderComponent>(48.f, 48.f);
+        auto* damage = player->AddComponent<dae::DamageManager>();
+        auto* lives = player->AddComponent<dae::LivesComponent>(2, dae::LivesComponent::DeathAction::None, 0.5f);
+        
+        auto* stateComp = player->AddComponent<EnemyStateComponent>();
+        stateComp->SetState(std::make_unique<dae::EnemyIdleState>());
+        player->AddComponent<dae::ShootComponent>(0.1f);
+
+        // Keyboard bindings
+        if (keyboardInput)
+        {
+            input.BindCommand(SDLK_A, dae::KeyState::Pressed, std::make_unique<dae::VersusBossDiveCommand>(player.get()));
+            input.BindCommand(SDLK_D, dae::KeyState::Pressed, std::make_unique<dae::VersusBossTractBeamCommand>(player.get()));
+            input.BindCommand(SDLK_SPACE, dae::KeyState::Up, std::make_unique<dae::ShootCommand>(player.get()));
+        }
+
+        // Gamepad bindings
+        if (gamepadInput)
+        {
+            input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_DPAD_LEFT, dae::KeyState::Pressed, std::make_unique<dae::VersusBossDiveCommand>(player.get()));
+            input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_DPAD_RIGHT, dae::KeyState::Pressed, std::make_unique<dae::VersusBossTractBeamCommand>(player.get()));
+            input.BindGamepadCommand(gamepadIdx, dae::GAMEPAD_A, dae::KeyState::Pressed, std::make_unique<dae::ShootCommand>(player.get()));
+        }
+
+        // Observer / Subject
+        collider->GetSubject().AddObserver(damage);
+        damage->GetSubject().AddObserver(lives);
+        damage->GetSubject().AddObserver(enemyComp);
+        lives->GetSubject().AddObserver(enemyComp);
+        damage->AddThreat(dae::TagComponent::Tags::Bullet);
 
         return player;
     }

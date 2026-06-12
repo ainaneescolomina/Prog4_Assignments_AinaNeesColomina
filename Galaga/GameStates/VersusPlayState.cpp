@@ -1,5 +1,5 @@
-#include "SinglePlayerState.h"
-#include "GameOverState.h"
+#include "VersusPlayState.h"
+#include "HighscoreState.h"
 #include "SceneManager.h"
 #include "ResourceManager.h"
 #include "Scene.h"
@@ -14,8 +14,9 @@
 
 #include "Factory.h"
 #include "GameComponents.h"
+#include "EnemyComponents.h"
 
-void dae::SinglePlayerState::OnEnter()
+void dae::VersusPlayState::OnEnter()
 {
 	InputManager::GetInstance().BindCommand(SDLK_F1, KeyState::Down, std::make_unique<SkipLevelCommand>(m_pLevelManager.get()));
 	InputManager::GetInstance().BindCommand(SDLK_F2, KeyState::Down, std::make_unique<MuteToggleCommand>());
@@ -52,12 +53,17 @@ void dae::SinglePlayerState::OnEnter()
 
 	// --- MANAGERS ---
 	m_pBulletSpawner = std::make_unique<dae::BulletSpawner>(*m_pScene);
-	m_pLevelManager = std::make_unique<LevelManager>(*m_pScene);
+	m_pLevelManager = std::make_unique<LevelManager>(*m_pScene, true);
 	m_pGameStats = std::make_unique<GameStatsManager>();
 
 	// --- ACTORS ---
-	// Player
-	auto player = ActorFactory::CreatePlayer(input, { 450, 650 });
+	// Player 1
+	auto player1 = ActorFactory::CreatePlayer(input, { 450, 650 }, false, true, 0);
+
+	// Player 2
+	auto player2 = ActorFactory::CreateGalagaPlayer(input, { 450, 100 }, true, true, 1);
+	auto beam = ActorFactory::CreateTractorBeam(player2.get());
+	m_pScene->Add(std::move(beam));
 
 	// UI
 	auto scoreTitle = UIFactory::CreateUI_Text(font, { 850, 400 }, "1 Up", { 255, 0, 0, 255 });
@@ -66,16 +72,20 @@ void dae::SinglePlayerState::OnEnter()
 	auto livesUI = UIFactory::CreateUI_Lives({ 800, 600 }, "Images/player.png");
 
 	// Observer / Subject
-	auto score = player->GetComponent<dae::ScoreComponent>();
+	auto score = player1->GetComponent<dae::ScoreComponent>();
 	//score->GetSubject().AddObserver(&m_pWinAchievement);
 
-	auto lives = player->GetComponent<dae::LivesComponent>();
-	lives->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	auto lives1 = player1->GetComponent<dae::LivesComponent>();
+	lives1->GetSubject().AddObserver(livesUI->GetComponent<dae::LivesDisplayComponent>());
+	auto lives2 = player2->GetComponent<dae::LivesComponent>();
 
 	score->GetSubject().AddObserver(scoreUI->GetComponent<dae::ScoreDisplayComponent>());
 	score->GetSubject().AddObserver(m_pGameStats.get());
-	auto shoot = player->GetComponent<dae::ShootComponent>();
-	shoot->GetSubject().AddObserver(m_pBulletSpawner.get());
+	
+	auto* shoot1 = player1->GetComponent<dae::ShootComponent>();
+	shoot1->GetSubject().AddObserver(m_pBulletSpawner.get());
+	auto* shoot2 = player2->GetComponent<dae::ShootComponent>();
+	shoot2->GetSubject().AddObserver(m_pBulletSpawner.get());
 
 	m_pBulletSpawner->GetSubject().AddObserver(m_pGameStats.get());
 
@@ -84,10 +94,12 @@ void dae::SinglePlayerState::OnEnter()
 	m_pLevelManager->SetBulletSpawner(m_pBulletSpawner.get());
 	m_pLevelManager->SetGameStatsManager(m_pGameStats.get());
 	m_pLevelManager->SpawnWave();
-	lives->GetSubject().AddObserver(this);
+	lives1->GetSubject().AddObserver(this);
+	lives2->GetSubject().AddObserver(this);
 
 	// Add to scene
-	m_pScene->Add(std::move(player));
+	m_pScene->Add(std::move(player1));
+	m_pScene->Add(std::move(player2));
 	m_pScene->Add(std::move(livesUI));
 	m_pScene->Add(std::move(scoreUI));
 
@@ -95,7 +107,7 @@ void dae::SinglePlayerState::OnEnter()
 	sound.Play(0, 0.15f);
 }
 
-void dae::SinglePlayerState::OnExit()
+void dae::VersusPlayState::OnExit()
 {
 	InputManager::GetInstance().UnbindCommand(SDLK_F1, KeyState::Down);
 	InputManager::GetInstance().UnbindCommand(SDLK_F2, KeyState::Down);
@@ -103,23 +115,19 @@ void dae::SinglePlayerState::OnExit()
 	m_pScene->RemoveAll();
 }
 
-std::unique_ptr<dae::GameState> dae::SinglePlayerState::Update(float delta_time)
+std::unique_ptr<dae::GameState> dae::VersusPlayState::Update(float delta_time)
 {
 	m_pLevelManager->Update(delta_time);
 
 	if (m_playerDied)
 	{
-		return std::make_unique<GameOverState>(
-			m_pGameStats->GetShotsFired(),
-			m_pGameStats->GetHitsScored(),
-			m_pGameStats->GetHitMissRatio(),
-			m_pGameStats->GetFinalScore());
+		return std::make_unique<HighscoreState>();
 	}
 
 	return nullptr;
 }
 
-void dae::SinglePlayerState::Notify(Event event, void* sender)
+void dae::VersusPlayState::Notify(Event event, void* sender)
 {
 	if (event.id == make_sdbm_hash("ActorDied"))
 	{
@@ -130,6 +138,12 @@ void dae::SinglePlayerState::Notify(Event event, void* sender)
 		if (otherTag->GetTag() == TagComponent::Tags::Player)
 		{
 			m_playerDied = true;
+		}
+		else if (otherTag->GetTag() == TagComponent::Tags::Enemy)
+		{
+			auto* enemyComp = otherObj->GetComponent<dae::EnemyComponent>();
+			if(enemyComp && enemyComp->GetType() == EnemyType::BossGalaga)
+				m_playerDied = true;
 		}
 	}
 	else if (event.id == make_sdbm_hash("UpdateLives"))

@@ -85,6 +85,7 @@ void dae::LevelManager::SkipLevel()
 
 void dae::LevelManager::SpawnEnemy(const EnemySpawnData& enemyData)
 {
+    if (enemyData.type == EnemyType::BossGalaga && m_isVersusMode) return;
     auto enemy = ActorFactory::CreateEnemy(enemyData.type, enemyData.pos);
 
     if (!enemy) return;

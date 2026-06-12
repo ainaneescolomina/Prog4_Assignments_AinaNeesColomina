@@ -16,7 +16,7 @@ namespace dae
     class LevelManager final : public Observer
     {
     public:
-        explicit LevelManager(dae::Scene& scene) : m_pScene(&scene){}
+        explicit LevelManager(dae::Scene& scene, bool vsMode = false) : m_pScene(&scene), m_isVersusMode(vsMode) {}
         void SetPlayerScore(dae::ScoreComponent* score) { m_pPlayerScore = score; }
         void SetBulletSpawner(dae::BulletSpawner* spawner) { m_pBulletSpawner = spawner; }
         void SetGameStatsManager(dae::GameStatsManager* stats) { m_pGameStatsManager = stats; }
@@ -43,5 +43,7 @@ namespace dae
 
         int m_levelIdx = 1;
         int m_aliveEnemies{};
+
+        bool m_isVersusMode;
     };
 }

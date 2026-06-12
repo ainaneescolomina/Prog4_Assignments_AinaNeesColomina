@@ -8,7 +8,7 @@
 namespace dae
 {
     class Scene;
-    class CoOpPlayState final : public dae::GameState, public Observer
+    class VersusPlayState final : public dae::GameState, public Observer
     {
     public:
         // GameState Functions
@@ -23,10 +23,10 @@ namespace dae
     private:
         Scene* m_pScene = nullptr;
 
+        bool m_playerDied{};
+
         std::unique_ptr<dae::BulletSpawner> m_pBulletSpawner;
         std::unique_ptr<LevelManager> m_pLevelManager;
         std::unique_ptr<GameStatsManager> m_pGameStats;
-
-        int m_playerDied{ 0 };
     };
 }

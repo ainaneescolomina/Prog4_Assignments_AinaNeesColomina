@@ -146,8 +146,3 @@ void dae::CoOpPlayState::Notify(Event event, void* sender)
 		sound.Play(2, 0.5f);
 	}
 }
-
-void dae::CoOpPlayState::SkipLevel()
-{
-	m_pLevelManager->SkipLevel();
-}

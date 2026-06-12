@@ -137,7 +137,7 @@ namespace dae
 
 	private:
 		float m_cooldown;
-		float m_timer{};
+		float m_timer{ 0.5f };
 
 		Subject m_subject;
 	};
