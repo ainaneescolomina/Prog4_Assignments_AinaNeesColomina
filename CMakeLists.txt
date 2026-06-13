@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.26)
 project(Galaga)
 
-# Force C++20 globally for all targets
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+# Force C++20 globally for ALL targets
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ Standard" FORCE)
+set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Require C++ Standard" FORCE)
+set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Disable extensions" FORCE)
+
+# Force Warning Level 4 globally for MSVC
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4" CACHE STRING "Forcing W4" FORCE)
+endif()
 
 if(EMSCRIPTEN)
   message("Using Emscripten!")
@@ -180,11 +185,6 @@ target_link_libraries(minigin_engine PUBLIC
   ${VLD_LIBRARIES}
 )
 
-if(MSVC)
-  target_compile_options(minigin_engine PRIVATE /W4 /WX)
-else()
-  target_compile_options(minigin_engine PRIVATE -Wall -Wextra -Werror)
-endif()
 
 # enable c++20 features
 if(WIN32)
@@ -243,11 +243,15 @@ if(WIN32)
 endif()
 
 if(MSVC)
-  # compile at warning level 4 + treat warnings as errors
+  target_compile_options(minigin_engine PRIVATE /W4 /WX)
   target_compile_options(${TARGET_NAME} PRIVATE /W4 /WX)
+  target_compile_options(imgui PRIVATE /W4 /WX)
 else()
+  target_compile_options(minigin_engine PRIVATE -Wall -Wextra -Werror)
   target_compile_options(${TARGET_NAME} PRIVATE -Wall -Wextra -Werror)
+  target_compile_options(imgui PRIVATE -Wall -Wextra -Werror)
 endif()
+
 
 if(EMSCRIPTEN)
   set(EMSCRIPTEN_COMPILE_FLAGS "${EMSCRIPTEN_LINK_FLAGS} -g")
